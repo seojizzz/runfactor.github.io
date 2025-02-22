@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prime Factorization Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+    <title>Prime Factorization Challenge</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .prime-btn {
+            width: 100px;
+            height: 100px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .correct {
+            background-color: #90EE90; /* Green */
+        }
+        .wrong {
+            background-color: #FFB6C1; /* Red */
+        }
+        #game-screen, #end-screen {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <h1>Prime Factorization Challenge</h1>
+        <label for="username">Enter your name:</label>
+        <input type="text" id="username">
+        <button id="start-btn">Start</button>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="game-screen">
+        <h1>Prime Factorization Challenge</h1>
+        <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
+        <p id="timer-display">Time Left: 120.00s</p>
+        <p id="number-display">Generating number...</p>
+        <p id="score-display">Score: 0</p>
+        <div id="buttons"></div>
+        <p id="action-text" style="font-size: 1.5em; color: green; display: none;"></p>
+    </div>
+
+    <!-- End Screen -->
+
+    <div id="end-screen" style="display: none;">
+        <h1>Game Over</h1>
+        <p id="final-score"></p> <!-- Final score is displayed here -->
+        <h2>Correctly Factorized</h2>
+        <ul id="correct-list"></ul>
+
+        <h2>Incorrectly Factorized</h2>
+        <ul id="wrong-list"></ul>
+
+        <button onclick="location.reload()">Play Again</button>
+    </div>
+
+
+    <script src="game.js"></script>
+    <script>
+        document.getElementById("start-btn").addEventListener("click", function() {
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("game-screen").style.display = "block";
+            startGame();
+        });
+    </script>
+</body>
+</html>
