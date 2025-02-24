@@ -1,25 +1,3 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
-  authDomain: "runfactor-cf724.firebaseapp.com",
-  projectId: "runfactor-cf724",
-  storageBucket: "runfactor-cf724.firebasestorage.app",
-  messagingSenderId: "882591954418",
-  appId: "1:882591954418:web:39964ebfa664061fb4a76b",
-  measurementId: "G-KWWWHF4NQE"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
 class PrimeFactorGame {
     constructor() {
         this.easyPrimes = [2, 3, 5, 7, 11];
@@ -316,35 +294,4 @@ class PrimeFactorGame {
 const game = new PrimeFactorGame();
 function startGame() {
     game.startGame();
-}
-
-
-import { db, doc, setDoc, updateDoc, getDoc } from "./firebase-config.js";
-
-async function savePlayerData(username, score, longestCombo, perfectClears, correctAnswers, mistakes) {
-    const playerRef = doc(db, "players", username); // Each player has a unique document
-
-    // Check if user already exists
-    const docSnap = await getDoc(playerRef);
-    
-    if (docSnap.exists()) {
-        // Update existing player record
-        await updateDoc(playerRef, {
-            score: Math.max(score, docSnap.data().score), // Keep the highest score
-            longestCombo: Math.max(longestCombo, docSnap.data().longestCombo),
-            perfectClears: docSnap.data().perfectClears + perfectClears,
-            correctAnswers: docSnap.data().correctAnswers + correctAnswers,
-            mistakes: docSnap.data().mistakes + mistakes
-        });
-    } else {
-        // Create a new player record
-        await setDoc(playerRef, {
-            username,
-            score,
-            longestCombo,
-            perfectClears,
-            correctAnswers,
-            mistakes
-        });
-    }
 }
