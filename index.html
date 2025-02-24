@@ -49,27 +49,26 @@
         <h1>Prime Factorization Challenge</h1>
         <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
         <p id="timer-display">Time Left: 120.00s</p>
-        <p id="number-display">Generating number...</p>
-        <p id="score-display">Score: 0</p>
-        <div id="buttons"></div>
-        <p id="action-text" style="font-size: 1.5em; color: green; display: none;"></p>
+        <p id="number-display">Factorize: Generating number...</p>
+        <div class="game-container">
+            <div id="buttons"></div> <!-- Prime buttons centered -->
+            <div class="score-container">
+                <p id="score-label">Score:</p>
+                <p id="score-display">0</p>
+                <p id="action-text">+0</p>
+            </div>
+        </div>
     </div>
-
     <!-- End Screen -->
-
     <div id="end-screen" style="display: none;">
         <h1>Game Over</h1>
         <p id="final-score"></p> <!-- Final score is displayed here -->
         <h2>Correctly Factorized</h2>
         <ul id="correct-list"></ul>
-
         <h2>Incorrectly Factorized</h2>
         <ul id="wrong-list"></ul>
-
         <button onclick="location.reload()">Play Again</button>
     </div>
-
-
     <script src="game.js"></script>
     <script>
         document.getElementById("start-btn").addEventListener("click", function() {
