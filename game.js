@@ -328,3 +328,34 @@ const game = new PrimeFactorGame();
 function startGame() {
     game.startGame();
 }
+
+
+import { db, doc, setDoc, updateDoc, getDoc } from "./firebase-config.js";
+
+async function savePlayerData(username, score, longestCombo, perfectClears, correctAnswers, mistakes) {
+    const playerRef = doc(db, "players", username); // Each player has a unique document
+
+    // Check if user already exists
+    const docSnap = await getDoc(playerRef);
+    
+    if (docSnap.exists()) {
+        // Update existing player record
+        await updateDoc(playerRef, {
+            score: Math.max(score, docSnap.data().score), // Keep the highest score
+            longestCombo: Math.max(longestCombo, docSnap.data().longestCombo),
+            perfectClears: docSnap.data().perfectClears + perfectClears,
+            correctAnswers: docSnap.data().correctAnswers + correctAnswers,
+            mistakes: docSnap.data().mistakes + mistakes
+        });
+    } else {
+        // Create a new player record
+        await setDoc(playerRef, {
+            username,
+            score,
+            longestCombo,
+            perfectClears,
+            correctAnswers,
+            mistakes
+        });
+    }
+}
