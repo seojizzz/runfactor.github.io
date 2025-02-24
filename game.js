@@ -15,6 +15,7 @@ class PrimeFactorGame {
         this.gameRunning = false;
         this.username = "";
         this.difficultyThresholds = [35000, 90000, 200000];
+        //.....
     }
 
     startGame() {

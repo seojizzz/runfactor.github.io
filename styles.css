@@ -1,5 +1,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@700&display=swap');
 /* General Styling */
+#username {
+    width: 250px; /* Adjust width as needed */
+    height: 40px; /* Adjust height as needed */
+    font-size: 16px; /* Adjust font size for better visibility */
+}
+
+
 body {
     font-family: Arial, sans-serif;
     text-align: center;
