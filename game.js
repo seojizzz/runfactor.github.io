@@ -1,3 +1,25 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
+  authDomain: "runfactor-cf724.firebaseapp.com",
+  projectId: "runfactor-cf724",
+  storageBucket: "runfactor-cf724.firebasestorage.app",
+  messagingSenderId: "882591954418",
+  appId: "1:882591954418:web:39964ebfa664061fb4a76b",
+  measurementId: "G-KWWWHF4NQE"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 class PrimeFactorGame {
     constructor() {
         this.easyPrimes = [2, 3, 5, 7, 11];
