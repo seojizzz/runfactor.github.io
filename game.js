@@ -17,6 +17,84 @@ class PrimeFactorGame {
         this.difficultyThresholds = [35000, 90000, 200000];
     }
 
+    startGame() {
+        this.username = document.getElementById("username").value || "Player";
+        document.getElementById("username-display").innerText = `Player: ${this.username}`;
+        document.getElementById("start-screen").style.display = "none";
+        document.getElementById("game-screen").style.display = "block";
+        
+        let countdown = 3;
+        document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+        let countdownInterval = setInterval(() => {
+            countdown--;
+            if (countdown > 0) {
+                document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+            } else {
+                clearInterval(countdownInterval);
+                this.beginGame();
+            }
+        }, 1000);
+    }
+
+    createButtons() {
+        const buttonContainer = document.getElementById("buttons");
+        buttonContainer.innerHTML = "";
+        
+        [...this.easyPrimes, ...this.hardPrimes].forEach(prime => {
+            let btn = document.createElement("button");
+            btn.innerText = prime;
+            btn.classList.add("prime-btn");
+            btn.onclick = () => this.handleGuess(prime, btn);
+            buttonContainer.appendChild(btn);
+        });
+    }
+    
+    beginGame() {
+        this.gameRunning = true;
+        this.createButtons();
+        this.newRound(); // Ensure first round starts immediately
+        this.timerInterval = setInterval(() => this.updateTimer(), 10);
+    }
+
+    setQuestion() {
+        let number;
+        do {
+            number = this.generateCompositeNumber();
+        } while (this.usedNumbers.has(number));
+        
+        this.usedNumbers.add(number);
+        return number;
+    }
+    
+    generateCompositeNumber() {
+        let score = this.score;
+        let numEasy, numHard;
+
+        if (score >= 200000) {
+            numEasy = Math.floor(Math.random() * 6) + 2;
+            numHard = Math.floor(Math.random() * 4) + 3;
+        } else if (score >= 90000) {
+            numEasy = Math.floor(Math.random() * 5) + 2;
+            numHard = Math.floor(Math.random() * 3) + 2;
+        } else if (score >= 35000) {
+            numEasy = Math.floor(Math.random() * 4) + 2;
+            numHard = 1;
+        } else {
+            numEasy = Math.floor(Math.random() * 3) + 2;
+            numHard = 0;
+        }
+
+        let factors = [];
+        for (let i = 0; i < numEasy; i++) {
+            factors.push(this.easyPrimes[Math.floor(Math.random() * this.easyPrimes.length)]);
+        }
+        for (let i = 0; i < numHard; i++) {
+            factors.push(this.hardPrimes[Math.floor(Math.random() * this.hardPrimes.length)]);
+        }
+
+        return factors.reduce((a, b) => a * b, 1);
+    }
+
     handleGuess(prime, button) {
         if (!this.gameRunning) return;
     
@@ -100,9 +178,6 @@ class PrimeFactorGame {
         }, duration); // Use the calculated duration
     }
     
-    
-    
-    
     newRound() {
         this.mistakeMade = false;
         this.currentNumber = this.setQuestion();
@@ -146,10 +221,6 @@ class PrimeFactorGame {
         this.newRound();
     }
     
-    
-    
-    
-
     applyPenalty() {
         this.mistakeCount++;
         let penalty = this.fibonacci(this.mistakeCount) * 0.1;
@@ -204,89 +275,6 @@ class PrimeFactorGame {
             ? this.wrongList.map(q => `<li title="${q.factors}">${q.number}</li>`).join('') 
             : '<li>None</li>';
     }
-    
-
-
-    startGame() {
-        this.username = document.getElementById("username").value || "Player";
-        document.getElementById("username-display").innerText = `Player: ${this.username}`;
-        document.getElementById("start-screen").style.display = "none";
-        document.getElementById("game-screen").style.display = "block";
-        
-        let countdown = 3;
-        document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-        let countdownInterval = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-            } else {
-                clearInterval(countdownInterval);
-                this.beginGame();
-            }
-        }, 1000);
-    }
-
-    createButtons() {
-        const buttonContainer = document.getElementById("buttons");
-        buttonContainer.innerHTML = "";
-        
-        [...this.easyPrimes, ...this.hardPrimes].forEach(prime => {
-            let btn = document.createElement("button");
-            btn.innerText = prime;
-            btn.classList.add("prime-btn");
-            btn.onclick = () => this.handleGuess(prime, btn);
-            buttonContainer.appendChild(btn);
-        });
-    }
-    
-
-    beginGame() {
-        this.gameRunning = true;
-        this.createButtons();
-        this.newRound(); // Ensure first round starts immediately
-        this.timerInterval = setInterval(() => this.updateTimer(), 10);
-    }
-
-    
-
-    setQuestion() {
-        let number;
-        do {
-            number = this.generateCompositeNumber();
-        } while (this.usedNumbers.has(number));
-        
-        this.usedNumbers.add(number);
-        return number;
-    }
-
-    generateCompositeNumber() {
-        let score = this.score;
-        let numEasy, numHard;
-
-        if (score >= 200000) {
-            numEasy = Math.floor(Math.random() * 6) + 2;
-            numHard = Math.floor(Math.random() * 4) + 3;
-        } else if (score >= 90000) {
-            numEasy = Math.floor(Math.random() * 5) + 2;
-            numHard = Math.floor(Math.random() * 3) + 2;
-        } else if (score >= 35000) {
-            numEasy = Math.floor(Math.random() * 4) + 2;
-            numHard = 1;
-        } else {
-            numEasy = Math.floor(Math.random() * 3) + 2;
-            numHard = 0;
-        }
-
-        let factors = [];
-        for (let i = 0; i < numEasy; i++) {
-            factors.push(this.easyPrimes[Math.floor(Math.random() * this.easyPrimes.length)]);
-        }
-        for (let i = 0; i < numHard; i++) {
-            factors.push(this.hardPrimes[Math.floor(Math.random() * this.hardPrimes.length)]);
-        }
-
-        return factors.reduce((a, b) => a * b, 1);
-    }
 
     getFactorization(number) {
         let n = number;
@@ -299,6 +287,7 @@ class PrimeFactorGame {
         }
         return Object.entries(factors).map(([base, exp]) => exp > 1 ? `${base}^${exp}` : base).join(" × ");
     }
+
 
 }
 
