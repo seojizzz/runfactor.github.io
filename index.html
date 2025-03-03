@@ -50,15 +50,14 @@
     <!-- Start Screen -->
     <div id="start-screen">
         <label for="username">Enter your name:</label>
-        <input type="text" id="username" maxlength="15" oninput="updateCharCount()">
-        <p id="char-count">0 / 88</p>
+        <input type="text" id="username" maxlength="20" oninput="updateCharCount()">
         <button id="start-btn">Start</button>
         <button onclick="window.location.reload(true);">Update Version (If available)</button>
     <script>
     document.getElementById("start-btn").addEventListener("click", function() {
         let username = document.getElementById("username").value;
-        if (username.length > 88) {
-            alert("Username must be 88 characters or less.");
+        if (username.length > 20) {
+            alert("Username must be 20 characters or less.");
         } else if (username.trim() === "") {
             alert("Username cannot be empty.");
         } else {
