@@ -1,4 +1,5 @@
 # Prime Factorization Challenge
+[You can access the game here!](https://seojizzz.github.io/runfactor.github.io/)
 
 ## Objective
 The goal of the game is to factorize as many composite numbers as possible within a time limit of 2 minutes. Players earn points by correctly selecting prime factors and can increase their score through combos, clear bonuses, and perfect clears.

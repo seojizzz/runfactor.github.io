@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+<meta http-equiv='cache-control' content='no-cache'> 
+<meta http-equiv='expires' content='0'> 
+<meta http-equiv='pragma' content='no-cache'>
 <head>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prime Factorization Challenge</title>
@@ -47,6 +51,7 @@
     
 
     <!-- Game Screen -->
+    <!-- Game Screen -->
     <div id="game-screen">
         <h1>Prime Factorization Challenge</h1>
         <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
@@ -54,6 +59,7 @@
         <p id="number-display">Factorize: Generating number...</p>
         <div class="game-container">
             <div id="buttons"></div> <!-- Prime buttons centered -->
+
             <div class="score-container">
                 <p id="score-label">Score:</p>
                 <p id="score-display">0</p>
@@ -67,10 +73,14 @@
         <p id="final-score"></p> <!-- Final score is displayed here -->
         <h2>Correctly Factorized</h2>
         <ul id="correct-list"></ul>
+
         <h2>Incorrectly Factorized</h2>
         <ul id="wrong-list"></ul>
+
         <button onclick="location.reload()">Play Again</button>
     </div>
+
+
     <script src="game.js"></script>
     <script>
         document.getElementById("start-btn").addEventListener("click", function() {
