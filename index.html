@@ -97,3 +97,50 @@
     </script>
 </body>
 </html>
+<script>
+    const CURRENT_VERSION = "1.0.3"; // Update this whenever you deploy a new version
+    
+    async function checkForUpdate() {
+      try {
+        let response = await fetch("version.json?v=" + new Date().getTime()); // Prevent caching
+        let data = await response.json();
+    
+        if (data.version !== CURRENT_VERSION) {
+          showUpdateNotification();
+        }
+      } catch (error) {
+        console.error("Error checking for updates:", error);
+      }
+    }
+    
+    function showUpdateNotification() {
+      let updateDiv = document.createElement("div");
+      updateDiv.innerHTML = `
+        <div style="position:fixed; bottom:10px; left:50%; transform:translateX(-50%);
+                    background:#f44336; color:white; padding:10px 20px; border-radius:5px;
+                    font-size:16px; z-index:1000;">
+          A new version is available. <button onclick="hardRefresh()" 
+          style="background:white; color:#f44336; border:none; padding:5px 10px;
+          cursor:pointer; font-weight:bold;">Refresh Now</button>
+        </div>`;
+      document.body.appendChild(updateDiv);
+    }
+    
+    function hardRefresh() {
+      location.reload(true); // Forces hard reload
+    }
+    
+    checkForUpdate();
+</script>
+<script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").then(() => {
+        console.log("Service Worker Registered");
+      });
+    
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        alert("A new version is available!\nPlease press Ctrl + Shift + R to refresh.");
+      });
+    }
+</script>
+        
