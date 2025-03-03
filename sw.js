@@ -1,16 +1,15 @@
-self.addEventListener("install", () => {
-  self.skipWaiting();
+self.addEventListener("install", (event) => {
+    console.log("Service Worker installing.");
+    self.skipWaiting();
 });
-
 self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cache => {
-          return caches.delete(cache);
+    console.log("Service Worker activated.");
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cache => caches.delete(cache))
+            );
         })
-      );
-    })
-  );
-  self.clients.claim(); // Forces refresh for active clients
+    );
+    self.clients.claim();
 });
