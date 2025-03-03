@@ -9,7 +9,7 @@
             console.log('Service Worker Registered');
           });
         }
-        </script>            
+    </script>            
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,15 +49,19 @@
 <body>
     <!-- Start Screen -->
     <div id="start-screen">
-        <h1>Prime Factorization Challenge</h1>
         <label for="username">Enter your name:</label>
-        <input type="text" id="username" maxlength="88">
+        <input type="text" id="username" maxlength="88" oninput="updateCharCount()">
+        <p id="char-count">0 / 88</p>
         <button id="start-btn">Start</button>
         <button onclick="window.location.reload(true);">Update Version (If available)</button>
-
+    <script>
+    function updateCharCount() {
+        let input = document.getElementById("username");
+        let charCount = document.getElementById("char-count");
+        charCount.textContent = `${input.value.length} / 88`;
+    }
+    </script>
     </div>
-
-    <!-- Game Screen -->
     <!-- Game Screen -->
     <div id="game-screen">
         <h1>Prime Factorization Challenge</h1>
