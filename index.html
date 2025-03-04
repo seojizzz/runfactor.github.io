@@ -15,7 +15,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prime Factorization Challenge</title>
     <link rel="stylesheet" href="styles.css?v=2">
-    <script src="game.js?v=2"></script>
+    <script type="module" src="game.js?v=2"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,7 +51,15 @@
     <div id="start-screen">
         <label for="username">Enter your name:</label>
         <input type="text" id="username" maxlength="20" oninput="updateCharCount()">
-        <button id="start-btn">Start</button>
+        <p id="char-count">0 / 20</p>
+        <script>
+            function updateCharCount() {
+                let input = document.getElementById("username");
+                let charCount = document.getElementById("char-count");
+                charCount.textContent = `${input.value.length} / 20`;
+            }
+            </script>            
+        <button id="start-btn" onclick="startGame()">Start</button>
 <!--         <button onclick="window.location.reload(true);">Update Version (If available)</button> -->
     <script>
     document.getElementById("start-btn").addEventListener("click", function() {
@@ -97,6 +105,17 @@
         <ul id="wrong-list"></ul>
 
         <button onclick="location.reload()">Play Again</button>
+        <h2>Leaderboard (Top 10)</h2>
+          <table id="leaderboard">
+              <thead>
+                  <tr>
+                      <th>Rank</th>
+                      <th>Username</th>
+                      <th>Score</th>
+                  </tr>
+              </thead>
+              <tbody></tbody>
+          </table>
     </div>
     <script>
         document.getElementById("start-btn").addEventListener("click", function() {
