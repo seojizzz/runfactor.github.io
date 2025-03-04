@@ -25,22 +25,7 @@ firebase.auth().signInAnonymously()
     });
 
 // Function to submit score
-function submitScore(username, score) {
-    if (!firebase.auth().currentUser) {
-        console.error("User not authenticated");
-        return;
-    }
 
-    db.collection("scores").add({
-        username: username,
-        score: score,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-        console.log("Score submitted!");
-    }).catch((error) => {
-        console.error("Error submitting score:", error);
-    });
-}
 
 function submitScore(username, score) {
     if (!firebase.auth().currentUser) {
@@ -122,16 +107,19 @@ class PrimeFactorGame {
         
         let countdown = 3;
         document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+    
         let countdownInterval = setInterval(() => {
             countdown--;
-            if (countdown > 0) {
-                document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-            } else {
+            document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+    
+            if (countdown <= 0) {
                 clearInterval(countdownInterval);
-                this.beginGame();
+                console.log("Starting game...");
+                this.beginGame(); // This should now trigger correctly
             }
         }, 1000);
     }
+    
 
     createButtons() {
         const buttonContainer = document.getElementById("buttons");
@@ -147,21 +135,24 @@ class PrimeFactorGame {
     }
     
     beginGame() {
+        console.log("Game has started!"); // Debugging line
         this.gameRunning = true;
         this.createButtons();
-        this.newRound(); // Ensure first round starts immediately
+        this.newRound();
         this.timerInterval = setInterval(() => this.updateTimer(), 10);
     }
+    
 
     setQuestion() {
         let number;
         do {
             number = this.generateCompositeNumber();
         } while (this.usedNumbers.has(number));
-        
+    
         this.usedNumbers.add(number);
         return number;
     }
+    
     
     generateCompositeNumber() {
         let score = this.score;
@@ -279,9 +270,11 @@ class PrimeFactorGame {
         this.mistakeMade = false;
         this.currentNumber = this.setQuestion();
         this.originalNumber = this.currentNumber;
+        
+        console.log("New number generated:", this.currentNumber); // Debugging line
         document.getElementById("number-display").innerText = `Factorize: ${this.currentNumber}`;
-        // Combo counter does NOT reset here anymore
     }
+    
     
     getBaseScore(prime) {
         if ([2, 3, 5, 7].includes(prime)) return 100;
