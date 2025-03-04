@@ -18,7 +18,33 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
 const db = getFirestore(app);
+const scoresCollection = collection(db, "scores");
+
+// Correct the leaderboard function
+async function loadLeaderboard() {
+    try {
+        const q = query(scoresCollection, orderBy("score", "desc"), limit(10));
+        const querySnapshot = await getDocs(q);
+        
+        let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+        leaderboardTable.innerHTML = ""; // Clear old data
+
+        let rank = 1;
+        querySnapshot.forEach((doc) => {
+            let row = leaderboardTable.insertRow();
+            row.insertCell(0).innerText = rank;
+            row.insertCell(1).innerText = doc.data().username;
+            row.insertCell(2).innerText = doc.data().score;
+            rank++;
+        });
+    } catch (error) {
+        console.error("Error loading leaderboard:", error);
+    }
+}
+
 const auth = getAuth(app);
 
 // Sign in user anonymously
@@ -36,7 +62,6 @@ function submitScore(username, score) {
         console.error("User not authenticated");
         return;
     }
-
     db.collection("scores").add({
         username: username,
         score: score,
