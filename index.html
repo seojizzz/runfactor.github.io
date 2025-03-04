@@ -14,8 +14,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prime Factorization Challenge</title>
-    <link rel="stylesheet" href="styles.css?v=2">
-    <script type="module" src="game.js?v=2"></script>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="game.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -58,9 +58,8 @@
                 let charCount = document.getElementById("char-count");
                 charCount.textContent = `${input.value.length} / 20`;
             }
-            </script>            
+        </script>            
         <button id="start-btn" onclick="startGame()">Start</button>
-<!--         <button onclick="window.location.reload(true);">Update Version (If available)</button> -->
     <script>
     document.getElementById("start-btn").addEventListener("click", function() {
         let username = document.getElementById("username").value;
