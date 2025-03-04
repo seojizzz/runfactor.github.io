@@ -1,3 +1,10 @@
+// Import Firebase SDK modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+// Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
   authDomain: "runfactor-cf724.firebaseapp.com",
@@ -11,20 +18,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// Sign in the user anonymously
-firebase.auth().signInAnonymously()
+// Sign in user anonymously
+signInAnonymously(auth)
     .then(() => {
         console.log("Signed in anonymously");
     })
     .catch((error) => {
         console.error("Authentication error:", error);
     });
-
-// Function to submit score
 
 
 function submitScore(username, score) {
