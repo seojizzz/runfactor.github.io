@@ -161,15 +161,15 @@
     
     checkForUpdate();
 </script>
+        
 <script>
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").then(() => {
-        console.log("Service Worker Registered");
-      });
-    
-      navigator.serviceWorker.addEventListener("controllerchange", () => {
-        alert("A new version is available!\nPlease press Ctrl + Shift + R to refresh.");
-      });
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+            registrations.forEach((registration) => {
+                registration.unregister();
+            });
+            console.log("Service Worker unregistered.");
+        });
     }
-</script>
-        
+    </script>
+    
