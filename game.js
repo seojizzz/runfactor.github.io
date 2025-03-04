@@ -1,3 +1,108 @@
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
+  authDomain: "runfactor-cf724.firebaseapp.com",
+  projectId: "runfactor-cf724",
+  storageBucket: "runfactor-cf724.firebasestorage.app",
+  messagingSenderId: "882591954418",
+  appId: "1:882591954418:web:39964ebfa664061fb4a76b",
+  measurementId: "G-KWWWHF4NQE"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Sign in the user anonymously
+firebase.auth().signInAnonymously()
+    .then(() => {
+        console.log("Signed in anonymously");
+    })
+    .catch((error) => {
+        console.error("Authentication error:", error);
+    });
+
+// Function to submit score
+function submitScore(username, score) {
+    if (!firebase.auth().currentUser) {
+        console.error("User not authenticated");
+        return;
+    }
+
+    db.collection("scores").add({
+        username: username,
+        score: score,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        console.log("Score submitted!");
+    }).catch((error) => {
+        console.error("Error submitting score:", error);
+    });
+}
+
+function submitScore(username, score) {
+    if (!firebase.auth().currentUser) {
+        console.error("User not authenticated");
+        return;
+    }
+
+    db.collection("scores").add({
+        username: username,
+        score: score,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        console.log("Score submitted!");
+    }).catch((error) => {
+        console.error("Error submitting score:", error);
+    });
+}
+
+function loadLeaderboard() {
+    db.collection("scores")
+        .orderBy("score", "desc")
+        .limit(10)
+        .get()
+        .then((querySnapshot) => {
+            let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+            leaderboardTable.innerHTML = ""; // Clear old data
+
+            let rank = 1;
+            querySnapshot.forEach((doc) => {
+                let row = leaderboardTable.insertRow();
+                row.insertCell(0).innerText = rank;
+                row.insertCell(1).innerText = doc.data().username;
+                row.insertCell(2).innerText = doc.data().score;
+                rank++;
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading leaderboard:", error);
+        });
+}
+
+// Load leaderboard when page loads
+document.addEventListener("DOMContentLoaded", loadLeaderboard);
+
+
+// Call this function when the game ends
+function gameOver() {
+    let username = document.getElementById("username").value;
+    let finalScore = parseFloat(document.getElementById("score-display").innerText);
+    
+    submitScore(username, finalScore);
+}
+
 class PrimeFactorGame {
     constructor() {
         this.easyPrimes = [2, 3, 5, 7, 11];
