@@ -17,7 +17,8 @@ const firebaseConfig = {
 
 // 2b. Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+// Disabling Analytics for now.
+// const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
