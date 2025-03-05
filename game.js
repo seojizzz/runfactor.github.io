@@ -330,21 +330,37 @@ function gameOver() {
     }
 }
 async function fetchLeaderboard() {
-    try {
-        const leaderboardRef = collection(db, "scores");  // Make sure collection name matches Firestore rules
-        const querySnapshot = await getDocs(leaderboardRef);
-        let leaderboardData = [];
+    console.log("Fetching leaderboard...");
 
+    try {
+        const db = getFirestore();
+        console.log("Firestore initialized:", db);
+
+        const leaderboardRef = collection(db, "scores"); // Ensure this matches Firestore collection
+        console.log("Fetching from collection:", leaderboardRef);
+
+        const querySnapshot = await getDocs(leaderboardRef);
+        console.log("Query snapshot received:", querySnapshot);
+
+        let leaderboardData = [];
         querySnapshot.forEach((doc) => {
+            console.log("Document fetched:", doc.data());
             leaderboardData.push(doc.data());
         });
 
+        if (leaderboardData.length === 0) {
+            console.warn("No leaderboard data found!");
+        }
+
         leaderboardData.sort((a, b) => b.finalScore - a.finalScore);
         updateLeaderboardTable(leaderboardData.slice(0, 10));
+        console.log("Leaderboard updated!");
+
     } catch (error) {
-        console.error("Error fetching leaderboard:", error);
+        console.error("🔥 Error fetching leaderboard:", error);
     }
 }
+
 
 function updateLeaderboardTable(data) {
     const leaderboardBody = document.getElementById("leaderboard-body");
