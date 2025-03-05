@@ -1,112 +1,112 @@
-// // Import Firebase SDK modules
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-// import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-// import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+// Import Firebase SDK modules
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// // Firebase Configuration
-// const firebaseConfig = {
-//   apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
-//   authDomain: "runfactor-cf724.firebaseapp.com",
-//   projectId: "runfactor-cf724",
-//   storageBucket: "runfactor-cf724.firebasestorage.app",
-//   messagingSenderId: "882591954418",
-//   appId: "1:882591954418:web:39964ebfa664061fb4a76b",
-//   measurementId: "G-KWWWHF4NQE"
-// };
+// Firebase Configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
+  authDomain: "runfactor-cf724.firebaseapp.com",
+  projectId: "runfactor-cf724",
+  storageBucket: "runfactor-cf724.firebasestorage.app",
+  messagingSenderId: "882591954418",
+  appId: "1:882591954418:web:39964ebfa664061fb4a76b",
+  measurementId: "G-KWWWHF4NQE"
+};
 
-// // Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const analytics = getAnalytics(app);
-// import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// const db = getFirestore(app);
-// const scoresCollection = collection(db, "scores");
+const db = getFirestore(app);
+const scoresCollection = collection(db, "scores");
 
-// // Correct the leaderboard function
-// async function loadLeaderboard() {
-//     try {
-//         const q = query(scoresCollection, orderBy("score", "desc"), limit(10));
-//         const querySnapshot = await getDocs(q);
+// Correct the leaderboard function
+async function loadLeaderboard() {
+    try {
+        const q = query(scoresCollection, orderBy("score", "desc"), limit(10));
+        const querySnapshot = await getDocs(q);
         
-//         let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-//         leaderboardTable.innerHTML = ""; // Clear old data
+        let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+        leaderboardTable.innerHTML = ""; // Clear old data
 
-//         let rank = 1;
-//         querySnapshot.forEach((doc) => {
-//             let row = leaderboardTable.insertRow();
-//             row.insertCell(0).innerText = rank;
-//             row.insertCell(1).innerText = doc.data().username;
-//             row.insertCell(2).innerText = doc.data().score;
-//             rank++;
-//         });
-//     } catch (error) {
-//         console.error("Error loading leaderboard:", error);
-//     }
-// }
+        let rank = 1;
+        querySnapshot.forEach((doc) => {
+            let row = leaderboardTable.insertRow();
+            row.insertCell(0).innerText = rank;
+            row.insertCell(1).innerText = doc.data().username;
+            row.insertCell(2).innerText = doc.data().score;
+            rank++;
+        });
+    } catch (error) {
+        console.error("Error loading leaderboard:", error);
+    }
+}
 
-// const auth = getAuth(app);
+const auth = getAuth(app);
 
-// // Sign in user anonymously
-// signInAnonymously(auth)
-//     .then(() => {
-//         console.log("Signed in anonymously");
-//     })
-//     .catch((error) => {
-//         console.error("Authentication error:", error);
-//     });
-
-
-// function submitScore(username, score) {
-//     if (!firebase.auth().currentUser) {
-//         console.error("User not authenticated");
-//         return;
-//     }
-//     db.collection("scores").add({
-//         username: username,
-//         score: score,
-//         timestamp: firebase.firestore.FieldValue.serverTimestamp()
-//     }).then(() => {
-//         console.log("Score submitted!");
-//     }).catch((error) => {
-//         console.error("Error submitting score:", error);
-//     });
-// }
-
-// function loadLeaderboard() {
-//     db.collection("scores")
-//         .orderBy("score", "desc")
-//         .limit(10)
-//         .get()
-//         .then((querySnapshot) => {
-//             let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-//             leaderboardTable.innerHTML = ""; // Clear old data
-
-//             let rank = 1;
-//             querySnapshot.forEach((doc) => {
-//                 let row = leaderboardTable.insertRow();
-//                 row.insertCell(0).innerText = rank;
-//                 row.insertCell(1).innerText = doc.data().username;
-//                 row.insertCell(2).innerText = doc.data().score;
-//                 rank++;
-//             });
-//         })
-//         .catch((error) => {
-//             console.error("Error loading leaderboard:", error);
-//         });
-// }
-
-// // Load leaderboard when page loads
-// document.addEventListener("DOMContentLoaded", loadLeaderboard);
+// Sign in user anonymously
+signInAnonymously(auth)
+    .then(() => {
+        console.log("Signed in anonymously");
+    })
+    .catch((error) => {
+        console.error("Authentication error:", error);
+    });
 
 
-// // Call this function when the game ends
-// function gameOver() {
-//     let username = document.getElementById("username").value;
-//     let finalScore = parseFloat(document.getElementById("score-display").innerText);
+function submitScore(username, score) {
+    if (!firebase.auth().currentUser) {
+        console.error("User not authenticated");
+        return;
+    }
+    db.collection("scores").add({
+        username: username,
+        score: score,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        console.log("Score submitted!");
+    }).catch((error) => {
+        console.error("Error submitting score:", error);
+    });
+}
+
+function loadLeaderboard() {
+    db.collection("scores")
+        .orderBy("score", "desc")
+        .limit(10)
+        .get()
+        .then((querySnapshot) => {
+            let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+            leaderboardTable.innerHTML = ""; // Clear old data
+
+            let rank = 1;
+            querySnapshot.forEach((doc) => {
+                let row = leaderboardTable.insertRow();
+                row.insertCell(0).innerText = rank;
+                row.insertCell(1).innerText = doc.data().username;
+                row.insertCell(2).innerText = doc.data().score;
+                rank++;
+            });
+        })
+        .catch((error) => {
+            console.error("Error loading leaderboard:", error);
+        });
+}
+
+// Load leaderboard when page loads
+document.addEventListener("DOMContentLoaded", loadLeaderboard);
+
+
+// Call this function when the game ends
+function gameOver() {
+    let username = document.getElementById("username").value;
+    let finalScore = parseFloat(document.getElementById("score-display").innerText);
     
-//     submitScore(username, finalScore);
-// }
+    submitScore(username, finalScore);
+}
 
 class PrimeFactorGame {
     constructor() {
