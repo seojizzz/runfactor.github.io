@@ -313,6 +313,18 @@ class PrimeFactorGame {
 }
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
+function gameOver() {
+    let username = document.getElementById("username").value;
+    let finalScore = parseFloat(document.getElementById("score-display").innerText);
+
+    console.log("Game over! Submitting score:", { username, finalScore });
+
+    if (username && !isNaN(finalScore)) {
+        submitScore(username, finalScore);
+    } else {
+        console.error("Invalid username or score, not submitting.");
+    }
+}
 async function loadLeaderboard() {
     try {
         const q = query(scoresCollection, orderBy("score", "desc"), limit(10));
