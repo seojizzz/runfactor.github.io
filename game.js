@@ -371,18 +371,18 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchLeaderboard();
 });
 
-
-async function submitScore(username, score) {
+async function submitScore(username, finalScore) {
+    const db = getFirestore();
     try {
-        const scoresRef = collection(db, "scores"); // Correct Firestore reference
-
-        await addDoc(scoresRef, {
+        await addDoc(collection(db, "leaderboard"), {
             username: username,
-            score: score,
-            timestamp: serverTimestamp() // Use Firestore server timestamp
+            finalScore: finalScore,
+            timestamp: serverTimestamp()
         });
-
         console.log("Score submitted successfully!");
+
+        // Fetch updated leaderboard after submitting score
+        fetchLeaderboard();
     } catch (error) {
         console.error("Error submitting score:", error);
     }
