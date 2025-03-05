@@ -52,7 +52,23 @@
                 charCount.textContent = `${input.value.length} / 20`;
             }
         </script>            
-        <button id="start-btn" onclick="startGame()">Start</button>
+        <button id="start-btn">Start</button>
+        <script type="module">
+            import { startGame } from "./game.js";
+        
+            document.getElementById("start-btn").addEventListener("click", function() {
+                let username = document.getElementById("username").value;
+                if (username.length > 20) {
+                    alert("Username must be 20 characters or less.");
+                } else if (username.trim() === "") {
+                    alert("Username cannot be empty.");
+                } else {
+                    document.getElementById("start-screen").style.display = "none";
+                    document.getElementById("game-screen").style.display = "block";
+                    startGame();
+                }
+            });
+        </script>
     <script>
     document.getElementById("start-btn").addEventListener("click", function() {
         let username = document.getElementById("username").value;
