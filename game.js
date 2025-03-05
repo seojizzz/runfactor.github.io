@@ -345,7 +345,6 @@ async function fetchLeaderboard() {
     }
 }
 
-}
 async function submitScore(username, score) {
     try {
         const scoresRef = collection(db, "scores"); // Correct Firestore reference
