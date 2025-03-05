@@ -69,29 +69,6 @@ function submitScore(username, score) {
     });
 }
 
-function loadLeaderboard() {
-    db.collection("scores")
-        .orderBy("score", "desc")
-        .limit(10)
-        .get()
-        .then((querySnapshot) => {
-            let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-            leaderboardTable.innerHTML = ""; // Clear old data
-
-            let rank = 1;
-            querySnapshot.forEach((doc) => {
-                let row = leaderboardTable.insertRow();
-                row.insertCell(0).innerText = rank;
-                row.insertCell(1).innerText = doc.data().username;
-                row.insertCell(2).innerText = doc.data().score;
-                rank++;
-            });
-        })
-        .catch((error) => {
-            console.error("Error loading leaderboard:", error);
-        });
-}
-
 // Load leaderboard when page loads
 document.addEventListener("DOMContentLoaded", loadLeaderboard);
 
