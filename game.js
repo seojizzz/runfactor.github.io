@@ -3,6 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 // 2a. Firebase Configuration
 const firebaseConfig = {
@@ -332,20 +333,20 @@ async function loadLeaderboard() {
         console.error("Error loading leaderboard:", error);
     }
 }
-function submitScore(username, score) {
-    if (!firebase.auth().currentUser) {
-        console.error("User not authenticated");
-        return;
-    }
-    db.collection("scores").add({
-        username: username,
-        score: score,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-        console.log("Score submitted!");
-    }).catch((error) => {
+async function submitScore(username, score) {
+    try {
+        const scoresRef = collection(db, "scores"); // Correct Firestore reference
+
+        await addDoc(scoresRef, {
+            username: username,
+            score: score,
+            timestamp: serverTimestamp() // Use Firestore server timestamp
+        });
+
+        console.log("Score submitted successfully!");
+    } catch (error) {
         console.error("Error submitting score:", error);
-    });
+    }
 }
 
 // 6. Initialize Game Object
