@@ -1,7 +1,6 @@
 // Import Firebase SDK modules
 import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-
 // Firebase Configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
@@ -16,7 +15,6 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 const db = getFirestore(app);
 const scoresCollection = collection(db, "scores");
@@ -409,6 +407,6 @@ class PrimeFactorGame {
 }
 
 const game = new PrimeFactorGame();
-function startGame() {
+export function startGame() {
     game.startGame();
 }

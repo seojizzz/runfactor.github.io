@@ -68,20 +68,20 @@
                     startGame();
                 }
             });
-        </script>
+        </script>        
     <script>
-    document.getElementById("start-btn").addEventListener("click", function() {
-        let username = document.getElementById("username").value;
-        if (username.length > 20) {
-            alert("Username must be 20 characters or less.");
-        } else if (username.trim() === "") {
-            alert("Username cannot be empty.");
-        } else {
-            document.getElementById("start-screen").style.display = "none";
-            document.getElementById("game-screen").style.display = "block";
-            startGame();
-        }
-    });
+        document.getElementById("start-btn").addEventListener("click", function() {
+            let username = document.getElementById("username").value;
+            if (username.length > 20) {
+                alert("Username must be 20 characters or less.");
+            } else if (username.trim() === "") {
+                alert("Username cannot be empty.");
+            } else {
+                document.getElementById("start-screen").style.display = "none";
+                document.getElementById("game-screen").style.display = "block";
+                startGame();
+            }
+        });
     </script>   
     </div>
     <!-- Game Screen -->
