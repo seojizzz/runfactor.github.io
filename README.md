@@ -1,5 +1,4 @@
-# Prime Factorization Challenge
-# WEbsite is currently down for abou 48 hours because we are implementing and testing a thingy
+# Prime Factorization Challenge (Competitive)
 [You can access the game here!](https://seojizzz.github.io/runfactor.github.io/)
 
 ## Objective
