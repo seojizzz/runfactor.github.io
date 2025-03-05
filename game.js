@@ -298,6 +298,7 @@ class PrimeFactorGame {
         wrongListElement.innerHTML = this.wrongList.length > 0 
             ? this.wrongList.map(q => `<li title="${q.factors}">${q.number}</li>`).join('') 
             : '<li>None</li>';
+        gameOver();
     }
     getFactorization(number) {
         let n = number;
