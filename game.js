@@ -331,19 +331,46 @@ function gameOver() {
 async function fetchLeaderboard() {
     try {
         const db = getFirestore();
-        const querySnapshot = await getDocs(collection(db, "leaderboard"));
+        const leaderboardRef = collection(db, "leaderboard");
+        const querySnapshot = await getDocs(leaderboardRef);
         let leaderboardData = [];
 
         querySnapshot.forEach((doc) => {
             leaderboardData.push(doc.data());
         });
 
+        // Sort scores in descending order
         leaderboardData.sort((a, b) => b.finalScore - a.finalScore);
-        updateLeaderboardTable(leaderboardData.slice(0, 10));
+
+        // Take only top 10 entries
+        leaderboardData = leaderboardData.slice(0, 10);
+
+        updateLeaderboardTable(leaderboardData);
     } catch (error) {
         console.error("Error fetching leaderboard:", error);
     }
 }
+
+function updateLeaderboardTable(data) {
+    const leaderboardBody = document.getElementById("leaderboard-body");
+    leaderboardBody.innerHTML = ""; // Clear old leaderboard
+
+    data.forEach((entry, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${entry.username}</td>
+            <td>${entry.finalScore}</td>
+        `;
+        leaderboardBody.appendChild(row);
+    });
+}
+
+// Call fetchLeaderboard when the end screen is displayed
+document.addEventListener("DOMContentLoaded", () => {
+    fetchLeaderboard();
+});
+
 
 async function submitScore(username, score) {
     try {
