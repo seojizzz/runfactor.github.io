@@ -342,13 +342,15 @@ async function fetchLeaderboard() {
             let data = doc.data();
             console.log("Document fetched:", data);
 
-            if (data.username && data.finalScore) {
+            // Handle both "score" and "finalScore"
+            let scoreValue = data.finalScore ?? data.score;
+            if (data.username && scoreValue !== undefined) {
                 leaderboardData.push({
                     username: data.username,
-                    finalScore: data.finalScore
+                    finalScore: scoreValue
                 });
             } else {
-                console.warn("Document is missing username or finalScore:", data);
+                console.warn("Document is missing username or score:", data);
             }
         });
 
@@ -364,6 +366,7 @@ async function fetchLeaderboard() {
         console.error("🔥 Error fetching leaderboard:", error);
     }
 }
+
 function updateLeaderboardTable(data) {
     const leaderboardBody = document.getElementById("leaderboard-body");
     leaderboardBody.innerHTML = ""; // Clear old leaderboard
