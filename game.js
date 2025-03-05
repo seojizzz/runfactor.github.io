@@ -1,10 +1,10 @@
 // 1. Import Firebase Modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+// import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
+import {addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import {getFirestore, collection, getDocs } from "firebase/firestore";
 // 2a. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
@@ -329,24 +329,20 @@ function gameOver() {
         console.error("Invalid username or score, not submitting.");
     }
 }
-async function loadLeaderboard() {
+async function fetchLeaderboard() {
     try {
-        const q = query(scoresCollection, orderBy("score", "desc"), limit(10));
-        const querySnapshot = await getDocs(q);
-        
-        let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-        leaderboardTable.innerHTML = ""; // Clear old data
+        const db = getFirestore();
+        const querySnapshot = await getDocs(collection(db, "leaderboard"));
+        let leaderboardData = [];
 
-        let rank = 1;
         querySnapshot.forEach((doc) => {
-            let row = leaderboardTable.insertRow();
-            row.insertCell(0).innerText = rank;
-            row.insertCell(1).innerText = doc.data().username;
-            row.insertCell(2).innerText = doc.data().score;
-            rank++;
+            leaderboardData.push(doc.data());
         });
+
+        leaderboardData.sort((a, b) => b.finalScore - a.finalScore);
+        updateLeaderboardTable(leaderboardData.slice(0, 10));
     } catch (error) {
-        console.error("Error loading leaderboard:", error);
+        console.error("Error fetching leaderboard:", error);
     }
 }
 async function submitScore(username, score) {
