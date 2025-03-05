@@ -334,18 +334,22 @@ async function fetchLeaderboard() {
 
     try {
         const db = getFirestore();
-        console.log("Firestore initialized:", db);
-
-        const leaderboardRef = collection(db, "scores"); // Ensure this matches Firestore collection
-        console.log("Fetching from collection:", leaderboardRef);
-
+        const leaderboardRef = collection(db, "scores");  // Ensure this matches Firestore collection
         const querySnapshot = await getDocs(leaderboardRef);
-        console.log("Query snapshot received:", querySnapshot);
 
         let leaderboardData = [];
         querySnapshot.forEach((doc) => {
-            console.log("Document fetched:", doc.data());
-            leaderboardData.push(doc.data());
+            let data = doc.data();
+            console.log("Document fetched:", data);
+
+            if (data.username && data.finalScore) {
+                leaderboardData.push({
+                    username: data.username,
+                    finalScore: data.finalScore
+                });
+            } else {
+                console.warn("Document is missing username or finalScore:", data);
+            }
         });
 
         if (leaderboardData.length === 0) {
@@ -360,8 +364,6 @@ async function fetchLeaderboard() {
         console.error("🔥 Error fetching leaderboard:", error);
     }
 }
-
-
 function updateLeaderboardTable(data) {
     const leaderboardBody = document.getElementById("leaderboard-body");
     leaderboardBody.innerHTML = ""; // Clear old leaderboard
@@ -370,12 +372,13 @@ function updateLeaderboardTable(data) {
         const row = document.createElement("tr");
         row.innerHTML = `
             <td>${index + 1}</td>
-            <td>${entry.username}</td>
-            <td>${entry.finalScore}</td>
+            <td>${entry.username || "Unknown"}</td>
+            <td>${entry.finalScore || 0}</td>
         `;
         leaderboardBody.appendChild(row);
     });
 }
+
 
 // Call fetchLeaderboard when the end screen is displayed
 document.addEventListener("DOMContentLoaded", () => {
@@ -383,21 +386,26 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function submitScore(username, finalScore) {
-    const db = getFirestore();
+    console.log(`Submitting score: ${username} - ${finalScore}`);
+
     try {
-        await addDoc(collection(db, "leaderboard"), {
+        const db = getFirestore();
+        const scoresRef = collection(db, "scores");
+
+        await addDoc(scoresRef, {
             username: username,
             finalScore: finalScore,
             timestamp: serverTimestamp()
         });
-        console.log("Score submitted successfully!");
 
-        // Fetch updated leaderboard after submitting score
-        fetchLeaderboard();
+        console.log("✅ Score submitted successfully!");
+        fetchLeaderboard();  // Refresh leaderboard after submission
+
     } catch (error) {
-        console.error("Error submitting score:", error);
+        console.error("🔥 Error submitting score:", error);
     }
 }
+
 
 // 6. Initialize Game Object
 const game = new PrimeFactorGame();
