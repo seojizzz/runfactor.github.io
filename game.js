@@ -316,7 +316,10 @@ class PrimeFactorGame {
 // 5. Define Helper Functions (Leaderboard, Score Submission)
 function gameOver() {
     let username = document.getElementById("username").value;
-    let finalScore = parseFloat(document.getElementById("score-display").innerText);
+    let scoreText = document.getElementById("score-display").innerText.trim();
+
+    // Remove any non-numeric characters and convert to a number
+    let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
 
     console.log("Game over! Submitting score:", { username, finalScore });
 
