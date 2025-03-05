@@ -1,10 +1,10 @@
 // 1. Import Firebase Modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// 2. Firebase Configuration & Initialization
+// 2a. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
     authDomain: "runfactor-cf724.firebaseapp.com",
@@ -14,12 +14,14 @@ const firebaseConfig = {
     appId: "1:882591954418:web:39964ebfa664061fb4a76b",
     measurementId: "G-KWWWHF4NQE"
 };
+
+// 2b. Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// 3. Sign in Anonymously
+// 3.Sign in user anonymously
 signInAnonymously(auth)
     .then(() => {
         console.log("Signed in anonymously");
@@ -27,6 +29,7 @@ signInAnonymously(auth)
     .catch((error) => {
         console.error("Authentication error:", error);
     });
+
 
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
