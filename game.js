@@ -4,6 +4,7 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-
 import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
+
 // 2a. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
@@ -330,8 +331,7 @@ function gameOver() {
 }
 async function fetchLeaderboard() {
     try {
-        const db = getFirestore();
-        const leaderboardRef = collection(db, "leaderboard");
+        const leaderboardRef = collection(db, "scores");  // Make sure collection name matches Firestore rules
         const querySnapshot = await getDocs(leaderboardRef);
         let leaderboardData = [];
 
@@ -339,13 +339,8 @@ async function fetchLeaderboard() {
             leaderboardData.push(doc.data());
         });
 
-        // Sort scores in descending order
         leaderboardData.sort((a, b) => b.finalScore - a.finalScore);
-
-        // Take only top 10 entries
-        leaderboardData = leaderboardData.slice(0, 10);
-
-        updateLeaderboardTable(leaderboardData);
+        updateLeaderboardTable(leaderboardData.slice(0, 10));
     } catch (error) {
         console.error("Error fetching leaderboard:", error);
     }
