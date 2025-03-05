@@ -1,10 +1,10 @@
-// Import Firebase SDK
+// 1. Import Firebase Modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
 import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// Firebase configuration
+// 2. Firebase Configuration & Initialization
 const firebaseConfig = {
     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
     authDomain: "runfactor-cf724.firebaseapp.com",
@@ -14,14 +14,12 @@ const firebaseConfig = {
     appId: "1:882591954418:web:39964ebfa664061fb4a76b",
     measurementId: "G-KWWWHF4NQE"
 };
-
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Sign in user anonymously
+// 3. Sign in Anonymously
 signInAnonymously(auth)
     .then(() => {
         console.log("Signed in anonymously");
@@ -30,67 +28,7 @@ signInAnonymously(auth)
         console.error("Authentication error:", error);
     });
 
-
-// Correct the leaderboard function
-async function loadLeaderboard() {
-    try {
-        const q = query(scoresCollection, orderBy("score", "desc"), limit(10));
-        const querySnapshot = await getDocs(q);
-        
-        let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-        leaderboardTable.innerHTML = ""; // Clear old data
-
-        let rank = 1;
-        querySnapshot.forEach((doc) => {
-            let row = leaderboardTable.insertRow();
-            row.insertCell(0).innerText = rank;
-            row.insertCell(1).innerText = doc.data().username;
-            row.insertCell(2).innerText = doc.data().score;
-            rank++;
-        });
-    } catch (error) {
-        console.error("Error loading leaderboard:", error);
-    }
-}
-
-// Sign in user anonymously
-signInAnonymously(auth)
-    .then(() => {
-        console.log("Signed in anonymously");
-    })
-    .catch((error) => {
-        console.error("Authentication error:", error);
-    });
-
-
-function submitScore(username, score) {
-    if (!firebase.auth().currentUser) {
-        console.error("User not authenticated");
-        return;
-    }
-    db.collection("scores").add({
-        username: username,
-        score: score,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-    }).then(() => {
-        console.log("Score submitted!");
-    }).catch((error) => {
-        console.error("Error submitting score:", error);
-    });
-}
-
-// Load leaderboard when page loads
-document.addEventListener("DOMContentLoaded", loadLeaderboard);
-
-
-// Call this function when the game ends
-function gameOver() {
-    let username = document.getElementById("username").value;
-    let finalScore = parseFloat(document.getElementById("score-display").innerText);
-    
-    submitScore(username, finalScore);
-}
-
+// 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {
         this.easyPrimes = [2, 3, 5, 7, 11];
@@ -110,7 +48,6 @@ class PrimeFactorGame {
         this.difficultyThresholds = [35000, 90000, 200000];
         //.....
     }
-
     startGame() {
         this.username = document.getElementById("username").value || "Player";
         document.getElementById("username-display").innerText = `Player: ${this.username}`;
@@ -131,8 +68,13 @@ class PrimeFactorGame {
             }
         }, 1000);
     }
-    
-
+    beginGame() {
+        console.log("Game has started!"); // Debugging line
+        this.gameRunning = true;
+        this.createButtons();
+        this.newRound();
+        this.timerInterval = setInterval(() => this.updateTimer(), 10);
+    }
     createButtons() {
         const buttonContainer = document.getElementById("buttons");
         buttonContainer.innerHTML = "";
@@ -145,16 +87,6 @@ class PrimeFactorGame {
             buttonContainer.appendChild(btn);
         });
     }
-    
-    beginGame() {
-        console.log("Game has started!"); // Debugging line
-        this.gameRunning = true;
-        this.createButtons();
-        this.newRound();
-        this.timerInterval = setInterval(() => this.updateTimer(), 10);
-    }
-    
-
     setQuestion() {
         let number;
         do {
@@ -164,8 +96,6 @@ class PrimeFactorGame {
         this.usedNumbers.add(number);
         return number;
     }
-    
-    
     generateCompositeNumber() {
         let score = this.score;
         let numEasy, numHard;
@@ -194,7 +124,6 @@ class PrimeFactorGame {
 
         return factors.reduce((a, b) => a * b, 1);
     }
-
     handleGuess(prime, button) {
         if (!this.gameRunning) return;
     
@@ -218,7 +147,6 @@ class PrimeFactorGame {
             this.completeFactorization();
         }
     }
-
     updateScore(prime) {
         let baseScore = this.getBaseScore(prime);
         this.combo++; // Increment combo counter
@@ -255,11 +183,9 @@ class PrimeFactorGame {
     
         // Re-add the animation class
         actionText.classList.add("action-popup");
-    
         // Gradually increase the score instead of an instant jump
         let currentScore = this.score;
         let targetScore = this.score + scoreIncrement;
-    
         let interval = setInterval(() => {
             if (currentScore < targetScore) {
                 currentScore += stepIncrement; // Increment by the calculated step
@@ -277,7 +203,6 @@ class PrimeFactorGame {
             actionText.style.display = "none";
         }, duration); // Use the calculated duration
     }
-    
     newRound() {
         this.mistakeMade = false;
         this.currentNumber = this.setQuestion();
@@ -285,15 +210,12 @@ class PrimeFactorGame {
         
         console.log("New number generated:", this.currentNumber); // Debugging line
         document.getElementById("number-display").innerText = `Factorize: ${this.currentNumber}`;
-    }
-    
-    
+    }  
     getBaseScore(prime) {
         if ([2, 3, 5, 7].includes(prime)) return 100;
         if ([11, 13, 17].includes(prime)) return 300;
         return 500;
     }
-
     completeFactorization() {
         let m = this.questionNumber; // Current question number
         let clearBonus = 1000 * m; // Base clear bonus
@@ -322,14 +244,12 @@ class PrimeFactorGame {
         // Start the next round
         this.newRound();
     }
-    
     applyPenalty() {
         this.mistakeCount++;
         let penalty = this.fibonacci(this.mistakeCount) * 0.1;
         this.timeLeft -= penalty;
         if (this.timeLeft < 0) this.timeLeft = 0;
     }
-
     fibonacci(n) {
         if (n <= 1) return n;
         let a = 0, b = 1, temp;
@@ -340,7 +260,6 @@ class PrimeFactorGame {
         }
         return b;
     }
-
     updateTimer() {
         if (!this.gameRunning) return;
         if (this.timeLeft <= 0) {
@@ -351,7 +270,6 @@ class PrimeFactorGame {
         this.timeLeft = Math.max(0, this.timeLeft - 0.01);
         document.getElementById("timer-display").innerText = `Time Left: ${this.timeLeft.toFixed(2)}s`;
     }
-
     endGame() {
         // Ensure elements exist before modifying them
         const endScreen = document.getElementById("end-screen");
@@ -363,7 +281,6 @@ class PrimeFactorGame {
             console.error("End screen elements not found!");
             return;
         }
-    
         document.getElementById("game-screen").style.display = "none";
         endScreen.style.display = "block";
     
@@ -377,7 +294,6 @@ class PrimeFactorGame {
             ? this.wrongList.map(q => `<li title="${q.factors}">${q.number}</li>`).join('') 
             : '<li>None</li>';
     }
-
     getFactorization(number) {
         let n = number;
         let factors = {};
@@ -389,11 +305,49 @@ class PrimeFactorGame {
         }
         return Object.entries(factors).map(([base, exp]) => exp > 1 ? `${base}^${exp}` : base).join(" × ");
     }
-
-
 }
 
+// 5. Define Helper Functions (Leaderboard, Score Submission)
+async function loadLeaderboard() {
+    try {
+        const q = query(scoresCollection, orderBy("score", "desc"), limit(10));
+        const querySnapshot = await getDocs(q);
+        
+        let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+        leaderboardTable.innerHTML = ""; // Clear old data
+
+        let rank = 1;
+        querySnapshot.forEach((doc) => {
+            let row = leaderboardTable.insertRow();
+            row.insertCell(0).innerText = rank;
+            row.insertCell(1).innerText = doc.data().username;
+            row.insertCell(2).innerText = doc.data().score;
+            rank++;
+        });
+    } catch (error) {
+        console.error("Error loading leaderboard:", error);
+    }
+}
+function submitScore(username, score) {
+    if (!firebase.auth().currentUser) {
+        console.error("User not authenticated");
+        return;
+    }
+    db.collection("scores").add({
+        username: username,
+        score: score,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    }).then(() => {
+        console.log("Score submitted!");
+    }).catch((error) => {
+        console.error("Error submitting score:", error);
+    });
+}
+
+// 6. Initialize Game Object
 const game = new PrimeFactorGame();
+
+// 7. Export startGame()
 export function startGame() {
     game.startGame();
 }
