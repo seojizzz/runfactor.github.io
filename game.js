@@ -1,23 +1,35 @@
-// Import Firebase SDK modules
+// Import Firebase SDK
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
 import { getFirestore, collection, getDocs, query, orderBy, limit, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 
-// Firebase Configuration
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
-  authDomain: "runfactor-cf724.firebaseapp.com",
-  projectId: "runfactor-cf724",
-  storageBucket: "runfactor-cf724.firebasestorage.app",
-  messagingSenderId: "882591954418",
-  appId: "1:882591954418:web:39964ebfa664061fb4a76b",
-  measurementId: "G-KWWWHF4NQE"
+    apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
+    authDomain: "runfactor-cf724.firebaseapp.com",
+    projectId: "runfactor-cf724",
+    storageBucket: "runfactor-cf724.firebasestorage.app",
+    messagingSenderId: "882591954418",
+    appId: "1:882591954418:web:39964ebfa664061fb4a76b",
+    measurementId: "G-KWWWHF4NQE"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
-
 const db = getFirestore(app);
-const scoresCollection = collection(db, "scores");
+const auth = getAuth(app);
+
+// Sign in user anonymously
+signInAnonymously(auth)
+    .then(() => {
+        console.log("Signed in anonymously");
+    })
+    .catch((error) => {
+        console.error("Authentication error:", error);
+    });
+
 
 // Correct the leaderboard function
 async function loadLeaderboard() {
@@ -40,8 +52,6 @@ async function loadLeaderboard() {
         console.error("Error loading leaderboard:", error);
     }
 }
-
-const auth = getAuth(app);
 
 // Sign in user anonymously
 signInAnonymously(auth)
