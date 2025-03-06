@@ -333,21 +333,19 @@ function gameOver() {
         console.error("Invalid username or score, not submitting.");
     }
 }
-async function fetchLeaderboard() {
+export async function fetchLeaderboard() {
     console.log("Fetching leaderboard...");
 
     try {
         const db = getFirestore();
-        const leaderboardRef = collection(db, "scores");  // Ensure this matches Firestore collection
+        const leaderboardRef = collection(db, "scores");
         const querySnapshot = await getDocs(leaderboardRef);
 
         let leaderboardData = [];
         querySnapshot.forEach((doc) => {
             let data = doc.data();
-            console.log("Document fetched:", data);
-
-            // Handle both "score" and "finalScore"
             let scoreValue = data.finalScore ?? data.score;
+
             if (data.username && scoreValue !== undefined) {
                 leaderboardData.push({
                     username: data.username,
@@ -358,22 +356,18 @@ async function fetchLeaderboard() {
             }
         });
 
-        if (leaderboardData.length === 0) {
-            console.warn("No leaderboard data found!");
-        }
-
         leaderboardData.sort((a, b) => b.finalScore - a.finalScore);
         updateLeaderboardTable(leaderboardData.slice(0, 10));
         console.log("Leaderboard updated!");
-
     } catch (error) {
         console.error("🔥 Error fetching leaderboard:", error);
     }
 }
 
-function updateLeaderboardTable(data) {
+
+export function updateLeaderboardTable(data) {
     const leaderboardBody = document.getElementById("leaderboard-body");
-    leaderboardBody.innerHTML = ""; // Clear old leaderboard
+    leaderboardBody.innerHTML = ""; 
 
     data.forEach((entry, index) => {
         const row = document.createElement("tr");
