@@ -46,6 +46,7 @@
         <label for="username">Enter your name:</label>
         <input type="text" id="username" maxlength="20" oninput="updateCharCount()">
         <p id="char-count">0 / 20</p>
+        <p id="username-error" style="color: red; display: none;">Inappropriate username. Please choose another.</p>
         <script>
             function updateCharCount() {
                 let input = document.getElementById("username");
@@ -75,7 +76,38 @@
                     startGame();
                 }
             });
-        </script>              
+        </script>    
+        <script type="module">
+            import badWordsList from "./badwords.js";
+            import { startGame } from "./game.js";
+        
+            function containsProfanity(username) {
+                const lowerUsername = username.toLowerCase();
+                return badWordsList.some((word) => lowerUsername.includes(word));
+            }
+        
+            document.getElementById("start-btn").addEventListener("click", function () {
+                let username = document.getElementById("username").value.trim();
+        
+                if (username.length === 0) {
+                    alert("Username cannot be empty.");
+                    return;
+                }
+        
+                if (containsProfanity(username)) {
+                    document.getElementById("username-error").style.display = "block";
+                    return;
+                } else {
+                    document.getElementById("username-error").style.display = "none";
+                }
+        
+                // Start the game and hide the start screen
+                document.getElementById("start-screen").style.display = "none";
+                document.getElementById("game-screen").style.display = "block";
+                startGame(username);
+            });
+        </script>
+                  
     </div>
     <!-- Game Screen -->
     <div id="game-screen">

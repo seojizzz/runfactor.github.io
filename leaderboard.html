@@ -36,7 +36,25 @@
             import { fetchLeaderboard } from "./game.js";
         
             document.addEventListener("DOMContentLoaded", fetchLeaderboard);
-        </script>        
+        </script>   
+        
+        <button id="show-more-btn" onclick="showMoreEntries()">Show More</button>
+        <script type="module">
+            import { fetchLeaderboard, updateLeaderboardTable } from "./game.js";
+        
+            document.addEventListener("DOMContentLoaded", () => {
+                fetchLeaderboard(10); // Show initial 10 entries
+            });
+        
+            window.showMoreEntries = function () {
+                let allEntries = window.fullLeaderboard || [];
+                let moreEntries = allEntries.slice(0, 20); // Show up to 20 entries
+                updateLeaderboardTable(moreEntries);
+                document.getElementById("show-more-btn").style.display = "none"; // Hide button after expanding
+            };
+        </script>
+        
+
     </body>
     
 </body>

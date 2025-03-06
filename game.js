@@ -3,6 +3,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
 import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import badWordsList from "./badwords.js"; // External file with bad words
 
 
 // 2a. Firebase Configuration
@@ -31,7 +32,6 @@ signInAnonymously(auth)
     .catch((error) => {
         console.error("Authentication error:", error);
     });
-
 
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
@@ -333,7 +333,8 @@ function gameOver() {
         console.error("Invalid username or score, not submitting.");
     }
 }
-export async function fetchLeaderboard() {
+
+export async function fetchLeaderboard(entriesToShow = 10) {
     console.log("Fetching leaderboard...");
 
     try {
@@ -341,29 +342,39 @@ export async function fetchLeaderboard() {
         const leaderboardRef = collection(db, "scores");
         const querySnapshot = await getDocs(leaderboardRef);
 
-        let leaderboardData = [];
+        let userScores = new Map(); // Map to store highest score per user
+
         querySnapshot.forEach((doc) => {
             let data = doc.data();
             let scoreValue = data.finalScore ?? data.score;
+            let username = data.username;
 
-            if (data.username && scoreValue !== undefined) {
-                leaderboardData.push({
-                    username: data.username,
-                    finalScore: scoreValue
-                });
+            if (username && scoreValue !== undefined) {
+                // Store only the highest score for each user
+                if (!userScores.has(username) || userScores.get(username) < scoreValue) {
+                    userScores.set(username, scoreValue);
+                }
             } else {
                 console.warn("Document is missing username or score:", data);
             }
         });
 
-        leaderboardData.sort((a, b) => b.finalScore - a.finalScore);
-        updateLeaderboardTable(leaderboardData.slice(0, 10));
+        // Convert map to array, sort by score descending
+        let leaderboardData = Array.from(userScores.entries())
+            .map(([username, finalScore]) => ({ username, finalScore }))
+            .sort((a, b) => b.finalScore - a.finalScore);
+
+        updateLeaderboardTable(leaderboardData.slice(0, entriesToShow));
+
+        // Store full leaderboard for "Show More" functionality
+        window.fullLeaderboard = leaderboardData;
+
         console.log("Leaderboard updated!");
+
     } catch (error) {
         console.error("🔥 Error fetching leaderboard:", error);
     }
 }
-
 
 export function updateLeaderboardTable(data) {
     const leaderboardBody = document.getElementById("leaderboard-body");
@@ -379,7 +390,6 @@ export function updateLeaderboardTable(data) {
         leaderboardBody.appendChild(row);
     });
 }
-
 
 // Call fetchLeaderboard when the end screen is displayed
 document.addEventListener("DOMContentLoaded", () => {
