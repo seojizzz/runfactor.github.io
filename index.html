@@ -53,6 +53,15 @@
                 charCount.textContent = `${input.value.length} / 20`;
             }
         </script>            
+        <label for="username">Enter your name:</label>
+        <input type="text" id="username" maxlength="20" oninput="updateCharCount()">
+        <p id="char-count">0 / 20</p>
+        
+        <button id="start-btn">Start</button>
+        <br><br>
+        <a href="leaderboard.html" id="leaderboard-link" style="position:absolute; top:10px; right:20px;">
+            View Leaderboard
+        </a>
         <button id="start-btn">Start</button>
         <script type="module">
             import { startGame } from "./game.js";

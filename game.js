@@ -51,6 +51,7 @@ class PrimeFactorGame {
         this.gameRunning = false;
         this.username = "";
         this.difficultyThresholds = [35000, 90000, 200000];
+        this.startTime = null;
         //.....
     }
     startGame() {
@@ -65,7 +66,6 @@ class PrimeFactorGame {
         let countdownInterval = setInterval(() => {
             countdown--;
             document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-    
             if (countdown <= 0) {
                 clearInterval(countdownInterval);
                 console.log("Starting game...");
@@ -79,6 +79,7 @@ class PrimeFactorGame {
         this.createButtons();
         this.newRound();
         this.timerInterval = setInterval(() => this.updateTimer(), 10);
+        this.startTime = Date.now(); // Record the exact time game started
     }
     createButtons() {
         const buttonContainer = document.getElementById("buttons");
@@ -267,13 +268,16 @@ class PrimeFactorGame {
     }
     updateTimer() {
         if (!this.gameRunning) return;
+        // Calculate elapsed time
+        const elapsedTime = (Date.now() - this.startTime) / 1000;
+        this.timeLeft = Math.max(0, 120 - elapsedTime); // 120 sec total
+
+        document.getElementById("timer-display").innerText = `Time Left: ${this.timeLeft.toFixed(2)}s`;
+
         if (this.timeLeft <= 0) {
             clearInterval(this.timerInterval);
             this.endGame();
-            return;
         }
-        this.timeLeft = Math.max(0, this.timeLeft - 0.01);
-        document.getElementById("timer-display").innerText = `Time Left: ${this.timeLeft.toFixed(2)}s`;
     }
     endGame() {
         // Ensure elements exist before modifying them
