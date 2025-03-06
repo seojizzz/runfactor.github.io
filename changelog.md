@@ -6,6 +6,9 @@
 
 Here I write update notes and bug fixes (if any). It's also to let you players know what has changed.
 ## Added
+[beta-1.2.1] - 2025-03-06
+Fixed an issue where the timer would pause upon lost browser focus.
+
 [beta-1.1.1] - 2025-03-05
 Made the information storable on Firestore database, so there is a Leaderboard system. Leaderboard visibility will be updated tentatively.
 
