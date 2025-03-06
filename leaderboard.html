@@ -8,22 +8,30 @@
     <script type="module" src="game.js"></script>
 </head>
 <body>
-    <h1>Leaderboard</h1>
-    <table id="leaderboard">
-        <thead>
-            <tr>
-                <th>Rank</th>
-                <th>Username</th>
-                <th>Score</th>
-            </tr>
-        </thead>
-        <tbody id="leaderboard-body"></tbody>
-    </table>
-    <br>
-    <a href="index.html">Back to Game</a>
-    <script type="module">
-        import { fetchLeaderboard } from "./game.js";
-        document.addEventListener("DOMContentLoaded", fetchLeaderboard);
-    </script>
+    <body>
+        <h1>Leaderboard</h1>
+        
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+        </table>
+    
+        <br>
+        <div style="text-align:center;">
+            <a href="index.html">Back to Game</a>
+        </div>
+    
+        <script type="module">
+            import { fetchLeaderboard } from "./game.js";
+            document.addEventListener("DOMContentLoaded", fetchLeaderboard);
+        </script>
+    </body>
+    
 </body>
 </html>
