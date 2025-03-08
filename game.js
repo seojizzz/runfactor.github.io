@@ -6,6 +6,32 @@ import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9
 import badWordsList from "./badwords.js"; // External file with bad words
 import {query, where, orderBy, limit, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+async function deleteUserScores(username) {
+    try {
+        const scoresRef = collection(db, "scores");
+        const q = query(scoresRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            console.log(`No scores found for ${username}.`);
+            return;
+        }
+
+        let deletedCount = 0;
+        for (const document of querySnapshot.docs) {
+            await deleteDoc(doc(db, "scores", document.id));
+            deletedCount++;
+        }
+
+        console.log(`Deleted ${deletedCount} scores for ${username}.`);
+    } catch (error) {
+        console.error("Error deleting scores:", error);
+    }
+}
+
+// Call the function once to delete all scores for "Adan Sneg"
+deleteUserScores("Adan Sneg");
+
 
 let leaderboardLoaded = false;
 
