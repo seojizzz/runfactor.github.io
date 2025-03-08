@@ -6,33 +6,6 @@ import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9
 import badWordsList from "./badwords.js"; // External file with bad words
 import {query, where, orderBy, limit, deleteDoc, doc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-
-
-// Call the function once to delete all scores for "Adan Sneg"
-deleteUserScores("Adan Sneg");
-
-
-let leaderboardLoaded = false;
-
-async function loadLeaderboard() {
-    if (leaderboardLoaded) return; // Prevent multiple calls
-
-    const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
-    const querySnapshot = await getDocs(q);
-
-    let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-    leaderboardTable.innerHTML = ""; // Clear old data
-
-    querySnapshot.forEach((doc, index) => {
-        let row = leaderboardTable.insertRow();
-        row.insertCell(0).innerText = index + 1;
-        row.insertCell(1).innerText = doc.data().username;
-        row.insertCell(2).innerText = doc.data().score;
-    });
-
-    leaderboardLoaded = true; // Ensure leaderboard only loads once
-}
-
 // 2a. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
@@ -50,6 +23,12 @@ const app = initializeApp(firebaseConfig);
 // const analytics = getAnalytics(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+
+// Call the function once to delete all scores for "Adan Sneg"
+
+
+
 
 // 3.Sign in user anonymously
 signInAnonymously(auth)
@@ -361,6 +340,27 @@ function gameOver() {
     }
 }
 
+let leaderboardLoaded = false;
+
+async function loadLeaderboard() {
+    if (leaderboardLoaded) return; // Prevent multiple calls
+
+    const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+    const querySnapshot = await getDocs(q);
+
+    let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+    leaderboardTable.innerHTML = ""; // Clear old data
+
+    querySnapshot.forEach((doc, index) => {
+        let row = leaderboardTable.insertRow();
+        row.insertCell(0).innerText = index + 1;
+        row.insertCell(1).innerText = doc.data().username;
+        row.insertCell(2).innerText = doc.data().score;
+    });
+
+    leaderboardLoaded = true; // Ensure leaderboard only loads once
+}
+
 export async function fetchLeaderboard(entriesToShow = 10) {
     console.log("Fetching leaderboard...");
 
@@ -479,7 +479,7 @@ async function deleteUserScores(username) {
         console.error("Error deleting scores:", error);
     }
 }
-
+deleteUserScores("Adan Sneg");
 
 // 6. Initialize Game Object
 const game = new PrimeFactorGame();
