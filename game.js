@@ -4,7 +4,29 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-
 import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import badWordsList from "./badwords.js"; // External file with bad words
+import {query, where, orderBy, limit, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+
+let leaderboardLoaded = false;
+
+async function loadLeaderboard() {
+    if (leaderboardLoaded) return; // Prevent multiple calls
+
+    const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+    const querySnapshot = await getDocs(q);
+
+    let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+    leaderboardTable.innerHTML = ""; // Clear old data
+
+    querySnapshot.forEach((doc, index) => {
+        let row = leaderboardTable.insertRow();
+        row.insertCell(0).innerText = index + 1;
+        row.insertCell(1).innerText = doc.data().username;
+        row.insertCell(2).innerText = doc.data().score;
+    });
+
+    leaderboardLoaded = true; // Ensure leaderboard only loads once
+}
 
 // 2a. Firebase Configuration
 const firebaseConfig = {
@@ -396,26 +418,41 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchLeaderboard();
 });
 
-async function submitScore(username, finalScore) {
-    console.log(`Submitting score: ${username} - ${finalScore}`);
-
+async function submitScore(username, score) {
     try {
-        const db = getFirestore();
         const scoresRef = collection(db, "scores");
 
+        // Step 1: Fetch all scores by this user
+        const q = query(scoresRef, where("username", "==", username), orderBy("score", "desc"));
+        const querySnapshot = await getDocs(q);
+        let scores = [];
+
+        querySnapshot.forEach(doc => {
+            scores.push({ id: doc.id, score: doc.data().score });
+        });
+
+        console.log(`Current scores for ${username}:`, scores);
+
+        // Step 2: If 3 or more scores exist, remove the lowest one before adding the new one
+        if (scores.length >= 3) {
+            let lowestScore = scores[scores.length - 1]; // The lowest score (last one in descending order)
+            await deleteDoc(doc(db, "scores", lowestScore.id)); // Remove the lowest score
+            console.log(`Deleted lowest score: ${lowestScore.score}`);
+        }
+
+        // Step 3: Add the new score
         await addDoc(scoresRef, {
             username: username,
-            finalScore: finalScore,
+            score: score,
             timestamp: serverTimestamp()
         });
 
-        console.log("✅ Score submitted successfully!");
-        fetchLeaderboard();  // Refresh leaderboard after submission
-
+        console.log("Score submitted successfully!");
     } catch (error) {
-        console.error("🔥 Error submitting score:", error);
+        console.error("Error submitting score:", error);
     }
 }
+
 
 
 // 6. Initialize Game Object
