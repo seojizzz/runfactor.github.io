@@ -123,9 +123,6 @@ document.getElementById('sign-in-btn').addEventListener('click', () => {
     }
 });
 
-
-  
-
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {
@@ -153,7 +150,7 @@ class PrimeFactorGame {
                 this.handleGuess(guessedFactor);
             }
         });
-        }
+    }
 
       // Creates and renders the prime buttons dynamically
     createButtons() {
