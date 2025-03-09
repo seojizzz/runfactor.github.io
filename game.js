@@ -212,6 +212,7 @@ class PrimeFactorGame {
             }
         }, 1000);
     }
+    
   
     beginGame() {
         this.timerInterval = setInterval(() => {
