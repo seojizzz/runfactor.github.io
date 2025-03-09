@@ -63,23 +63,6 @@ exports.submitScore = functions.https.onCall((data, context) => {
   });
 });
 
-function hideAuthSections() {
-    document.getElementById("sign-in-page").style.display = "none";
-    document.getElementById("account-options").style.display = "none";
-    document.getElementById("existing-account").style.display = "none";
-}
-
-function showGameScreen(username) {
-    hideAuthSections();
-    document.getElementById("game-screen").style.display = "block";
-    // If not playing anonymously, display the username.
-    if (username) {
-        document.getElementById("username-display").textContent = username;
-    }
-    // Call your game initialization function.
-    window.game.startGame(username);
-}
-
 // "Play Anonymously" button handler.
 document.getElementById('play-anon-btn').addEventListener('click', () => {
     window.playAnonymously = true; // Set flag for anonymous play.
@@ -398,6 +381,24 @@ class PrimeFactorGame {
 }
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
+// --- Helper Functions ---
+function hideAuthSections() {
+    document.getElementById("sign-in-page").style.display = "none";
+    document.getElementById("account-options").style.display = "none";
+    document.getElementById("existing-account").style.display = "none";
+  }
+  
+  function showGameScreen(username) {
+    hideAuthSections();
+    document.getElementById("game-screen").style.display = "block";
+    if (username) {
+      document.getElementById("username-display").textContent = username;
+    }
+    // Call the exported startGame function from your module.
+    startGame(username);
+  }
+
+
 function gameOver() {
     let username = document.getElementById("username").value;
     let scoreText = document.getElementById("score-display").innerText.trim();

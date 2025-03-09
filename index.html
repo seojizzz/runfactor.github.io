@@ -129,9 +129,19 @@
 <script>
     // --- Helper Functions ---
     function hideAuthSections() {
-        document.getElementById("sign-in-page").style.display = "none";
-        document.getElementById("account-options").style.display = "none";
-        document.getElementById("existing-account").style.display = "none";
+    document.getElementById("sign-in-page").style.display = "none";
+    document.getElementById("account-options").style.display = "none";
+    document.getElementById("existing-account").style.display = "none";
+    }
+
+    function showGameScreen(username) {
+    hideAuthSections();
+    document.getElementById("game-screen").style.display = "block";
+    if (username) {
+        document.getElementById("username-display").textContent = username;
+    }
+    // Call the exported startGame function from your module.
+    startGame(username);
     }
 
     // --- Dummy startGame Function ---
