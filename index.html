@@ -142,8 +142,7 @@
             if (username) {
                 document.getElementById("username-display").textContent = username;
             }
-            // Call the imported startGame function.
-            startGame(username);
+            startGame(username); // This calls the exported function from game.js
         }
 
         // --- Simulated Backend & Event Listeners ---

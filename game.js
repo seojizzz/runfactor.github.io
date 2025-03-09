@@ -34,34 +34,34 @@ signInAnonymously(auth)
   });
 
 // authentication
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-admin.initializeApp();
+// const functions = require("firebase-functions");
+// const admin = require("firebase-admin");
+// admin.initializeApp();
 
-exports.submitScore = functions.https.onCall((data, context) => {
-  // Make sure the user is authenticated.
-  if (!context.auth) {
-    throw new functions.https.HttpsError("unauthenticated", "User must be authenticated.");
-  }
+// exports.submitScore = functions.https.onCall((data, context) => {
+//   // Make sure the user is authenticated.
+//   if (!context.auth) {
+//     throw new functions.https.HttpsError("unauthenticated", "User must be authenticated.");
+//   }
   
-  // Validate the data
-  const username = data.username;
-  const score = data.score;
-  if (typeof username !== "string" || username.trim() === "") {
-    throw new functions.https.HttpsError("invalid-argument", "Invalid username");
-  }
-  if (typeof score !== "number" || score < 0) {
-    throw new functions.https.HttpsError("invalid-argument", "Invalid score");
-  }
+//   // Validate the data
+//   const username = data.username;
+//   const score = data.score;
+//   if (typeof username !== "string" || username.trim() === "") {
+//     throw new functions.https.HttpsError("invalid-argument", "Invalid username");
+//   }
+//   if (typeof score !== "number" || score < 0) {
+//     throw new functions.https.HttpsError("invalid-argument", "Invalid score");
+//   }
 
-  // Write to Firestore
-  return admin.firestore().collection("scores").add({
-    username: username,
-    score: score,
-    timestamp: admin.firestore.FieldValue.serverTimestamp(),
-    uid: context.auth.uid,
-  });
-});
+//   // Write to Firestore
+//   return admin.firestore().collection("scores").add({
+//     username: username,
+//     score: score,
+//     timestamp: admin.firestore.FieldValue.serverTimestamp(),
+//     uid: context.auth.uid,
+//   });
+// });
 
 // "Play Anonymously" button handler.
 document.getElementById('play-anon-btn').addEventListener('click', () => {
@@ -555,12 +555,9 @@ async function deleteUserScores(username) {
         console.error("Error deleting scores:", error);
     }
 }
-deleteUserScores("Adan Sneg");
 
-// Instantiate the game once.
-// At the end of game.js
 const game = new PrimeFactorGame();
-window.game = game; // Optional: attach to window for debugging.
+window.game = game;
 export function startGame(username) {
     game.startGame(username);
 }
