@@ -215,6 +215,19 @@ class PrimeFactorGame {
         this.createButtons();
         this.setQuestion();
         this.beginGame();
+
+        let countdown = 3;
+        document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+    
+        let countdownInterval = setInterval(() => {
+            countdown--;
+            document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+            if (countdown <= 0) {
+                clearInterval(countdownInterval);
+                console.log("Starting game...");
+                this.beginGame(); // This should now trigger correctly
+            }
+        }, 1000);
     }
   
     beginGame() {
