@@ -560,7 +560,7 @@ deleteUserScores("Adan Sneg");
 // Instantiate the game once.
 // At the end of game.js
 const game = new PrimeFactorGame();
-window.game = game; // (Optional) Attach to window if needed for debugging.
+window.game = game; // Optional: attach to window for debugging.
 export function startGame(username) {
     game.startGame(username);
 }
