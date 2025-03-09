@@ -12,6 +12,31 @@ body {
     text-align: center;
 }
 /* Prime Button Styling */
+
+@media (max-width: 600px) {
+    .prime-btn {
+        width: 80px;
+        height: 80px;
+        font-size: 20px;
+    }
+    #buttons {
+        grid-template-columns: repeat(3, 80px);
+        gap: 5px;
+    }
+    
+    /* You can adjust other elements like the username input or score display as needed */
+    #username {
+        width: 200px;
+        height: 35px;
+        font-size: 14px;
+    }
+    
+    #score-display {
+        font-size: 28px;
+    }
+}
+  
+
 .prime-btn {
     width: 100px;
     height: 100px;
