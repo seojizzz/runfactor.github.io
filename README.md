@@ -34,7 +34,7 @@ Consecutive correct answers activate a combo system:
 
 #### Consecutive Perfect Clears
 - If a player achieves multiple **perfect clears** in a row, they receive an additional bonus:
-  - **3500 × (1.618^(√k))**, where **k** is the number of consecutive perfect clears.
+  - **3500 × (1.618^(k/6))**, where **k** is the number of consecutive perfect clears.
 
 ### 4. Answering - Wrong Answers
 - Making a wrong guess resets the **combo counter** and **perfect clear streak**.
