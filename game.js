@@ -98,16 +98,6 @@ class PrimeFactorGame {
   
   // Set up event listeners in one place
     bindEvents() {
-        document.getElementById("start-btn").addEventListener("click", () => {
-            this.handleStartClick();
-            });
-            // Use event delegation on the container of the prime buttons
-            document.getElementById("buttons").addEventListener("click", (e) => {
-            if (e.target && e.target.classList.contains("prime-btn")) {
-                const guessedFactor = parseInt(e.target.textContent, 10);
-                this.handleGuess(guessedFactor);
-            }
-            });
         document.getElementById("start-btn").addEventListener("click", function () {
             let username = document.getElementById("username").value.trim();
             if (username.length === 0) {
@@ -123,6 +113,12 @@ class PrimeFactorGame {
             
             // Hide authentication sections and show game screen
             showGameScreen();
+        });
+        document.getElementById("buttons").addEventListener("click", (e) => {
+            if (e.target && e.target.classList.contains("prime-btn")) {
+                const guessedFactor = parseInt(e.target.textContent, 10);
+                this.handleGuess(guessedFactor);
+            }
         });
         }
 
