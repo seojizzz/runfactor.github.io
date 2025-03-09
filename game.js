@@ -119,6 +119,8 @@ class PrimeFactorGame {
         this.correctFactorizations = [];
         this.wrongFactorizations = [];
         this.primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23];
+        this.easyPrimes = [2,3,5,7,11];
+        this.hardPrimes = [13,17,19,23];
         this.bannedWords = ["badword1", "badword2", "anotherbadword"];
         this.bindEvents();
     }
