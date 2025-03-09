@@ -1,88 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">       
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sign In - Prime Factorization Challenge</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign In - Prime Factorization Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
     /* Minimal styling for demonstration */
     #sign-in-page, #account-options, #existing-account {
-      margin: 20px auto;
-      max-width: 400px;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      display: none;
+        margin: 20px auto;
+        max-width: 400px;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        display: none;
     }
     input {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 8px;
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+        padding: 8px;
     }
     button {
-      margin: 5px;
-      padding: 8px 12px;
+        margin: 5px;
+        padding: 8px 12px;
     }
-  </style>
+    </style>
 </head>
 <body>
-  <!-- Sign In Page -->
-  <div id="sign-in-page">
+    <!-- Sign In Page -->
+    <div id="sign-in-page">
     <h1>Sign In</h1>
     <label for="username-signin">Enter your username:</label>
     <input type="text" id="username-signin" maxlength="20" placeholder="Username">
     <button id="join-btn">Join</button>
-  </div>
+    </div>
 
-  <!-- New Account Options (username doesn't exist) -->
-  <div id="account-options">
+    <!-- New Account Options (username doesn't exist) -->
+    <div id="account-options">
     <p id="new-account-message"></p>
     <div id="new-account-form">
-      <input type="email" id="new-email" placeholder="Email">
-      <input type="password" id="new-password" placeholder="Password">
-      <input type="password" id="confirm-password" placeholder="Confirm Password">
-      <div>
+        <input type="email" id="new-email" placeholder="Email">
+        <input type="password" id="new-password" placeholder="Password">
+        <input type="password" id="confirm-password" placeholder="Confirm Password">
+        <div>
         <button id="back-btn">Back</button>
         <button id="play-anon-btn">Play Anonymously</button>
         <button id="create-account-btn">Create Account</button>
-      </div>
+        </div>
     </div>
-  </div>
+    </div>
 
-  <!-- Existing Account Login -->
-  <div id="existing-account">
+    <!-- Existing Account Login -->
+    <div id="existing-account">
     <p id="welcome-message"></p>
     <input type="password" id="existing-password" placeholder="Enter your password">
     <div>
-      <button id="sign-in-btn">Sign In</button>
-      <button id="not-your-account-btn">Not your account?</button>
+        <button id="sign-in-btn">Sign In</button>
+        <button id="not-your-account-btn">Not your account?</button>
     </div>
-  </div>
+    </div>
 
-  <script>
+    <script>
     // ----- Simulated Backend (Replace with your real DB/auth calls) -----
     const fakeAccountsDB = {
-      // Example: username mapped to account details.
-      'johnDoe': { email: 'john@example.com', password: 'password123' }
+        // Example: username mapped to account details.
+        'johnDoe': { email: 'john@example.com', password: 'password123' }
     };
 
     function checkUserExists(username) {
-      return new Promise((resolve) => {
+        return new Promise((resolve) => {
         setTimeout(() => {
-          resolve(!!fakeAccountsDB[username]);
+            resolve(!!fakeAccountsDB[username]);
         }, 500);
-      });
+        });
     }
 
     function checkEmailExists(email) {
-      return new Promise((resolve) => {
+        return new Promise((resolve) => {
         setTimeout(() => {
-          const exists = Object.values(fakeAccountsDB).some(account => account.email === email);
-          resolve(exists);
+            const exists = Object.values(fakeAccountsDB).some(account => account.email === email);
+            resolve(exists);
         }, 500);
-      });
+        });
     }
     // --------------------------------------------------------------------
 
@@ -94,26 +97,26 @@
 
     // Join button handler.
     document.getElementById('join-btn').addEventListener('click', () => {
-      const username = document.getElementById('username-signin').value.trim();
-      if (username === "") {
+        const username = document.getElementById('username-signin').value.trim();
+        if (username === "") {
         alert("Username cannot be empty.");
         return;
-      }
-      currentUsername = username;
-      checkUserExists(username).then(exists => {
-        if (exists) {
-          showExistingAccount(username);
-        } else {
-          showNewAccountOptions(username);
         }
-      });
+        currentUsername = username;
+        checkUserExists(username).then(exists => {
+        if (exists) {
+            showExistingAccount(username);
+        } else {
+            showNewAccountOptions(username);
+        }
+        });
     });
 
     // Show options for a new account.
     function showNewAccountOptions(username) {
-      document.getElementById('sign-in-page').style.display = 'none';
-      document.getElementById('account-options').style.display = 'block';
-      document.getElementById('new-account-message').textContent =
+        document.getElementById('sign-in-page').style.display = 'none';
+        document.getElementById('account-options').style.display = 'block';
+        document.getElementById('new-account-message').textContent =
         `The nickname "${username}" hasn't been registered. ` +
         `Do you want to claim it as yours or play anonymously? ` +
         `(If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
@@ -121,71 +124,257 @@
 
     // Show existing account login.
     function showExistingAccount(username) {
-      document.getElementById('sign-in-page').style.display = 'none';
-      document.getElementById('existing-account').style.display = 'block';
-      document.getElementById('welcome-message').textContent = `Welcome back, ${username}!`;
+        document.getElementById('sign-in-page').style.display = 'none';
+        document.getElementById('existing-account').style.display = 'block';
+        document.getElementById('welcome-message').textContent = `Welcome back, ${username}!`;
     }
 
     // "Back" button handler (from new account options).
     document.getElementById('back-btn').addEventListener('click', () => {
-      document.getElementById('account-options').style.display = 'none';
-      document.getElementById('sign-in-page').style.display = 'block';
+        document.getElementById('account-options').style.display = 'none';
+        document.getElementById('sign-in-page').style.display = 'block';
     });
 
     // "Play Anonymously" button handler.
     document.getElementById('play-anon-btn').addEventListener('click', () => {
-      // Set a flag indicating anonymous play (scores won’t be saved).
-      window.playAnonymously = true;
-      alert("Playing anonymously. Your scores won't be saved.");
-      // Redirect to the game-start page (e.g., game.html) or call your startGame() function.
-      window.location.href = "game.html";
+        // Set a flag indicating anonymous play (scores won’t be saved).
+        window.playAnonymously = true;
+        alert("Playing anonymously. Your scores won't be saved.");
+        // Redirect to the game-start page (e.g., game.html) or call your startGame() function.
+        window.location.href = "game.html";
     });
 
     // "Create Account" button handler.
     document.getElementById('create-account-btn').addEventListener('click', () => {
-      const email = document.getElementById('new-email').value.trim();
-      const password = document.getElementById('new-password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-      if (!email || !password || !confirmPassword) {
+        const email = document.getElementById('new-email').value.trim();
+        const password = document.getElementById('new-password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        if (!email || !password || !confirmPassword) {
         alert("Please fill in all fields.");
         return;
-      }
-      if (password !== confirmPassword) {
+        }
+        if (password !== confirmPassword) {
         alert("Passwords do not match.");
         return;
-      }
-      checkEmailExists(email).then(emailExists => {
-        if (emailExists) {
-          alert("Email already in use. Please choose a different email.");
-          return;
-        } else {
-          // Simulate account creation.
-          fakeAccountsDB[currentUsername] = { email, password };
-          alert("Account created successfully! Your scores will be saved.");
-          // Redirect to game-start page.
-          window.location.href = "game.html";
         }
-      });
+        checkEmailExists(email).then(emailExists => {
+        if (emailExists) {
+            alert("Email already in use. Please choose a different email.");
+            return;
+        } else {
+            // Simulate account creation.
+            fakeAccountsDB[currentUsername] = { email, password };
+            alert("Account created successfully! Your scores will be saved.");
+            // Redirect to game-start page.
+            window.location.href = "game.html";
+        }
+        });
     });
 
     // "Sign In" button handler for existing accounts.
     document.getElementById('sign-in-btn').addEventListener('click', () => {
-      const password = document.getElementById('existing-password').value;
-      const account = fakeAccountsDB[currentUsername];
-      if (account && account.password === password) {
+        const password = document.getElementById('existing-password').value;
+        const account = fakeAccountsDB[currentUsername];
+        if (account && account.password === password) {
         alert("Sign in successful! Welcome back.");
         window.location.href = "game.html";
-      } else {
+        } else {
         alert("Incorrect password. Please try again.");
-      }
+        }
     });
 
     // "Not your account?" button handler.
     document.getElementById('not-your-account-btn').addEventListener('click', () => {
-      document.getElementById('existing-account').style.display = 'none';
-      document.getElementById('sign-in-page').style.display = 'block';
-      document.getElementById('existing-password').value = "";
+        document.getElementById('existing-account').style.display = 'none';
+        document.getElementById('sign-in-page').style.display = 'block';
+        document.getElementById('existing-password').value = "";
     });
-  </script>
+    </script>
+</body>         
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prime Factorization Challenge</title>
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="game.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+    }
+    #buttons {
+        display: grid;
+        grid-template-columns: repeat(3, 100px);
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .prime-btn {
+        width: 100px;
+        height: 100px;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .correct {
+        background-color: #90EE90; /* Green */
+    }
+    .wrong {
+        background-color: #FFB6C1; /* Red */
+    }
+    #game-screen, #end-screen {
+        display: none;
+    }
+</style>
+</head>
+<body>
+    <title>Prime Factorization Challenge</title>
+    <!-- Start Screen -->
+    <div id="start-screen">
+        <label for="username">Enter your name:</label>
+        <input type="text" id="username" maxlength="20" oninput="updateCharCount()">
+        <p id="char-count">0 / 20</p>
+
+        <script>
+            function updateCharCount() {
+                let input = document.getElementById("username");
+                let charCount = document.getElementById("char-count");
+                charCount.textContent = `${input.value.length} / 20`;
+            }
+        </script>            
+       <br><br>
+       <!-- Hyperlinks for Leaderboard & GitHub -->
+       <div style="position:absolute; top:10px; right:20px;">
+           <a href="leaderboard.html">View Leaderboard</a> |
+           <a href="https://github.com/seojizzz/runfactor.github.io/tree/main" target="_blank">GitHub Repo</a>
+       </div>
+        <button id="start-btn">Start</button>
+        <script type="module">
+            import { startGame } from "./game.js";
+        
+            document.getElementById("start-btn").addEventListener("click", function() {
+                let username = document.getElementById("username").value;
+                if (username.length > 20) {
+                    alert("Username must be 20 characters or less.");
+                } else if (username.trim() === "") {
+                    alert("Username cannot be empty.");
+                } else {
+                    document.getElementById("start-screen").style.display = "none";
+                    document.getElementById("game-screen").style.display = "block";
+                    startGame();
+                }
+            });
+        </script>    
+        <p id="username-error" style="color: red; display: none;">Inappropriate username. Please choose another.</p>
+        <script type="module">
+            import badWordsList from "./badwords.js";
+            import { startGame } from "./game.js";
+        
+            function containsProfanity(username) {
+                const lowerUsername = username.toLowerCase();
+                return badWordsList.some((word) => lowerUsername.includes(word));
+            }
+        
+            document.getElementById("start-btn").addEventListener("click", function () {
+                let username = document.getElementById("username").value.trim();
+        
+                if (username.length === 0) {
+                    alert("Username cannot be empty.");
+                    return;
+                }
+        
+                if (containsProfanity(username)) {
+                    document.getElementById("username-error").style.display = "block";
+                    return;
+                } else {
+                    document.getElementById("username-error").style.display = "none";
+                }
+        
+                // Start the game and hide the start screen
+                document.getElementById("start-screen").style.display = "none";
+                document.getElementById("game-screen").style.display = "block";
+                startGame(username);
+            });
+        </script>
+                  
+    </div>
+    <!-- Game Screen -->
+    <div id="game-screen">
+        <h1>Prime Factorization Challenge</h1>
+        <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
+        <p id="timer-display">Time Left: 120.00s</p>
+
+        <p id="number-display">Factorize: Generating number...</p>
+
+        <div class="game-container">
+            <div id="buttons"></div> <!-- Prime buttons centered -->
+
+            <div class="score-container">
+                <p id="score-label">Score:</p>
+                <p id="score-display">0</p>
+                <p id="action-text">+0</p>
+            </div>
+        </div>
+    </div>
+    <!-- End Screen -->
+    <div id="end-screen" style="display: none;">
+        <h1>Game Over</h1>
+        <p id="final-score"></p> <!-- Final score is displayed here -->
+        <h2>Correctly Factorized</h2>
+        <ul id="correct-list"></ul>
+
+        <h2>Incorrectly Factorized</h2>
+        <ul id="wrong-list"></ul>
+
+        <button onclick="location.reload()">Play Again</button>
+        <h2>Leaderboard (Top 10)</h2>
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                <!-- Leaderboard entries will be dynamically added here -->
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
+<script>
+    const CURRENT_VERSION = "1.0.3"; // Update this whenever you deploy a new version
+    
+    async function checkForUpdate() {
+      try {
+        let response = await fetch("version.json?v=" + new Date().getTime()); // Prevent caching
+        let data = await response.json();
+    
+        if (data.version !== CURRENT_VERSION) {
+          showUpdateNotification();
+        }
+      } catch (error) {
+        console.error("Error checking for updates:", error);
+      }
+    }
+    
+    function showUpdateNotification() {
+      let updateDiv = document.createElement("div");
+      updateDiv.innerHTML = `
+        <div style="position:fixed; bottom:10px; left:50%; transform:translateX(-50%);
+                    background:#f44336; color:white; padding:10px 20px; border-radius:5px;
+                    font-size:16px; z-index:1000;">
+          A new version is available. <button onclick="hardRefresh()" 
+          style="background:white; color:#f44336; border:none; padding:5px 10px;
+          cursor:pointer; font-weight:bold;">Refresh Now</button>
+        </div>`;
+      document.body.appendChild(updateDiv);
+    }
+    
+    function hardRefresh() {
+      location.reload(true); // Forces hard reload
+    }
+    
+    checkForUpdate();
+</script>
