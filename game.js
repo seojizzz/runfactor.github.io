@@ -109,7 +109,7 @@ document.getElementById('sign-in-btn').addEventListener('click', () => {
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {
-        // Initialize game variables...
+        // Initialize game variables.
         this.timer = 120.00;
         this.score = 0;
         this.mistakeCount = 0;
@@ -118,47 +118,60 @@ class PrimeFactorGame {
         this.questionNumber = 1;
         this.correctFactorizations = [];
         this.wrongFactorizations = [];
+        // Define the nine prime buttons.
         this.primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23];
-        this.easyPrimes = [2,3,5,7,11];
-        this.hardPrimes = [13,17,19,23];
+        // Define easy and hard primes for factorization.
+        this.easyPrimes = [2, 3, 5, 7, 11];
+        this.hardPrimes = [13, 17, 19, 23];
+        // List of banned words for profanity check.
         this.bannedWords = ["badword1", "badword2", "anotherbadword"];
+        // This flag tracks whether the current question had a mistake.
+        this.roundHadMistake = false;
+        // To store the initial composite number for the current question.
+        this.currentQuestionOriginal = 0;
+        this.consecutivePerfectClears = 0;
+        
         this.bindEvents();
     }
   
-  // Set up event listeners in one place
+    // Set up event listener for prime buttons.
     bindEvents() {
         document.getElementById("buttons").addEventListener("click", (e) => {
         if (e.target && e.target.classList.contains("prime-btn")) {
             const guessedFactor = parseInt(e.target.textContent, 10);
-            this.handleGuess(guessedFactor);
+            this.handleGuess(guessedFactor, e.target);
         }
         });
     }
-
-      // Creates and renders the prime buttons dynamically
-        createButtons() {
-            const buttonsContainer = document.getElementById("buttons");
-            buttonsContainer.innerHTML = "";
-            this.primeNumbers.forEach(prime => {
-            const button = document.createElement("button");
-            button.classList.add("prime-btn");
-            button.textContent = prime;
-            buttonsContainer.appendChild(button);
-            });
-        }
-
-    handleStartClick() {
-        const usernameInput = document.getElementById("username");
-        const username = usernameInput.value.trim();
-        if (username === "" || username.length > 20 || this.checkProfanity(username)) {
-          alert("Invalid username.");
-          return;
-        }
-        document.getElementById("start-screen").style.display = "none";
-        document.getElementById("game-screen").style.display = "block";
-        this.startGame(username);
+  
+    // Creates and renders the prime buttons dynamically.
+    createButtons() {
+        const buttonsContainer = document.getElementById("buttons");
+        buttonsContainer.innerHTML = ""; // Clear existing buttons.
+        this.primeNumbers.forEach(prime => {
+        const button = document.createElement("button");
+        button.classList.add("prime-btn");
+        button.textContent = prime;
+        buttonsContainer.appendChild(button);
+        });
     }
-    
+        
+    // getFactorization returns the full factorization as a string.
+    getFactorization(number) {
+        let n = number;
+        let factors = {};
+        for (let prime of [...this.easyPrimes, ...this.hardPrimes]) {
+        while (n % prime === 0) {
+            factors[prime] = (factors[prime] || 0) + 1;
+            n /= prime;
+        }
+        }
+    return Object.entries(factors)
+      .map(([base, exp]) => exp > 1 ? `${base}^${exp}` : base)
+      .join(" × ");
+    }
+  
+  // Updates the score and shows action text.
     updateScore(guessedFactor) {
         let baseScore = 0;
         if ([2, 3, 5, 7].includes(guessedFactor)) {
@@ -170,23 +183,23 @@ class PrimeFactorGame {
         }
         // Increase the combo streak.
         this.comboStreak++;
-        // Combo bonus: each additional correct guess (after the first) gives +50 × (comboStreak-1)
         const comboBonus = 50 * (this.comboStreak - 1);
         const pointsEarned = baseScore + comboBonus;
         this.score += pointsEarned;
-    
-        // Update the score display.
-        document.getElementById("score-display").textContent = this.score;
-    
-        // Display temporary animation for score increment.
+        
+        // Update score display with 2 decimal points.
+        document.getElementById("score-display").textContent = this.score.toFixed(2);
+            
+        // Display temporary score increment animation.
         const actionText = document.getElementById("action-text");
-        actionText.textContent = `+${pointsEarned}`;
+        actionText.textContent = `+${pointsEarned.toFixed(2)}`;
         actionText.style.display = "block";
         setTimeout(() => {
-            actionText.style.display = "none";
+        actionText.style.display = "none";
         }, 1200);
     }
   
+  // Starts the game after a 3-second countdown.
     startGame(username) {
         // Reset game state.
         this.timer = 120.00;
@@ -194,89 +207,110 @@ class PrimeFactorGame {
         this.mistakeCount = 0;
         this.comboStreak = 0;
         this.questionNumber = 1;
+        this.consecutivePerfectClears = 0;
+        this.roundHadMistake = false;
         
-        // Create the prime buttons.
+        // Create prime buttons.
         this.createButtons();
         
-        // Start a 3-second countdown before beginning the game.
+        // Begin with a 3-second countdown.
         let countdown = 3;
         document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
         
         let countdownInterval = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-            } else {
-                clearInterval(countdownInterval);
-                // When the countdown finishes, generate the first question and start the timer.
-                this.setQuestion();
-                this.beginGame();
-            }
+        countdown--;
+        if (countdown > 0) {
+            document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+        } else {
+            clearInterval(countdownInterval);
+            // Once countdown ends, generate the first question and start timer.
+            this.setQuestion();
+            this.beginGame();
+        }
         }, 1000);
     }
-    
   
+  // Starts the game timer (updates every 10 ms for 0.01-second precision).
     beginGame() {
         this.timerInterval = setInterval(() => {
-            this.timer -= 0.01;
-            if (this.timer <= 0) {
-                this.endGame();
-            }
-            this.updateTimerDisplay();
+        this.timer -= 0.01;
+        if (this.timer <= 0) {
+            this.endGame();
+        }
+        this.updateTimerDisplay();
         }, 10);
     }
-  
+    
+    // Updates the timer display to 2 decimal places.
+    updateTimerDisplay() {
+        document.getElementById("timer-display").textContent = `Time Left: ${this.timer.toFixed(2)}s`;
+    }
+    
+    // Generates a new question and stores the initial composite number.
     setQuestion() {
         this.currentCompositeNumber = this.generateCompositeNumber();
+        // Save the original number for end-of-game reporting.
+        this.currentQuestionOriginal = this.currentCompositeNumber;
         this.updateNumberDisplay();
     }
-  
+    
+    // Dummy composite number generator that adjusts difficulty based on score.
     generateCompositeNumber() {
         let score = this.score;
         let numEasy, numHard;
-
         if (score >= 200000) {
-            numEasy = Math.floor(Math.random() * 6) + 2;
-            numHard = Math.floor(Math.random() * 4) + 3;
+        numEasy = Math.floor(Math.random() * 6) + 2;
+        numHard = Math.floor(Math.random() * 4) + 3;
         } else if (score >= 90000) {
-            numEasy = Math.floor(Math.random() * 5) + 2;
-            numHard = Math.floor(Math.random() * 3) + 2;
+        numEasy = Math.floor(Math.random() * 5) + 2;
+        numHard = Math.floor(Math.random() * 3) + 2;
         } else if (score >= 35000) {
-            numEasy = Math.floor(Math.random() * 4) + 2;
-            numHard = 1;
+        numEasy = Math.floor(Math.random() * 4) + 2;
+        numHard = 1;
         } else {
-            numEasy = Math.floor(Math.random() * 3) + 2;
-            numHard = 0;
+        numEasy = Math.floor(Math.random() * 3) + 2;
+        numHard = 0;
         }
-
         let factors = [];
+        // For simplicity, use the easy primes array if no hard primes are needed.
         for (let i = 0; i < numEasy; i++) {
-            factors.push(this.easyPrimes[Math.floor(Math.random() * this.easyPrimes.length)]);
+        factors.push(this.easyPrimes[Math.floor(Math.random() * this.easyPrimes.length)]);
         }
         for (let i = 0; i < numHard; i++) {
-            factors.push(this.hardPrimes[Math.floor(Math.random() * this.hardPrimes.length)]);
+        factors.push(this.hardPrimes[Math.floor(Math.random() * this.hardPrimes.length)]);
         }
-
         return factors.reduce((a, b) => a * b, 1);
     }
   
-    handleGuess(guessedFactor) {
+    // Handles a guessed prime. Accepts the guessed factor and the button element.
+    handleGuess(guessedFactor, buttonElement) {
         if (this.currentCompositeNumber % guessedFactor === 0) {
-            // Correct guess: update score and the composite number.
-            this.updateScore(guessedFactor);
-            this.currentCompositeNumber /= guessedFactor;
-            this.updateNumberDisplay();
-            if (this.currentCompositeNumber === 1) {
-                this.newRound();
+        // Correct guess: highlight button green.
+        buttonElement.classList.add("correct");
+        setTimeout(() => {
+            buttonElement.classList.remove("correct");
+        }, 300);
+        
+        this.updateScore(guessedFactor);
+        this.currentCompositeNumber /= guessedFactor;
+        this.updateNumberDisplay();
+        
+        // If the number is fully factorized, move to next round.
+        if (this.currentCompositeNumber === 1) {
+            this.newRound();
         }
         } else {
-            // Incorrect guess: apply time penalty and reset combo.
-            this.applyPenalty();
-            this.wrongFactorizations.push(`Guessed ${guessedFactor} in question ${this.questionNumber}`);
-            this.comboStreak = 0;
+        // Wrong guess: highlight button red.
+        buttonElement.classList.add("wrong");
+        setTimeout(() => {
+            buttonElement.classList.remove("wrong");
+        }, 300);
+        this.roundHadMistake = true;
+        this.applyPenalty();
         }
     }
-
+  
+    // Applies a time penalty for wrong guesses.
     applyPenalty() {
         this.mistakeCount++;
         const penalty = this.fibonacci(this.mistakeCount) * 0.1;
@@ -284,104 +318,75 @@ class PrimeFactorGame {
         this.updateTimerDisplay();
     }
   
+    // Simple Fibonacci function.
     fibonacci(n) {
         if (n <= 1) return n;
-        let a = 0, b = 1, temp;
+        let a = 0, b = 1;
         for (let i = 2; i <= n; i++) {
-            temp = a + b;
-            a = b;
-            b = temp;
+        [a, b] = [b, a + b];
         }
         return b;
     }
   
-    updateTimerDisplay() {
-        document.getElementById("timer-display").textContent = `Time Left: ${this.timer.toFixed(2)}s`;
-    }
-  
+    // Updates the composite number display.
     updateNumberDisplay() {
         document.getElementById("number-display").textContent = `Factorize: ${this.currentCompositeNumber}`;
     }
-  
+    
+    // Called when a question is fully factorized.
     newRound() {
-        // When the current composite number is fully factorized.
-        let clearBonus = 0;
+        // Record the result: if no mistake was made, it's a perfect clear.
         if (!this.roundHadMistake) {
-          // Perfect clear: no mistakes made in the round.
-          // Use alternative bonus if this is part of a consecutive perfect clear streak.
-          if (this.consecutivePerfectClears > 0) {
-            // k is the number of consecutive perfect clears including this one.
-            let k = this.consecutivePerfectClears + 1;
-            clearBonus = 3500 * Math.pow(1.618, k / 6);
-          } else {
-            // First perfect clear in a row.
-            clearBonus = 3500 * Math.pow(1.05, this.questionNumber);
-          }
-          // Increase the perfect clear streak counter.
-          this.consecutivePerfectClears++;
+        this.correctFactorizations.push(this.currentQuestionOriginal);
+        this.consecutivePerfectClears++;
         } else {
-          // Not a perfect clear: apply a normal clear bonus.
-          clearBonus = 1000 * this.questionNumber;
-          // Reset consecutive perfect clear streak.
-          this.consecutivePerfectClears = 0;
+        this.wrongFactorizations.push(this.currentQuestionOriginal);
+        this.consecutivePerfectClears = 0;
         }
-        // Add the clear bonus to the overall score.
-        this.score += clearBonus;
-        document.getElementById("score-display").textContent = this.score;
-        // Optionally record the round's result.
-        this.correctFactorizations.push(`Q${this.questionNumber}: Clear Bonus ${clearBonus.toFixed(2)}`);
         // Reset round-specific variables.
         this.mistakeCount = 0;
         this.comboStreak = 0;
         this.roundHadMistake = false;
         this.questionNumber++;
-        // Set up the next question.
+        // Generate the next question.
         this.setQuestion();
-        }
-  
-    resetGame() {
-        // Reset game variables for a new game session
-        this.timer = 120.00;
-        this.score = 0;
-        this.mistakeCount = 0;
     }
   
+    // Ends the game and populates the end screen.
     endGame() {
         clearInterval(this.timerInterval);
-        // Hide game screen and show end screen.
         document.getElementById("game-screen").style.display = "none";
         document.getElementById("end-screen").style.display = "block";
-        // Update final score display.
-        document.getElementById("final-score").textContent = `Final Score: ${this.score}`;
-        // Populate correct factorization list.
+        document.getElementById("final-score").textContent = `Final Score: ${this.score.toFixed(2)}`;
+        
+        // Populate correct factorization list with tooltips.
         const correctList = document.getElementById("correct-list");
         correctList.innerHTML = "";
-        this.correctFactorizations.forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = item;
-            correctList.appendChild(li);
+        this.correctFactorizations.forEach(num => {
+        const li = document.createElement("li");
+        li.textContent = num;
+        li.title = this.getFactorization(num);
+        correctList.appendChild(li);
         });
-        // Populate wrong factorization list.
+    
+        // Populate wrong factorization list with tooltips.
         const wrongList = document.getElementById("wrong-list");
         wrongList.innerHTML = "";
-        this.wrongFactorizations.forEach(item => {
-            const li = document.createElement("li");
-            li.textContent = item;
-            wrongList.appendChild(li);
+        this.wrongFactorizations.forEach(num => {
+        const li = document.createElement("li");
+        li.textContent = num;
+        li.title = this.getFactorization(num);
+        wrongList.appendChild(li);
         });
     }
-    
+  
+    // Checks for profanity in the username.
     checkProfanity(username) {
-        // Checks whether the provided username contains any banned/profane words.
-        // The logic converts the username to lowercase for a case-insensitive check
-        // and then searches for any occurrence of the banned words.
         const lowerUsername = username.toLowerCase();
         return this.bannedWords.some(badWord => lowerUsername.includes(badWord));
     }
-    // --------------------------
-    // Additional helper methods
-    // ---
 }
+
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
 // --- Helper Functions ---
