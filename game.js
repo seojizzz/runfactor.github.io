@@ -558,10 +558,9 @@ async function deleteUserScores(username) {
 deleteUserScores("Adan Sneg");
 
 // Instantiate the game once.
+// At the end of game.js
 const game = new PrimeFactorGame();
-window.game = game;  // Make it globally accessible.
-
-// Export a function that calls the game instance's startGame method.
+window.game = game; // (Optional) Attach to window if needed for debugging.
 export function startGame(username) {
-    window.game.startGame(username);
+    game.startGame(username);
 }

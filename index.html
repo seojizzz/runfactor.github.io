@@ -126,7 +126,8 @@
         </table>
     </section>
   </div>
-<script>
+<script type="module">
+    import { startGame } from './game.js';
     // --- Helper Functions ---
     function hideAuthSections() {
     document.getElementById("sign-in-page").style.display = "none";
@@ -183,28 +184,28 @@
 
     // Join button on sign-in page
     document.getElementById("join-btn").addEventListener("click", () => {
-        let username = document.getElementById("username-signin").value.trim();
-        if (username === "") {
-            alert("Username cannot be empty.");
-            return;
-        }
-        if (containsProfanity(username)) {
+    let username = document.getElementById("username-signin").value.trim();
+    if (username === "") {
+        alert("Username cannot be empty.");
+        return;
+    }
+    if (containsProfanity(username)) {
             alert("Inappropriate username.");
             return;
+    }
+    currentUsername = username;
+    checkUserExists(username).then(exists => {
+        if (exists) {
+            document.getElementById("sign-in-page").style.display = "none";
+            document.getElementById("existing-account").style.display = "block";
+            document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+        } else {
+            document.getElementById("sign-in-page").style.display = "none";
+            document.getElementById("account-options").style.display = "block";
+            document.getElementById("new-account-message").textContent =
+            `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
         }
-        currentUsername = username;
-        checkUserExists(username).then(exists => {
-            if (exists) {
-                document.getElementById("sign-in-page").style.display = "none";
-                document.getElementById("existing-account").style.display = "block";
-                document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-            } else {
-                document.getElementById("sign-in-page").style.display = "none";
-                document.getElementById("account-options").style.display = "block";
-                document.getElementById("new-account-message").textContent =
-                `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
-            }
-        });
+    });
     });
 
     // "Back" button (from account options)
@@ -264,6 +265,8 @@
         document.getElementById("sign-in-page").style.display = "block";
         document.getElementById("existing-password").value = "";
     });
+
+    startGame(username);
   </script>
 </body>
 </html>
