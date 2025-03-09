@@ -126,7 +126,7 @@ document.getElementById('sign-in-btn').addEventListener('click', () => {
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {
-        // Initialize game variables
+        // Initialize game variables...
         this.timer = 120.00;
         this.score = 0;
         this.mistakeCount = 0;
@@ -135,9 +135,7 @@ class PrimeFactorGame {
         this.questionNumber = 1;
         this.correctFactorizations = [];
         this.wrongFactorizations = [];
-        // Define the nine prime buttons
         this.primeNumbers = [2, 3, 5, 7, 11, 13, 17, 19, 23];
-        // List of banned words for profanity check (replace with your actual list)
         this.bannedWords = ["badword1", "badword2", "anotherbadword"];
         this.bindEvents();
     }
@@ -145,24 +143,24 @@ class PrimeFactorGame {
   // Set up event listeners in one place
     bindEvents() {
         document.getElementById("buttons").addEventListener("click", (e) => {
-            if (e.target && e.target.classList.contains("prime-btn")) {
-                const guessedFactor = parseInt(e.target.textContent, 10);
-                this.handleGuess(guessedFactor);
-            }
+        if (e.target && e.target.classList.contains("prime-btn")) {
+            const guessedFactor = parseInt(e.target.textContent, 10);
+            this.handleGuess(guessedFactor);
+        }
         });
     }
 
       // Creates and renders the prime buttons dynamically
-    createButtons() {
-        const buttonsContainer = document.getElementById("buttons");
-        buttonsContainer.innerHTML = ""; // Clear any existing buttons
-        this.primeNumbers.forEach(prime => {
-        const button = document.createElement("button");
-        button.classList.add("prime-btn");
-        button.textContent = prime;
-        buttonsContainer.appendChild(button);
-        });
-    }
+        createButtons() {
+            const buttonsContainer = document.getElementById("buttons");
+            buttonsContainer.innerHTML = "";
+            this.primeNumbers.forEach(prime => {
+            const button = document.createElement("button");
+            button.classList.add("prime-btn");
+            button.textContent = prime;
+            buttonsContainer.appendChild(button);
+            });
+        }
 
     handleStartClick() {
         const usernameInput = document.getElementById("username");
@@ -205,31 +203,28 @@ class PrimeFactorGame {
     }
   
     startGame(username) {
-        // Initialize game state.
+        // Reset game state, create buttons, and start countdown before generating a question.
         this.timer = 120.00;
         this.score = 0;
         this.mistakeCount = 0;
         this.comboStreak = 0;
         this.questionNumber = 1;
         
-        // Create the prime buttons.
         this.createButtons();
         
-        // Start a 3-second countdown before the game starts.
+        // Start a 3-second countdown
         let countdown = 3;
         document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
         
         let countdownInterval = setInterval(() => {
-            countdown--;
-            if (countdown > 0) {
-                document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-            } else {
-                clearInterval(countdownInterval);
-                // Once the countdown ends, generate the question based on the current score.
-                this.setQuestion();
-                // Start the game timer.
-                this.beginGame();
-            }
+        countdown--;
+        if (countdown > 0) {
+            document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+        } else {
+            clearInterval(countdownInterval);
+            this.setQuestion();
+            this.beginGame();
+        }
         }, 1000);
     }
     
@@ -559,11 +554,10 @@ async function deleteUserScores(username) {
 }
 deleteUserScores("Adan Sneg");
 
-// 6. Initialize Game Object
 const game = new PrimeFactorGame();
+window.game = game; // (Optional) Makes it available globally if needed.
 
-// 7. Export startGame()
-export function startGame() {
-    game.startGame();
+// Export a function to start the game.
+export function startGame(username) {
+    game.startGame(username);
 }
-window.game = new PrimeFactorGame();
