@@ -77,7 +77,7 @@ function showGameScreen(username) {
         document.getElementById("username-display").textContent = username;
     }
     // Call your game initialization function.
-    startGame(username);
+    window.game.startGame(username);
 }
 
 // "Play Anonymously" button handler.
@@ -566,3 +566,4 @@ const game = new PrimeFactorGame();
 export function startGame() {
     game.startGame();
 }
+window.game = new PrimeFactorGame();
