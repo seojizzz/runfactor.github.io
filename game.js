@@ -463,7 +463,6 @@ class PrimeFactorGame {
     game.startGame();
   }
   
-  
 
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
