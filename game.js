@@ -205,30 +205,34 @@ class PrimeFactorGame {
     }
   
     startGame(username) {
-        // (Optional) Use the username if needed for display or authentication.
+        // Initialize game state.
         this.timer = 120.00;
         this.score = 0;
         this.mistakeCount = 0;
         this.comboStreak = 0;
         this.questionNumber = 1;
         
+        // Create the prime buttons.
         this.createButtons();
-        this.setQuestion();
-        this.beginGame();
-
+        
+        // Start a 3-second countdown before the game starts.
         let countdown = 3;
         document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-    
+        
         let countdownInterval = setInterval(() => {
             countdown--;
-            document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-            if (countdown <= 0) {
+            if (countdown > 0) {
+                document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+            } else {
                 clearInterval(countdownInterval);
-                console.log("Starting game...");
-                this.beginGame(); // This should now trigger correctly
+                // Once the countdown ends, generate the question based on the current score.
+                this.setQuestion();
+                // Start the game timer.
+                this.beginGame();
             }
         }, 1000);
     }
+    
   
     beginGame() {
         this.timerInterval = setInterval(() => {
