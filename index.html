@@ -136,12 +136,20 @@
     }
 
     function showGameScreen(username) {
-      hideAuthSections();
-      document.getElementById("game-screen").style.display = "block";
-      if (username) {
-        document.getElementById("username-display").textContent = username;
-      }
-      startGame(username);
+        hideAuthSections();
+        document.getElementById("game-screen").style.display = "block";
+        if (username) {
+            document.getElementById("username-display").textContent = username;
+        }
+        function showGameScreen(username) {
+            hideAuthSections();
+            document.getElementById("game-screen").style.display = "block";
+            if (username) {
+                document.getElementById("username-display").textContent = username;
+            }
+            // Call the exported startGame function.
+            startGame(username);
+        }
     }
 
     // --- Dummy startGame Function ---
