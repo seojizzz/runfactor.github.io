@@ -65,16 +65,32 @@ exports.submitScore = functions.https.onCall((data, context) => {
 
 function hideAuthSections() {
     document.getElementById("start-screen").style.display = "none";
-    // If you have additional containers like account options or existing account:
     document.getElementById("account-options").style.display = "none";
     document.getElementById("existing-account").style.display = "none";
 }
-function showGameScreen() {
-    hideAuthSections(); // Hide all auth-related sections
+
+function showGameScreen(username) {
+    hideAuthSections();
     document.getElementById("game-screen").style.display = "block";
-    // Optionally, call your startGame() function:
-    startGame(document.getElementById("username").value);
+    startGame(username);  // Call your game initialization
 }
+
+// Attach a single listener on the start button:
+document.getElementById("start-btn").addEventListener("click", function() {
+    let username = document.getElementById("username").value.trim();
+    if (username.length === 0) {
+        alert("Username cannot be empty.");
+        return;
+    }
+    if (containsProfanity(username)) {
+        document.getElementById("username-error").style.display = "block";
+        return;
+    } else {
+        document.getElementById("username-error").style.display = "none";
+    }
+    showGameScreen(username);
+});
+
   
 
 // 4. Define PrimeFactorGame Class
@@ -98,22 +114,6 @@ class PrimeFactorGame {
   
   // Set up event listeners in one place
     bindEvents() {
-        document.getElementById("start-btn").addEventListener("click", function () {
-            let username = document.getElementById("username").value.trim();
-            if (username.length === 0) {
-            alert("Username cannot be empty.");
-            return;
-            }
-            if (containsProfanity(username)) {
-            document.getElementById("username-error").style.display = "block";
-            return;
-            } else {
-            document.getElementById("username-error").style.display = "none";
-            }
-            
-            // Hide authentication sections and show game screen
-            showGameScreen();
-        });
         document.getElementById("buttons").addEventListener("click", (e) => {
             if (e.target && e.target.classList.contains("prime-btn")) {
                 const guessedFactor = parseInt(e.target.textContent, 10);
