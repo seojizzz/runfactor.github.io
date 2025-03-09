@@ -203,31 +203,32 @@ class PrimeFactorGame {
     }
   
     startGame(username) {
-        // Reset game state, create buttons, and start countdown before generating a question.
+        // Reset game state.
         this.timer = 120.00;
         this.score = 0;
         this.mistakeCount = 0;
         this.comboStreak = 0;
         this.questionNumber = 1;
         
+        // Create the prime buttons.
         this.createButtons();
         
-        // Start a 3-second countdown
+        // Start a 3-second countdown before beginning the game.
         let countdown = 3;
         document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
         
         let countdownInterval = setInterval(() => {
-        countdown--;
-        if (countdown > 0) {
-            document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
-        } else {
-            clearInterval(countdownInterval);
-            this.setQuestion();
-            this.beginGame();
-        }
+            countdown--;
+            if (countdown > 0) {
+                document.getElementById("number-display").innerText = `Starting in ${countdown}...`;
+            } else {
+                clearInterval(countdownInterval);
+                // When the countdown finishes, generate the first question and start the timer.
+                this.setQuestion();
+                this.beginGame();
+            }
         }, 1000);
     }
-    
   
     beginGame() {
         this.timerInterval = setInterval(() => {
