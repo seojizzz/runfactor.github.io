@@ -591,9 +591,3 @@ function gameOver() {
 //         console.error("Error deleting scores:", error);
 //     }
 // }
-
-const game = new PrimeFactorGame();
-window.game = game;
-export function startGame(username) {
-    game.startGame(username);
-}
