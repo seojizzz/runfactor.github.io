@@ -63,6 +63,19 @@ exports.submitScore = functions.https.onCall((data, context) => {
   });
 });
 
+function hideAuthSections() {
+    document.getElementById("start-screen").style.display = "none";
+    // If you have additional containers like account options or existing account:
+    document.getElementById("account-options").style.display = "none";
+    document.getElementById("existing-account").style.display = "none";
+}
+function showGameScreen() {
+    hideAuthSections(); // Hide all auth-related sections
+    document.getElementById("game-screen").style.display = "block";
+    // Optionally, call your startGame() function:
+    startGame(document.getElementById("username").value);
+}
+  
 
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
@@ -95,6 +108,22 @@ class PrimeFactorGame {
                 this.handleGuess(guessedFactor);
             }
             });
+        document.getElementById("start-btn").addEventListener("click", function () {
+            let username = document.getElementById("username").value.trim();
+            if (username.length === 0) {
+            alert("Username cannot be empty.");
+            return;
+            }
+            if (containsProfanity(username)) {
+            document.getElementById("username-error").style.display = "block";
+            return;
+            } else {
+            document.getElementById("username-error").style.display = "none";
+            }
+            
+            // Hide authentication sections and show game screen
+            showGameScreen();
+        });
         }
 
       // Creates and renders the prime buttons dynamically
