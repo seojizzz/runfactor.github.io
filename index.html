@@ -190,191 +190,67 @@
         document.getElementById('existing-password').value = "";
     });
     </script>
-</body>         
-<head>
-<link rel="icon" href="favicon.ico" type="image/x-icon">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prime Factorization Challenge</title>
-<link rel="stylesheet" href="styles.css">
-<script type="module" src="game.js"></script>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        text-align: center;
-    }
-    #buttons {
-        display: grid;
-        grid-template-columns: repeat(3, 100px);
-        gap: 10px;
-        justify-content: center;
-        margin-top: 20px;
-    }
-    .prime-btn {
-        width: 100px;
-        height: 100px;
-        font-size: 24px;
-        cursor: pointer;
-    }
-    .correct {
-        background-color: #90EE90; /* Green */
-    }
-    .wrong {
-        background-color: #FFB6C1; /* Red */
-    }
-    #game-screen, #end-screen {
-        display: none;
-    }
-</style>
-</head>
-<body>
-    <title>Prime Factorization Challenge</title>
-    <!-- Start Screen -->
-    <div id="start-screen">
-        <label for="username">Enter your name:</label>
-        <input type="text" id="username" maxlength="20" oninput="updateCharCount()">
-        <p id="char-count">0 / 20</p>
+</body>
 
-        <script>
-            function updateCharCount() {
-                let input = document.getElementById("username");
-                let charCount = document.getElementById("char-count");
-                charCount.textContent = `${input.value.length} / 20`;
-            }
-        </script>            
-       <br><br>
-       <!-- Hyperlinks for Leaderboard & GitHub -->
-       <div style="position:absolute; top:10px; right:20px;">
-           <a href="leaderboard.html">View Leaderboard</a> |
-           <a href="https://github.com/seojizzz/runfactor.github.io/tree/main" target="_blank">GitHub Repo</a>
-       </div>
-        <button id="start-btn">Start</button>
-        <script type="module">
-            import { startGame } from "./game.js";
-        
-            document.getElementById("start-btn").addEventListener("click", function() {
-                let username = document.getElementById("username").value;
-                if (username.length > 20) {
-                    alert("Username must be 20 characters or less.");
-                } else if (username.trim() === "") {
-                    alert("Username cannot be empty.");
-                } else {
-                    document.getElementById("start-screen").style.display = "none";
-                    document.getElementById("game-screen").style.display = "block";
-                    startGame();
-                }
-            });
-        </script>    
-        <p id="username-error" style="color: red; display: none;">Inappropriate username. Please choose another.</p>
-        <script type="module">
-            import badWordsList from "./badwords.js";
-            import { startGame } from "./game.js";
-        
-            function containsProfanity(username) {
-                const lowerUsername = username.toLowerCase();
-                return badWordsList.some((word) => lowerUsername.includes(word));
-            }
-        
-            document.getElementById("start-btn").addEventListener("click", function () {
-                let username = document.getElementById("username").value.trim();
-        
-                if (username.length === 0) {
-                    alert("Username cannot be empty.");
-                    return;
-                }
-        
-                if (containsProfanity(username)) {
-                    document.getElementById("username-error").style.display = "block";
-                    return;
-                } else {
-                    document.getElementById("username-error").style.display = "none";
-                }
-        
-                // Start the game and hide the start screen
-                document.getElementById("start-screen").style.display = "none";
-                document.getElementById("game-screen").style.display = "block";
-                startGame(username);
-            });
-        </script>
-                  
-    </div>
-    <!-- Game Screen -->
-    <div id="game-screen">
+<!-- Game Screen (hidden until sign-in is complete) -->
+<!-- Game Screen -->
+<div id="game-screen">
+    <header>
         <h1>Prime Factorization Challenge</h1>
+        <!-- Username display: will be filled with the player's name if not playing anonymously -->
         <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
+        <!-- Timer display -->
         <p id="timer-display">Time Left: 120.00s</p>
-
+    </header>
+    <section id="game-content">
+        <!-- Composite number display -->
         <p id="number-display">Factorize: Generating number...</p>
-
         <div class="game-container">
-            <div id="buttons"></div> <!-- Prime buttons centered -->
-
+            <!-- Prime buttons container -->
+            <div id="buttons"></div>
+            <!-- Score container -->
             <div class="score-container">
                 <p id="score-label">Score:</p>
                 <p id="score-display">0</p>
+                <!-- Temporary score increment animation -->
                 <p id="action-text">+0</p>
             </div>
         </div>
-    </div>
-    <!-- End Screen -->
-    <div id="end-screen" style="display: none;">
-        <h1>Game Over</h1>
-        <p id="final-score"></p> <!-- Final score is displayed here -->
-        <h2>Correctly Factorized</h2>
-        <ul id="correct-list"></ul>
-
-        <h2>Incorrectly Factorized</h2>
-        <ul id="wrong-list"></ul>
-
-        <button onclick="location.reload()">Play Again</button>
+    </section>
+  </div>
+  
+  <!-- End Screen -->
+  <div id="end-screen" style="display: none;">
+    <h1>Game Over</h1>
+    <!-- Final score display -->
+    <p id="final-score"></p>
+    <!-- Results sections -->
+    <section id="results">
+        <div id="correct-results">
+            <h2>Correctly Factorized</h2>
+            <ul id="correct-list"></ul>
+        </div>
+        <div id="incorrect-results">
+            <h2>Incorrectly Factorized</h2>
+            <ul id="wrong-list"></ul>
+        </div>
+    </section>
+    <!-- Replay button -->
+    <button onclick="location.reload()">Play Again</button>
+    <!-- Leaderboard -->
+    <section id="leaderboard-section">
         <h2>Leaderboard (Top 10)</h2>
         <table id="leaderboard">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Username</th>
+                <th>Score</th>
+            </tr>
+        </thead>
             <tbody id="leaderboard-body">
-                <!-- Leaderboard entries will be dynamically added here -->
+          <!-- Leaderboard entries will be added dynamically -->
             </tbody>
         </table>
-    </div>
-</body>
-</html>
-<script>
-    const CURRENT_VERSION = "1.0.3"; // Update this whenever you deploy a new version
-    
-    async function checkForUpdate() {
-      try {
-        let response = await fetch("version.json?v=" + new Date().getTime()); // Prevent caching
-        let data = await response.json();
-    
-        if (data.version !== CURRENT_VERSION) {
-          showUpdateNotification();
-        }
-      } catch (error) {
-        console.error("Error checking for updates:", error);
-      }
-    }
-    
-    function showUpdateNotification() {
-      let updateDiv = document.createElement("div");
-      updateDiv.innerHTML = `
-        <div style="position:fixed; bottom:10px; left:50%; transform:translateX(-50%);
-                    background:#f44336; color:white; padding:10px 20px; border-radius:5px;
-                    font-size:16px; z-index:1000;">
-          A new version is available. <button onclick="hardRefresh()" 
-          style="background:white; color:#f44336; border:none; padding:5px 10px;
-          cursor:pointer; font-weight:bold;">Refresh Now</button>
-        </div>`;
-      document.body.appendChild(updateDiv);
-    }
-    
-    function hardRefresh() {
-      location.reload(true); // Forces hard reload
-    }
-    
-    checkForUpdate();
-</script>
+    </section>
+  </div>

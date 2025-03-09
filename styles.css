@@ -1,4 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Hind+Vadodara:wght@700&display=swap');
+
+header {
+    position: relative;
+    padding: 10px 0;
+}
+    #game-content {
+        margin-top: 20px;
+}
+    #results {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+}
+  
+
 /* General Styling */
 #username {
     width: 250px; /* Adjust width as needed */
