@@ -485,21 +485,21 @@ function hideAuthSections() {
   }
 
 
-function gameOver() {
-    let username = document.getElementById("username").value;
-    let scoreText = document.getElementById("score-display").innerText.trim();
+// function gameOver() {
+//     let username = document.getElementById("username").value;
+//     let scoreText = document.getElementById("score-display").innerText.trim();
 
-    // Remove any non-numeric characters and convert to a number
-    let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
+//     // Remove any non-numeric characters and convert to a number
+//     let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
 
-    console.log("Game over! Submitting score:", { username, finalScore });
+//     console.log("Game over! Submitting score:", { username, finalScore });
 
-    if (username && !isNaN(finalScore)) {
-        submitScore(username, finalScore);
-    } else {
-        console.error("Invalid username or score, not submitting.");
-    }
-}
+//     if (username && !isNaN(finalScore)) {
+//         submitScore(username, finalScore);
+//     } else {
+//         console.error("Invalid username or score, not submitting.");
+//     }
+// }
 
 // let leaderboardLoaded = false;
 
