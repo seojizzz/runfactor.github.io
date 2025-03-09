@@ -136,12 +136,12 @@
     }
 
     function showGameScreen(username) {
-    hideAuthSections();
-    document.getElementById("game-screen").style.display = "block";
-    if (username) {
-        document.getElementById("username-display").textContent = username;
+        hideAuthSections();
+        document.getElementById("game-screen").style.display = "block";
+        if (username) {
+            document.getElementById("username-display").textContent = username;
+        }
     }
-
     // Replace this with your actual game initialization logic from game.js
     function startGame(username) {
         game.startGame();
