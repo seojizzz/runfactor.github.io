@@ -1,37 +1,37 @@
 // 1. Import Firebase Modules
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import badWordsList from "./badwords.js"; // External file with bad words
-import {query, where, orderBy, limit, deleteDoc, doc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+// import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
+// import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+// import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+// import badWordsList from "./badwords.js"; // External file with bad words
+// import {query, where, orderBy, limit, deleteDoc, doc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// 2a. Firebase Configuration
-const firebaseConfig = {
-    apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
-    authDomain: "runfactor-cf724.firebaseapp.com",
-    projectId: "runfactor-cf724",
-    storageBucket: "runfactor-cf724.firebasestorage.app",
-    messagingSenderId: "882591954418",
-    appId: "1:882591954418:web:39964ebfa664061fb4a76b",
-    measurementId: "G-KWWWHF4NQE"
-};
+// // 2a. Firebase Configuration
+// const firebaseConfig = {
+//     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
+//     authDomain: "runfactor-cf724.firebaseapp.com",
+//     projectId: "runfactor-cf724",
+//     storageBucket: "runfactor-cf724.firebasestorage.app",
+//     messagingSenderId: "882591954418",
+//     appId: "1:882591954418:web:39964ebfa664061fb4a76b",
+//     measurementId: "G-KWWWHF4NQE"
+// };
 
-// 2b. Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+// // 2b. Initialize Firebase
+// const app = initializeApp(firebaseConfig);
+// const auth = getAuth(app);
+// const db = getFirestore(app);
 
-// Sign in anonymously
-signInAnonymously(auth)
-  .then(() => {
-    console.log("Signed in anonymously");
-    // You can now start your game logic safely
-    startGame();
-  })
-  .catch((error) => {
-    console.error("Authentication error:", error);
-  });
+// // Sign in anonymously
+// signInAnonymously(auth)
+//   .then(() => {
+//     console.log("Signed in anonymously");
+//     // You can now start your game logic safely
+//     startGame();
+//   })
+//   .catch((error) => {
+//     console.error("Authentication error:", error);
+//   });
 
 // authentication
 // const functions = require("firebase-functions");
