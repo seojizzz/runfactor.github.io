@@ -53,6 +53,25 @@
         </div>
     </div>
     </div>
+    <script>
+        function hideAuthSections() {
+            document.getElementById("sign-in-page").style.display = "none";
+            document.getElementById("account-options").style.display = "none";
+            document.getElementById("existing-account").style.display = "none";
+        }
+
+            function showGameScreen(username) {
+            hideAuthSections();
+            document.getElementById("game-screen").style.display = "block";
+            // If a username is provided, display it.
+            if (username) {
+                document.getElementById("username-display").textContent = username;
+            }
+            // Initialize the game logic here:
+            startGame(username);
+        }
+
+    </script>
 
     <!-- Existing Account Login -->
     <div id="existing-account">
@@ -171,24 +190,24 @@
         });
     });
 
-    // "Sign In" button handler for existing accounts.
-    document.getElementById('sign-in-btn').addEventListener('click', () => {
-        const password = document.getElementById('existing-password').value;
-        const account = fakeAccountsDB[currentUsername];
-        if (account && account.password === password) {
-        alert("Sign in successful! Welcome back.");
-        showGameScreen(username);
-        } else {
-        alert("Incorrect password. Please try again.");
-        }
-    });
+        // "Sign In" button handler for existing accounts.
+        document.getElementById('sign-in-btn').addEventListener('click', () => {
+            const password = document.getElementById('existing-password').value;
+            const account = fakeAccountsDB[currentUsername];
+            if (account && account.password === password) {
+            alert("Sign in successful! Welcome back.");
+            showGameScreen(username);
+            } else {
+            alert("Incorrect password. Please try again.");
+            }
+        });
 
-    // "Not your account?" button handler.
-    document.getElementById('not-your-account-btn').addEventListener('click', () => {
-        document.getElementById('existing-account').style.display = 'none';
-        document.getElementById('sign-in-page').style.display = 'block';
-        document.getElementById('existing-password').value = "";
-    });
+        // "Not your account?" button handler.
+        document.getElementById('not-your-account-btn').addEventListener('click', () => {
+            document.getElementById('existing-account').style.display = 'none';
+            document.getElementById('sign-in-page').style.display = 'block';
+            document.getElementById('existing-password').value = "";
+        });
     </script>
 </body>
 
