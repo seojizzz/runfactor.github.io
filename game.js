@@ -33,35 +33,35 @@ signInAnonymously(auth)
     console.error("Authentication error:", error);
   });
 
-// authentication
-// const functions = require("firebase-functions");
-// const admin = require("firebase-admin");
-// admin.initializeApp();
+authentication
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+admin.initializeApp();
 
-// exports.submitScore = functions.https.onCall((data, context) => {
-//   // Make sure the user is authenticated.
-//   if (!context.auth) {
-//     throw new functions.https.HttpsError("unauthenticated", "User must be authenticated.");
-//   }
+exports.submitScore = functions.https.onCall((data, context) => {
+  // Make sure the user is authenticated.
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "User must be authenticated.");
+  }
   
-//   // Validate the data
-//   const username = data.username;
-//   const score = data.score;
-//   if (typeof username !== "string" || username.trim() === "") {
-//     throw new functions.https.HttpsError("invalid-argument", "Invalid username");
-//   }
-//   if (typeof score !== "number" || score < 0) {
-//     throw new functions.https.HttpsError("invalid-argument", "Invalid score");
-//   }
+  // Validate the data
+  const username = data.username;
+  const score = data.score;
+  if (typeof username !== "string" || username.trim() === "") {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid username");
+  }
+  if (typeof score !== "number" || score < 0) {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid score");
+  }
 
-//   // Write to Firestore
-//   return admin.firestore().collection("scores").add({
-//     username: username,
-//     score: score,
-//     timestamp: admin.firestore.FieldValue.serverTimestamp(),
-//     uid: context.auth.uid,
-//   });
-// });
+  // Write to Firestore
+  return admin.firestore().collection("scores").add({
+    username: username,
+    score: score,
+    timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    uid: context.auth.uid,
+  });
+});
 
 // "Play Anonymously" button handler.
 document.getElementById('play-anon-btn').addEventListener('click', () => {
@@ -131,7 +131,7 @@ class PrimeFactorGame {
       this.currentNumber = 0;
       this.originalNumber = 0;
       
-      this.bannedWords = ["badword1", "badword2", "anotherbadword"];
+      this.bannedWords = badWordsList;
       this.bindEvents();
     }
     
@@ -491,158 +491,142 @@ function hideAuthSections() {
   }
 
 
-// function gameOver() {
-//     let username = document.getElementById("username").value;
-//     let scoreText = document.getElementById("score-display").innerText.trim();
+let leaderboardLoaded = false;
 
-//     // Remove any non-numeric characters and convert to a number
-//     let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
+async function loadLeaderboard() {
+    if (leaderboardLoaded) return; // Prevent multiple calls
 
-//     console.log("Game over! Submitting score:", { username, finalScore });
+    const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+    const querySnapshot = await getDocs(q);
 
-//     if (username && !isNaN(finalScore)) {
-//         submitScore(username, finalScore);
-//     } else {
-//         console.error("Invalid username or score, not submitting.");
-//     }
-// }
+    let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+    leaderboardTable.innerHTML = ""; // Clear old data
 
-// let leaderboardLoaded = false;
+    querySnapshot.forEach((doc, index) => {
+        let row = leaderboardTable.insertRow();
+        row.insertCell(0).innerText = index + 1;
+        row.insertCell(1).innerText = doc.data().username;
+        row.insertCell(2).innerText = doc.data().score;
+    });
 
-// async function loadLeaderboard() {
-//     if (leaderboardLoaded) return; // Prevent multiple calls
+    leaderboardLoaded = true; // Ensure leaderboard only loads once
+}
 
-//     const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
-//     const querySnapshot = await getDocs(q);
+export async function fetchLeaderboard(entriesToShow = 10) {
+    console.log("Fetching leaderboard...");
 
-//     let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-//     leaderboardTable.innerHTML = ""; // Clear old data
+    try {
+        const db = getFirestore();
+        const leaderboardRef = collection(db, "scores");
+        const querySnapshot = await getDocs(leaderboardRef);
 
-//     querySnapshot.forEach((doc, index) => {
-//         let row = leaderboardTable.insertRow();
-//         row.insertCell(0).innerText = index + 1;
-//         row.insertCell(1).innerText = doc.data().username;
-//         row.insertCell(2).innerText = doc.data().score;
-//     });
+        let userScores = new Map(); // Map to store highest score per user
 
-//     leaderboardLoaded = true; // Ensure leaderboard only loads once
-// }
+        querySnapshot.forEach((doc) => {
+            let data = doc.data();
+            let scoreValue = data.finalScore ?? data.score;
+            let username = data.username;
 
-// export async function fetchLeaderboard(entriesToShow = 10) {
-//     console.log("Fetching leaderboard...");
+            if (username && scoreValue !== undefined) {
+                // Store only the highest score for each user
+                if (!userScores.has(username) || userScores.get(username) < scoreValue) {
+                    userScores.set(username, scoreValue);
+                }
+            } else {
+                console.warn("Document is missing username or score:", data);
+            }
+        });
 
-//     try {
-//         const db = getFirestore();
-//         const leaderboardRef = collection(db, "scores");
-//         const querySnapshot = await getDocs(leaderboardRef);
+        // Convert map to array, sort by score descending
+        let leaderboardData = Array.from(userScores.entries())
+            .map(([username, finalScore]) => ({ username, finalScore }))
+            .sort((a, b) => b.finalScore - a.finalScore);
 
-//         let userScores = new Map(); // Map to store highest score per user
+        updateLeaderboardTable(leaderboardData.slice(0, entriesToShow));
 
-//         querySnapshot.forEach((doc) => {
-//             let data = doc.data();
-//             let scoreValue = data.finalScore ?? data.score;
-//             let username = data.username;
+        // Store full leaderboard for "Show More" functionality
+        window.fullLeaderboard = leaderboardData;
 
-//             if (username && scoreValue !== undefined) {
-//                 // Store only the highest score for each user
-//                 if (!userScores.has(username) || userScores.get(username) < scoreValue) {
-//                     userScores.set(username, scoreValue);
-//                 }
-//             } else {
-//                 console.warn("Document is missing username or score:", data);
-//             }
-//         });
+        console.log("Leaderboard updated!");
 
-//         // Convert map to array, sort by score descending
-//         let leaderboardData = Array.from(userScores.entries())
-//             .map(([username, finalScore]) => ({ username, finalScore }))
-//             .sort((a, b) => b.finalScore - a.finalScore);
+    } catch (error) {
+        console.error("🔥 Error fetching leaderboard:", error);
+    }
+}
 
-//         updateLeaderboardTable(leaderboardData.slice(0, entriesToShow));
+export function updateLeaderboardTable(data) {
+    const leaderboardBody = document.getElementById("leaderboard-body");
+    leaderboardBody.innerHTML = ""; 
 
-//         // Store full leaderboard for "Show More" functionality
-//         window.fullLeaderboard = leaderboardData;
+    data.forEach((entry, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${entry.username || "Unknown"}</td>
+            <td>${entry.finalScore || 0}</td>
+        `;
+        leaderboardBody.appendChild(row);
+    });
+}
 
-//         console.log("Leaderboard updated!");
+// Call fetchLeaderboard when the end screen is displayed
+document.addEventListener("DOMContentLoaded", () => {
+    fetchLeaderboard();
+});
 
-//     } catch (error) {
-//         console.error("🔥 Error fetching leaderboard:", error);
-//     }
-// }
+async function submitScore(username, score) {
+    try {
+        const scoresRef = collection(db, "scores");
 
-// export function updateLeaderboardTable(data) {
-//     const leaderboardBody = document.getElementById("leaderboard-body");
-//     leaderboardBody.innerHTML = ""; 
+        // Step 1: Fetch all scores by this user
+        const q = query(scoresRef, where("username", "==", username), orderBy("score", "desc"));
+        const querySnapshot = await getDocs(q);
+        let scores = [];
 
-//     data.forEach((entry, index) => {
-//         const row = document.createElement("tr");
-//         row.innerHTML = `
-//             <td>${index + 1}</td>
-//             <td>${entry.username || "Unknown"}</td>
-//             <td>${entry.finalScore || 0}</td>
-//         `;
-//         leaderboardBody.appendChild(row);
-//     });
-// }
+        querySnapshot.forEach(doc => {
+            scores.push({ id: doc.id, score: doc.data().score });
+        });
 
-// // Call fetchLeaderboard when the end screen is displayed
-// document.addEventListener("DOMContentLoaded", () => {
-//     fetchLeaderboard();
-// });
+        console.log(`Current scores for ${username}:`, scores);
 
-// async function submitScore(username, score) {
-//     try {
-//         const scoresRef = collection(db, "scores");
+        // Step 2: If 3 or more scores exist, remove the lowest one before adding the new one
+        if (scores.length >= 3) {
+            let lowestScore = scores[scores.length - 1]; // The lowest score (last one in descending order)
+            await deleteDoc(doc(db, "scores", lowestScore.id)); // Remove the lowest score
+            console.log(`Deleted lowest score: ${lowestScore.score}`);
+        }
 
-//         // Step 1: Fetch all scores by this user
-//         const q = query(scoresRef, where("username", "==", username), orderBy("score", "desc"));
-//         const querySnapshot = await getDocs(q);
-//         let scores = [];
+        // Step 3: Add the new score
+        await addDoc(scoresRef, {
+            username: username,
+            score: score,
+            timestamp: serverTimestamp()
+        });
 
-//         querySnapshot.forEach(doc => {
-//             scores.push({ id: doc.id, score: doc.data().score });
-//         });
+        console.log("Score submitted successfully!");
+    } catch (error) {
+        console.error("Error submitting score:", error);
+    }
+}
+async function deleteUserScores(username) {
+    try {
+        const scoresRef = collection(db, "scores");
+        const q = query(scoresRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
 
-//         console.log(`Current scores for ${username}:`, scores);
+        if (querySnapshot.empty) {
+            console.log(`No scores found for ${username}.`);
+            return;
+        }
 
-//         // Step 2: If 3 or more scores exist, remove the lowest one before adding the new one
-//         if (scores.length >= 3) {
-//             let lowestScore = scores[scores.length - 1]; // The lowest score (last one in descending order)
-//             await deleteDoc(doc(db, "scores", lowestScore.id)); // Remove the lowest score
-//             console.log(`Deleted lowest score: ${lowestScore.score}`);
-//         }
+        let deletedCount = 0;
+        for (const document of querySnapshot.docs) {
+            await deleteDoc(doc(db, "scores", document.id));
+            deletedCount++;
+        }
 
-//         // Step 3: Add the new score
-//         await addDoc(scoresRef, {
-//             username: username,
-//             score: score,
-//             timestamp: serverTimestamp()
-//         });
-
-//         console.log("Score submitted successfully!");
-//     } catch (error) {
-//         console.error("Error submitting score:", error);
-//     }
-// }
-// async function deleteUserScores(username) {
-//     try {
-//         const scoresRef = collection(db, "scores");
-//         const q = query(scoresRef, where("username", "==", username));
-//         const querySnapshot = await getDocs(q);
-
-//         if (querySnapshot.empty) {
-//             console.log(`No scores found for ${username}.`);
-//             return;
-//         }
-
-//         let deletedCount = 0;
-//         for (const document of querySnapshot.docs) {
-//             await deleteDoc(doc(db, "scores", document.id));
-//             deletedCount++;
-//         }
-
-//         console.log(`Deleted ${deletedCount} scores for ${username}.`);
-//     } catch (error) {
-//         console.error("Error deleting scores:", error);
-//     }
-// }
+        console.log(`Deleted ${deletedCount} scores for ${username}.`);
+    } catch (error) {
+        console.error("Error deleting scores:", error);
+    }
+}
