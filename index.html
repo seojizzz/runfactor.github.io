@@ -206,18 +206,16 @@
             document.getElementById("sign-in-page").style.display = "block";
         });
 
-        // "Play Anonymously" button
-        document.getElementById("play-anon-btn").addEventListener("click", () => {
-            window.playAnonymously = true;
+        document.getElementById('play-anon-btn').addEventListener('click', () => {
+            window.playAnonymously = true; // Set flag for anonymous play.
             alert("Playing anonymously. Your scores won't be saved.");
-            showGameScreen("");
+            showGameScreen(""); // Pass an empty username for anonymous play.
         });
 
-        // "Create Account" button
-        document.getElementById("create-account-btn").addEventListener("click", () => {
-            const email = document.getElementById("new-email").value.trim();
-            const password = document.getElementById("new-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
+        document.getElementById('create-account-btn').addEventListener('click', () => {
+            const email = document.getElementById('new-email').value.trim();
+            const password = document.getElementById('new-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
             if (!email || !password || !confirmPassword) {
                 alert("Please fill in all fields.");
                 return;
@@ -231,6 +229,7 @@
                     alert("Email already in use. Please choose a different email.");
                     return;
                 } else {
+                    // Simulate account creation.
                     fakeAccountsDB[currentUsername] = { email, password };
                     alert("Account created successfully! Your scores will be saved.");
                     showGameScreen(currentUsername);
@@ -238,9 +237,8 @@
             });
         });
 
-        // "Sign In" button for existing accounts
-        document.getElementById("sign-in-btn").addEventListener("click", () => {
-            const password = document.getElementById("existing-password").value;
+        document.getElementById('sign-in-btn').addEventListener('click', () => {
+            const password = document.getElementById('existing-password').value;
             const account = fakeAccountsDB[currentUsername];
             if (account && account.password === password) {
                 alert("Sign in successful! Welcome back.");

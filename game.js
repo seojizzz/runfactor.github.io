@@ -64,47 +64,7 @@
 // });
 
 // "Play Anonymously" button handler.
-document.getElementById('play-anon-btn').addEventListener('click', () => {
-    window.playAnonymously = true; // Set flag for anonymous play.
-    alert("Playing anonymously. Your scores won't be saved.");
-    showGameScreen(""); // Pass an empty username for anonymous play.
-});
 
-document.getElementById('create-account-btn').addEventListener('click', () => {
-    const email = document.getElementById('new-email').value.trim();
-    const password = document.getElementById('new-password').value;
-    const confirmPassword = document.getElementById('confirm-password').value;
-    if (!email || !password || !confirmPassword) {
-        alert("Please fill in all fields.");
-        return;
-    }
-    if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-    }
-    checkEmailExists(email).then(emailExists => {
-        if (emailExists) {
-            alert("Email already in use. Please choose a different email.");
-            return;
-        } else {
-            // Simulate account creation.
-            fakeAccountsDB[currentUsername] = { email, password };
-            alert("Account created successfully! Your scores will be saved.");
-            showGameScreen(currentUsername);
-        }
-    });
-});
-
-document.getElementById('sign-in-btn').addEventListener('click', () => {
-    const password = document.getElementById('existing-password').value;
-    const account = fakeAccountsDB[currentUsername];
-    if (account && account.password === password) {
-        alert("Sign in successful! Welcome back.");
-        showGameScreen(currentUsername);
-    } else {
-        alert("Incorrect password. Please try again.");
-    }
-});
 
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
