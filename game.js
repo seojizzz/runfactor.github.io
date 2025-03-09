@@ -64,7 +64,7 @@ exports.submitScore = functions.https.onCall((data, context) => {
 });
 
 function hideAuthSections() {
-    document.getElementById("start-screen").style.display = "none";
+    document.getElementById("sign-in-page").style.display = "none";
     document.getElementById("account-options").style.display = "none";
     document.getElementById("existing-account").style.display = "none";
 }
@@ -72,24 +72,57 @@ function hideAuthSections() {
 function showGameScreen(username) {
     hideAuthSections();
     document.getElementById("game-screen").style.display = "block";
-    startGame(username);  // Call your game initialization
+    // If not playing anonymously, display the username.
+    if (username) {
+        document.getElementById("username-display").textContent = username;
+    }
+    // Call your game initialization function.
+    startGame(username);
 }
 
-// Attach a single listener on the start button:
-document.getElementById("start-btn").addEventListener("click", function() {
-    let username = document.getElementById("username").value.trim();
-    if (username.length === 0) {
-        alert("Username cannot be empty.");
-        return;
-    }
-    if (containsProfanity(username)) {
-        document.getElementById("username-error").style.display = "block";
-        return;
-    } else {
-        document.getElementById("username-error").style.display = "none";
-    }
-    showGameScreen(username);
+// "Play Anonymously" button handler.
+document.getElementById('play-anon-btn').addEventListener('click', () => {
+    window.playAnonymously = true; // Set flag for anonymous play.
+    alert("Playing anonymously. Your scores won't be saved.");
+    showGameScreen(""); // Pass an empty username for anonymous play.
 });
+
+document.getElementById('create-account-btn').addEventListener('click', () => {
+    const email = document.getElementById('new-email').value.trim();
+    const password = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    if (!email || !password || !confirmPassword) {
+        alert("Please fill in all fields.");
+        return;
+    }
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+    checkEmailExists(email).then(emailExists => {
+        if (emailExists) {
+            alert("Email already in use. Please choose a different email.");
+            return;
+        } else {
+            // Simulate account creation.
+            fakeAccountsDB[currentUsername] = { email, password };
+            alert("Account created successfully! Your scores will be saved.");
+            showGameScreen(currentUsername);
+        }
+    });
+});
+
+document.getElementById('sign-in-btn').addEventListener('click', () => {
+    const password = document.getElementById('existing-password').value;
+    const account = fakeAccountsDB[currentUsername];
+    if (account && account.password === password) {
+        alert("Sign in successful! Welcome back.");
+        showGameScreen(currentUsername);
+    } else {
+        alert("Incorrect password. Please try again.");
+    }
+});
+
 
   
 

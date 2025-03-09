@@ -141,7 +141,7 @@
         window.playAnonymously = true;
         alert("Playing anonymously. Your scores won't be saved.");
         // Redirect to the game-start page (e.g., game.html) or call your startGame() function.
-        window.location.href = "game.html";
+        showGameScreen(username);
     });
 
     // "Create Account" button handler.
@@ -166,7 +166,7 @@
             fakeAccountsDB[currentUsername] = { email, password };
             alert("Account created successfully! Your scores will be saved.");
             // Redirect to game-start page.
-            window.location.href = "game.html";
+            showGameScreen(username);
         }
         });
     });
@@ -177,7 +177,7 @@
         const account = fakeAccountsDB[currentUsername];
         if (account && account.password === password) {
         alert("Sign in successful! Welcome back.");
-        window.location.href = "game.html";
+        showGameScreen(username);
         } else {
         alert("Incorrect password. Please try again.");
         }
