@@ -1,93 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sign In - Prime Factorization Challenge</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* Minimal styling for demonstration */
-    #sign-in-page, #account-options, #existing-account {
-      margin: 20px auto;
-      max-width: 400px;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      display: none;
-    }
-    /* By default, only sign-in is visible */
-    #sign-in-page {
-      display: block;
-    }
-    input {
-      display: block;
-      width: 100%;
-      margin: 10px 0;
-      padding: 8px;
-    }
-    button {
-      margin: 5px;
-      padding: 8px 12px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign In - Prime Factorization Challenge</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Minimal styling for demonstration */
+        #sign-in-page, #account-options, #existing-account {
+            margin: 20px auto;
+            max-width: 400px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            display: none;
+        }
+        /* By default, only sign-in is visible */
+        #sign-in-page {
+            display: block;
+        }
+        input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+            padding: 8px;
+        }
+        button {
+            margin: 5px;
+            padding: 8px 12px;
+        }
+    </style>
 </head>
 <body>
-  <!-- Sign In Page -->
-  <div id="sign-in-page">
-    <h1>Sign In</h1>
-    <label for="username-signin">Enter your username:</label>
-    <input type="text" id="username-signin" maxlength="20" placeholder="Username">
-    <button id="join-btn">Join</button>
-  </div>
-
-  <!-- New Account Options (username doesn't exist) -->
-  <div id="account-options">
-    <p id="new-account-message"></p>
-    <div id="new-account-form">
-      <input type="email" id="new-email" placeholder="Email">
-      <input type="password" id="new-password" placeholder="Password">
-      <input type="password" id="confirm-password" placeholder="Confirm Password">
-      <div>
-        <button id="back-btn">Back</button>
-        <button id="play-anon-btn">Play Anonymously</button>
-        <button id="create-account-btn">Create Account</button>
-      </div>
+    <!-- Sign In Page -->
+    <div id="sign-in-page">
+        <h1>Sign In</h1>
+        <label for="username-signin">Enter your username:</label>
+        <input type="text" id="username-signin" maxlength="20" placeholder="Username">
+        <button id="join-btn">Join</button>
     </div>
-  </div>
 
-  <!-- Existing Account Login -->
-  <div id="existing-account">
-    <p id="welcome-message"></p>
-    <input type="password" id="existing-password" placeholder="Enter your password">
-    <div>
-      <button id="sign-in-btn">Sign In</button>
-      <button id="not-your-account-btn">Not your account?</button>
+    <!-- New Account Options (username doesn't exist) -->
+    <div id="account-options">
+        <p id="new-account-message"></p>
+        <div id="new-account-form">
+        <input type="email" id="new-email" placeholder="Email">
+        <input type="password" id="new-password" placeholder="Password">
+        <input type="password" id="confirm-password" placeholder="Confirm Password">
+        <div>
+            <button id="back-btn">Back</button>
+            <button id="play-anon-btn">Play Anonymously</button>
+            <button id="create-account-btn">Create Account</button>
+        </div>
+        </div>
     </div>
-  </div>
+
+    <!-- Existing Account Login -->
+    <div id="existing-account">
+        <p id="welcome-message"></p>
+        <input type="password" id="existing-password" placeholder="Enter your password">
+        <div>
+        <button id="sign-in-btn">Sign In</button>
+        <button id="not-your-account-btn">Not your account?</button>
+        </div>
+    </div>
 
   <!-- Game Screen (hidden until sign-in is complete) -->
-  <div id="game-screen">
+<div id="game-screen">
     <header>
-      <h1>Prime Factorization Challenge</h1>
-      <!-- Username display: will be filled if not anonymous -->
-      <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
-      <!-- Timer display -->
-      <p id="timer-display">Time Left: 120.00s</p>
+        <h1>Prime Factorization Challenge</h1>
+        <!-- Username display: will be filled if not anonymous -->
+        <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
+        <!-- Timer display -->
+        <p id="timer-display">Time Left: 120.00s</p>
     </header>
     <section id="game-content">
       <!-- Composite number display -->
-      <p id="number-display">Factorize: Generating number...</p>
-      <div class="game-container">
+        <p id="number-display">Factorize: Generating number...</p>
+        <div class="game-container">
         <!-- Prime buttons container -->
-        <div id="buttons"></div>
-        <!-- Score container -->
-        <div class="score-container">
-          <p id="score-label">Score:</p>
-          <p id="score-display">0</p>
-          <!-- Temporary score increment animation -->
-          <p id="action-text">+0</p>
+            <div id="buttons"></div>
+            <!-- Score container -->
+            <div class="score-container">
+                <p id="score-label">Score:</p>
+                <p id="score-display">0</p>
+                <!-- Temporary score increment animation -->
+                <p id="action-text">+0</p>
+            </div>
         </div>
-      </div>
     </section>
   </div>
 
@@ -98,58 +98,40 @@
     <p id="final-score"></p>
     <!-- Results sections -->
     <section id="results">
-      <div id="correct-results">
-        <h2>Correctly Factorized</h2>
-        <ul id="correct-list"></ul>
-      </div>
-      <div id="incorrect-results">
-        <h2>Incorrectly Factorized</h2>
-        <ul id="wrong-list"></ul>
-      </div>
+        <div id="correct-results">
+            <h2>Correctly Factorized</h2>
+            <ul id="correct-list"></ul>
+        </div>
+        <div id="incorrect-results">
+            <h2>Incorrectly Factorized</h2>
+            <ul id="wrong-list"></ul>
+        </div>
     </section>
     <!-- Replay button -->
     <button onclick="location.reload()">Play Again</button>
     <!-- Leaderboard -->
     <section id="leaderboard-section">
-      <h2>Leaderboard (Top 10)</h2>
-      <table id="leaderboard">
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Username</th>
-            <th>Score</th>
-          </tr>
-        </thead>
-        <tbody id="leaderboard-body">
-          <!-- Leaderboard entries will be added dynamically -->
-        </tbody>
-      </table>
+        <h2>Leaderboard (Top 10)</h2>
+        <table id="leaderboard">
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Username</th>
+                    <th>Score</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+            <!-- Leaderboard entries will be added dynamically -->
+            </tbody>
+        </table>
     </section>
   </div>
-
-  <script>
+<script>
     // --- Helper Functions ---
     function hideAuthSections() {
-      document.getElementById("sign-in-page").style.display = "none";
-      document.getElementById("account-options").style.display = "none";
-      document.getElementById("existing-account").style.display = "none";
-    }
-
-    function showGameScreen(username) {
-        hideAuthSections();
-        document.getElementById("game-screen").style.display = "block";
-        if (username) {
-            document.getElementById("username-display").textContent = username;
-        }
-        function showGameScreen(username) {
-            hideAuthSections();
-            document.getElementById("game-screen").style.display = "block";
-            if (username) {
-                document.getElementById("username-display").textContent = username;
-            }
-            // Call the exported startGame function.
-            startGame(username);
-        }
+        document.getElementById("sign-in-page").style.display = "none";
+        document.getElementById("account-options").style.display = "none";
+        document.getElementById("existing-account").style.display = "none";
     }
 
     // --- Dummy startGame Function ---
@@ -160,15 +142,15 @@
 
     // --- Simulated Backend (For Demo) ---
     const fakeAccountsDB = {
-      'johnDoe': { email: 'john@example.com', password: 'password123' }
+        'johnDoe': { email: 'john@example.com', password: 'password123' }
     };
 
     function checkUserExists(username) {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(!!fakeAccountsDB[username]);
-        }, 500);
-      });
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(!!fakeAccountsDB[username]);
+            }, 500);
+        });
     }
 
     function checkEmailExists(email) {
@@ -191,86 +173,86 @@
 
     // Join button on sign-in page
     document.getElementById("join-btn").addEventListener("click", () => {
-      let username = document.getElementById("username-signin").value.trim();
-      if (username === "") {
-        alert("Username cannot be empty.");
-        return;
-      }
-      if (containsProfanity(username)) {
-        alert("Inappropriate username.");
-        return;
-      }
-      currentUsername = username;
-      checkUserExists(username).then(exists => {
-        if (exists) {
-          document.getElementById("sign-in-page").style.display = "none";
-          document.getElementById("existing-account").style.display = "block";
-          document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-        } else {
-          document.getElementById("sign-in-page").style.display = "none";
-          document.getElementById("account-options").style.display = "block";
-          document.getElementById("new-account-message").textContent =
-            `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
+        let username = document.getElementById("username-signin").value.trim();
+        if (username === "") {
+            alert("Username cannot be empty.");
+            return;
         }
-      });
+        if (containsProfanity(username)) {
+            alert("Inappropriate username.");
+            return;
+        }
+        currentUsername = username;
+        checkUserExists(username).then(exists => {
+            if (exists) {
+                document.getElementById("sign-in-page").style.display = "none";
+                document.getElementById("existing-account").style.display = "block";
+                document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+            } else {
+                document.getElementById("sign-in-page").style.display = "none";
+                document.getElementById("account-options").style.display = "block";
+                document.getElementById("new-account-message").textContent =
+                `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
+            }
+        });
     });
 
     // "Back" button (from account options)
     document.getElementById("back-btn").addEventListener("click", () => {
-      document.getElementById("account-options").style.display = "none";
-      document.getElementById("sign-in-page").style.display = "block";
+        document.getElementById("account-options").style.display = "none";
+        document.getElementById("sign-in-page").style.display = "block";
     });
 
     // "Play Anonymously" button
     document.getElementById("play-anon-btn").addEventListener("click", () => {
-      window.playAnonymously = true; // Flag for anonymous play
-      alert("Playing anonymously. Your scores won't be saved.");
-      showGameScreen("");
+        window.playAnonymously = true; // Flag for anonymous play
+        alert("Playing anonymously. Your scores won't be saved.");
+        showGameScreen("");
     });
 
     // "Create Account" button
     document.getElementById("create-account-btn").addEventListener("click", () => {
-      const email = document.getElementById("new-email").value.trim();
-      const password = document.getElementById("new-password").value;
-      const confirmPassword = document.getElementById("confirm-password").value;
-      if (!email || !password || !confirmPassword) {
-        alert("Please fill in all fields.");
-        return;
-      }
+        const email = document.getElementById("new-email").value.trim();
+        const password = document.getElementById("new-password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+        if (!email || !password || !confirmPassword) {
+            alert("Please fill in all fields.");
+            return;
+        }
       if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-      }
+            alert("Passwords do not match.");
+            return;
+        }
       checkEmailExists(email).then(emailExists => {
         if (emailExists) {
-          alert("Email already in use. Please choose a different email.");
-          return;
+            alert("Email already in use. Please choose a different email.");
+            return;
         } else {
-          // Simulate account creation.
-          fakeAccountsDB[currentUsername] = { email, password };
-          alert("Account created successfully! Your scores will be saved.");
-          showGameScreen(currentUsername);
+            // Simulate account creation.
+            fakeAccountsDB[currentUsername] = { email, password };
+            alert("Account created successfully! Your scores will be saved.");
+            showGameScreen(currentUsername);
         }
-      });
+        });
     });
 
     // "Sign In" button for existing accounts
     document.getElementById("sign-in-btn").addEventListener("click", () => {
-      const password = document.getElementById("existing-password").value;
-      const account = fakeAccountsDB[currentUsername];
-      if (account && account.password === password) {
-        alert("Sign in successful! Welcome back.");
-        showGameScreen(currentUsername);
-      } else {
-        alert("Incorrect password. Please try again.");
-      }
+        const password = document.getElementById("existing-password").value;
+        const account = fakeAccountsDB[currentUsername];
+        if (account && account.password === password) {
+            alert("Sign in successful! Welcome back.");
+            showGameScreen(currentUsername);
+        } else {
+            alert("Incorrect password. Please try again.");
+        }
     });
 
     // "Not your account?" button
     document.getElementById("not-your-account-btn").addEventListener("click", () => {
-      document.getElementById("existing-account").style.display = "none";
-      document.getElementById("sign-in-page").style.display = "block";
-      document.getElementById("existing-password").value = "";
+        document.getElementById("existing-account").style.display = "none";
+        document.getElementById("sign-in-page").style.display = "block";
+        document.getElementById("existing-password").value = "";
     });
   </script>
 </body>
