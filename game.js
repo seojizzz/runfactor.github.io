@@ -1,10 +1,11 @@
 // 1. Import Firebase Modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import badWordsList from "./badwords.js"; // External file with bad words
 import {query, where, orderBy, limit, deleteDoc, doc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
 
 // 2a. Firebase Configuration
 const firebaseConfig = {
@@ -24,14 +25,14 @@ const db = getFirestore(app);
 
 // Sign in anonymously
 signInAnonymously(auth)
-  .then(() => {
-    console.log("Signed in anonymously");
-    // You can now start your game logic safely
-    startGame();
-  })
-  .catch((error) => {
-    console.error("Authentication error:", error);
-  });
+    .then(() => {
+        console.log("Signed in anonymously");
+        // You can now start your game logic safely
+        startGame();
+    })
+    .catch((error) => {
+      console.error("Authentication error:", error);
+    });
 
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
@@ -370,17 +371,36 @@ class PrimeFactorGame {
 }
 
 // --- Global Helper Function ---
+// Ensure this global flag is defined so we only submit once.
+let scoreSubmitted = false;
+
 function gameOver() {
+  if (scoreSubmitted) return;
+  scoreSubmitted = true;
+  
+  // Use game.username (set during sign-in) and your stored user data.
   let username = window.game.username;
+  // For demonstration, assume these global variables were set upon sign‑in:
+  let email = window.userEmail || "default@example.com"; 
+  let password = window.userPassword || "defaultpassword";
+  
   let scoreText = document.getElementById("score-display").innerText.trim();
   let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
+  
   console.log("Game over! Submitting score:", { username, finalScore });
+  
   if (username && !isNaN(finalScore)) {
-    submitScore(username, finalScore);
+    submitUserScore(username, email, password, finalScore);
   } else {
     console.error("Invalid username or score, not submitting.");
   }
-}  
+}
+
+
+// user credentials
+window.userEmail = /* user's email */;
+window.userPassword = /* user's password */;
+window.game.username = /* user's username */;
 
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
@@ -418,10 +438,11 @@ async function updateUserRecord(username, email, password, newScore) {
 }
 
 
+import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
 async function getLeaderboard() {
   const db = getFirestore();
   const usersRef = collection(db, "users");
-  // Query top 20 users by highestScore descending.
   const q = query(usersRef, orderBy("highestScore", "desc"), limit(20));
   const querySnapshot = await getDocs(q);
   let leaderboard = [];
@@ -438,7 +459,7 @@ function hideAuthSections() {
     document.getElementById("existing-account").style.display = "none";
   }
   
-  function showGameScreen(username) {
+function showGameScreen(username) {
     hideAuthSections();
     document.getElementById("game-screen").style.display = "block";
     if (username) {
@@ -532,63 +553,44 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchLeaderboard();
 });
 
-async function submitScore(username, score) {
-    try {
-        const scoresRef = collection(db, "scores");
 
-        // Step 1: Fetch all scores by this user
-        const q = query(scoresRef, where("username", "==", username), orderBy("score", "desc"));
-        const querySnapshot = await getDocs(q);
-        let scores = [];
 
-        querySnapshot.forEach(doc => {
-            scores.push({ id: doc.id, score: doc.data().score });
-        });
-
-        console.log(`Current scores for ${username}:`, scores);
-
-        // Step 2: If 3 or more scores exist, remove the lowest one before adding the new one
-        if (scores.length >= 3) {
-            let lowestScore = scores[scores.length - 1]; // The lowest score (last one in descending order)
-            await deleteDoc(doc(db, "scores", lowestScore.id)); // Remove the lowest score
-            console.log(`Deleted lowest score: ${lowestScore.score}`);
-        }
-
-        // Step 3: Add the new score
-        await addDoc(scoresRef, {
-            username: username,
-            score: score,
-            timestamp: serverTimestamp()
-        });
-
-        console.log("Score submitted successfully!");
-    } catch (error) {
-        console.error("Error submitting score:", error);
+async function submitUserScore(username, email, password, finalScore) {
+  const db = getFirestore();
+  // Use the username as the document ID (in production, use the UID from Firebase Auth)
+  const userRef = doc(db, "users", username);
+  try {
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+      const currentHighest = docSnap.data().highestScore || 0;
+      if (finalScore > currentHighest) {
+        // Update record if new score is higher.
+        await setDoc(userRef, {
+          username: username,
+          email: email,
+          password: password, // Use hashed passwords in production.
+          highestScore: finalScore,
+          timestamp: serverTimestamp()
+        }, { merge: true });
+        console.log("User record updated with new high score.");
+      } else {
+        console.log("New score is not higher; record not updated.");
+      }
+    } else {
+      // Create a new record.
+      await setDoc(userRef, {
+        username: username,
+        email: email,
+        password: password,
+        highestScore: finalScore,
+        timestamp: serverTimestamp()
+      });
+      console.log("New user record created.");
     }
+  } catch (error) {
+    console.error("Error updating user record:", error);
+  }
 }
-async function deleteUserScores(username) {
-    try {
-        const scoresRef = collection(db, "scores");
-        const q = query(scoresRef, where("username", "==", username));
-        const querySnapshot = await getDocs(q);
-
-        if (querySnapshot.empty) {
-            console.log(`No scores found for ${username}.`);
-            return;
-        }
-
-        let deletedCount = 0;
-        for (const document of querySnapshot.docs) {
-            await deleteDoc(doc(db, "scores", document.id));
-            deletedCount++;
-        }
-
-        console.log(`Deleted ${deletedCount} scores for ${username}.`);
-    } catch (error) {
-        console.error("Error deleting scores:", error);
-    }
-}
-
 
 // --- Instantiate Game & Export startGame ---
 const game = new PrimeFactorGame();
