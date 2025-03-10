@@ -587,6 +587,7 @@ async function submitUserScore(username, email, password, finalScore) {
   }
 }
 
+
 // --- Instantiate Game & Export startGame ---
 const game = new PrimeFactorGame();
 window.game = game;
