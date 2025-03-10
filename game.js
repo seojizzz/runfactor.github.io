@@ -398,9 +398,10 @@ function gameOver() {
 
 
 // user credentials
-window.userEmail = /* user's email */;
-window.userPassword = /* user's password */;
-window.game.username = /* user's username */;
+window.userEmail = "example@example.com"; // user's email
+window.userPassword = "secretPassword"; // user's password
+window.game.username = "exampleUser"; // user's username
+
 
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
