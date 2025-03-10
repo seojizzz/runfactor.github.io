@@ -451,142 +451,142 @@ function hideAuthSections() {
   }
 
 
-// let leaderboardLoaded = false;
+let leaderboardLoaded = false;
 
-// async function loadLeaderboard() {
-//     if (leaderboardLoaded) return; // Prevent multiple calls
+async function loadLeaderboard() {
+    if (leaderboardLoaded) return; // Prevent multiple calls
 
-//     const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
-//     const querySnapshot = await getDocs(q);
+    const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
+    const querySnapshot = await getDocs(q);
 
-//     let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-//     leaderboardTable.innerHTML = ""; // Clear old data
+    let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
+    leaderboardTable.innerHTML = ""; // Clear old data
 
-//     querySnapshot.forEach((doc, index) => {
-//         let row = leaderboardTable.insertRow();
-//         row.insertCell(0).innerText = index + 1;
-//         row.insertCell(1).innerText = doc.data().username;
-//         row.insertCell(2).innerText = doc.data().score;
-//     });
+    querySnapshot.forEach((doc, index) => {
+        let row = leaderboardTable.insertRow();
+        row.insertCell(0).innerText = index + 1;
+        row.insertCell(1).innerText = doc.data().username;
+        row.insertCell(2).innerText = doc.data().score;
+    });
 
-//     leaderboardLoaded = true; // Ensure leaderboard only loads once
-// }
+    leaderboardLoaded = true; // Ensure leaderboard only loads once
+}
 
-// export async function fetchLeaderboard(entriesToShow = 10) {
-//     console.log("Fetching leaderboard...");
+export async function fetchLeaderboard(entriesToShow = 10) {
+    console.log("Fetching leaderboard...");
 
-//     try {
-//         const db = getFirestore();
-//         const leaderboardRef = collection(db, "scores");
-//         const querySnapshot = await getDocs(leaderboardRef);
+    try {
+        const db = getFirestore();
+        const leaderboardRef = collection(db, "scores");
+        const querySnapshot = await getDocs(leaderboardRef);
 
-//         let userScores = new Map(); // Map to store highest score per user
+        let userScores = new Map(); // Map to store highest score per user
 
-//         querySnapshot.forEach((doc) => {
-//             let data = doc.data();
-//             let scoreValue = data.finalScore ?? data.score;
-//             let username = data.username;
+        querySnapshot.forEach((doc) => {
+            let data = doc.data();
+            let scoreValue = data.finalScore ?? data.score;
+            let username = data.username;
 
-//             if (username && scoreValue !== undefined) {
-//                 // Store only the highest score for each user
-//                 if (!userScores.has(username) || userScores.get(username) < scoreValue) {
-//                     userScores.set(username, scoreValue);
-//                 }
-//             } else {
-//                 console.warn("Document is missing username or score:", data);
-//             }
-//         });
+            if (username && scoreValue !== undefined) {
+                // Store only the highest score for each user
+                if (!userScores.has(username) || userScores.get(username) < scoreValue) {
+                    userScores.set(username, scoreValue);
+                }
+            } else {
+                console.warn("Document is missing username or score:", data);
+            }
+        });
 
-//         // Convert map to array, sort by score descending
-//         let leaderboardData = Array.from(userScores.entries())
-//             .map(([username, finalScore]) => ({ username, finalScore }))
-//             .sort((a, b) => b.finalScore - a.finalScore);
+        // Convert map to array, sort by score descending
+        let leaderboardData = Array.from(userScores.entries())
+            .map(([username, finalScore]) => ({ username, finalScore }))
+            .sort((a, b) => b.finalScore - a.finalScore);
 
-//         updateLeaderboardTable(leaderboardData.slice(0, entriesToShow));
+        updateLeaderboardTable(leaderboardData.slice(0, entriesToShow));
 
-//         // Store full leaderboard for "Show More" functionality
-//         window.fullLeaderboard = leaderboardData;
+        // Store full leaderboard for "Show More" functionality
+        window.fullLeaderboard = leaderboardData;
 
-//         console.log("Leaderboard updated!");
+        console.log("Leaderboard updated!");
 
-//     } catch (error) {
-//         console.error("🔥 Error fetching leaderboard:", error);
-//     }
-// }
+    } catch (error) {
+        console.error("🔥 Error fetching leaderboard:", error);
+    }
+}
 
-// export function updateLeaderboardTable(data) {
-//     const leaderboardBody = document.getElementById("leaderboard-body");
-//     leaderboardBody.innerHTML = ""; 
+export function updateLeaderboardTable(data) {
+    const leaderboardBody = document.getElementById("leaderboard-body");
+    leaderboardBody.innerHTML = ""; 
 
-//     data.forEach((entry, index) => {
-//         const row = document.createElement("tr");
-//         row.innerHTML = `
-//             <td>${index + 1}</td>
-//             <td>${entry.username || "Unknown"}</td>
-//             <td>${entry.finalScore || 0}</td>
-//         `;
-//         leaderboardBody.appendChild(row);
-//     });
-// }
+    data.forEach((entry, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${entry.username || "Unknown"}</td>
+            <td>${entry.finalScore || 0}</td>
+        `;
+        leaderboardBody.appendChild(row);
+    });
+}
 
-// // Call fetchLeaderboard when the end screen is displayed
-// document.addEventListener("DOMContentLoaded", () => {
-//     fetchLeaderboard();
-// });
+// Call fetchLeaderboard when the end screen is displayed
+document.addEventListener("DOMContentLoaded", () => {
+    fetchLeaderboard();
+});
 
-// async function submitScore(username, score) {
-//     try {
-//         const scoresRef = collection(db, "scores");
+async function submitScore(username, score) {
+    try {
+        const scoresRef = collection(db, "scores");
 
-//         // Step 1: Fetch all scores by this user
-//         const q = query(scoresRef, where("username", "==", username), orderBy("score", "desc"));
-//         const querySnapshot = await getDocs(q);
-//         let scores = [];
+        // Step 1: Fetch all scores by this user
+        const q = query(scoresRef, where("username", "==", username), orderBy("score", "desc"));
+        const querySnapshot = await getDocs(q);
+        let scores = [];
 
-//         querySnapshot.forEach(doc => {
-//             scores.push({ id: doc.id, score: doc.data().score });
-//         });
+        querySnapshot.forEach(doc => {
+            scores.push({ id: doc.id, score: doc.data().score });
+        });
 
-//         console.log(`Current scores for ${username}:`, scores);
+        console.log(`Current scores for ${username}:`, scores);
 
-//         // Step 2: If 3 or more scores exist, remove the lowest one before adding the new one
-//         if (scores.length >= 3) {
-//             let lowestScore = scores[scores.length - 1]; // The lowest score (last one in descending order)
-//             await deleteDoc(doc(db, "scores", lowestScore.id)); // Remove the lowest score
-//             console.log(`Deleted lowest score: ${lowestScore.score}`);
-//         }
+        // Step 2: If 3 or more scores exist, remove the lowest one before adding the new one
+        if (scores.length >= 3) {
+            let lowestScore = scores[scores.length - 1]; // The lowest score (last one in descending order)
+            await deleteDoc(doc(db, "scores", lowestScore.id)); // Remove the lowest score
+            console.log(`Deleted lowest score: ${lowestScore.score}`);
+        }
 
-//         // Step 3: Add the new score
-//         await addDoc(scoresRef, {
-//             username: username,
-//             score: score,
-//             timestamp: serverTimestamp()
-//         });
+        // Step 3: Add the new score
+        await addDoc(scoresRef, {
+            username: username,
+            score: score,
+            timestamp: serverTimestamp()
+        });
 
-//         console.log("Score submitted successfully!");
-//     } catch (error) {
-//         console.error("Error submitting score:", error);
-//     }
-// }
-// async function deleteUserScores(username) {
-//     try {
-//         const scoresRef = collection(db, "scores");
-//         const q = query(scoresRef, where("username", "==", username));
-//         const querySnapshot = await getDocs(q);
+        console.log("Score submitted successfully!");
+    } catch (error) {
+        console.error("Error submitting score:", error);
+    }
+}
+async function deleteUserScores(username) {
+    try {
+        const scoresRef = collection(db, "scores");
+        const q = query(scoresRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
 
-//         if (querySnapshot.empty) {
-//             console.log(`No scores found for ${username}.`);
-//             return;
-//         }
+        if (querySnapshot.empty) {
+            console.log(`No scores found for ${username}.`);
+            return;
+        }
 
-//         let deletedCount = 0;
-//         for (const document of querySnapshot.docs) {
-//             await deleteDoc(doc(db, "scores", document.id));
-//             deletedCount++;
-//         }
+        let deletedCount = 0;
+        for (const document of querySnapshot.docs) {
+            await deleteDoc(doc(db, "scores", document.id));
+            deletedCount++;
+        }
 
-//         console.log(`Deleted ${deletedCount} scores for ${username}.`);
-//     } catch (error) {
-//         console.error("Error deleting scores:", error);
-//     }
-// }
+        console.log(`Deleted ${deletedCount} scores for ${username}.`);
+    } catch (error) {
+        console.error("Error deleting scores:", error);
+    }
+}
