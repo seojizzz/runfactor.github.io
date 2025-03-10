@@ -33,10 +33,6 @@ signInAnonymously(auth)
     console.error("Authentication error:", error);
   });
 
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-admin.initializeApp();
-
 exports.submitScore = functions.https.onCall((data, context) => {
   // Make sure the user is authenticated.
   if (!context.auth) {
@@ -61,9 +57,6 @@ exports.submitScore = functions.https.onCall((data, context) => {
     uid: context.auth.uid,
   });
 });
-
-// "Play Anonymously" button handler.
-
 
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
@@ -412,16 +405,7 @@ function gameOver() {
   } else {
     console.error("Invalid username or score, not submitting.");
   }
-}
-
-// --- Instantiate Game & Export startGame ---
-const game = new PrimeFactorGame();
-window.game = game;
-export function startGame() {
-  game.startGame();
-}
-
-  
+}  
 
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
@@ -581,4 +565,12 @@ async function deleteUserScores(username) {
     } catch (error) {
         console.error("Error deleting scores:", error);
     }
+}
+
+
+// --- Instantiate Game & Export startGame ---
+const game = new PrimeFactorGame();
+window.game = game;
+export function startGame() {
+  game.startGame();
 }
