@@ -438,17 +438,6 @@ async function updateUserRecord(username, email, password, newScore) {
   }
 }
 
-
-import { getFirestore, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-async function getLeaderboard() {
-  const db = getFirestore();
-  const usersRef = collection(db, "users");
-  const q = query(usersRef, orderBy("highestScore", "desc"), limit(20));
-  const querySnapshot = await getDocs(q);
-  let leaderboard = [];
-  querySnapshot.forEach(docSnap => {
-    leaderboard.push(docSnap.data());
   });
   console.table(leaderboard);
   return leaderboard;
