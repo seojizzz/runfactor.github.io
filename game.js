@@ -1,67 +1,67 @@
 // 1. Import Firebase Modules
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-// import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-// import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-// import badWordsList from "./badwords.js"; // External file with bad words
-// import {query, where, orderBy, limit, deleteDoc, doc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
+import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import badWordsList from "./badwords.js"; // External file with bad words
+import {query, where, orderBy, limit, deleteDoc, doc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// // 2a. Firebase Configuration
-// const firebaseConfig = {
-//     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
-//     authDomain: "runfactor-cf724.firebaseapp.com",
-//     projectId: "runfactor-cf724",
-//     storageBucket: "runfactor-cf724.firebasestorage.app",
-//     messagingSenderId: "882591954418",
-//     appId: "1:882591954418:web:39964ebfa664061fb4a76b",
-//     measurementId: "G-KWWWHF4NQE"
-// };
+// 2a. Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
+    authDomain: "runfactor-cf724.firebaseapp.com",
+    projectId: "runfactor-cf724",
+    storageBucket: "runfactor-cf724.firebasestorage.app",
+    messagingSenderId: "882591954418",
+    appId: "1:882591954418:web:39964ebfa664061fb4a76b",
+    measurementId: "G-KWWWHF4NQE"
+};
 
-// // 2b. Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const auth = getAuth(app);
-// const db = getFirestore(app);
+// 2b. Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-// // Sign in anonymously
-// signInAnonymously(auth)
-//   .then(() => {
-//     console.log("Signed in anonymously");
-//     // You can now start your game logic safely
-//     startGame();
-//   })
-//   .catch((error) => {
-//     console.error("Authentication error:", error);
-//   });
+// Sign in anonymously
+signInAnonymously(auth)
+  .then(() => {
+    console.log("Signed in anonymously");
+    // You can now start your game logic safely
+    startGame();
+  })
+  .catch((error) => {
+    console.error("Authentication error:", error);
+  });
 
-// authentication
-// const functions = require("firebase-functions");
-// const admin = require("firebase-admin");
-// admin.initializeApp();
+authentication
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+admin.initializeApp();
 
-// exports.submitScore = functions.https.onCall((data, context) => {
-//   // Make sure the user is authenticated.
-//   if (!context.auth) {
-//     throw new functions.https.HttpsError("unauthenticated", "User must be authenticated.");
-//   }
+exports.submitScore = functions.https.onCall((data, context) => {
+  // Make sure the user is authenticated.
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "User must be authenticated.");
+  }
   
-//   // Validate the data
-//   const username = data.username;
-//   const score = data.score;
-//   if (typeof username !== "string" || username.trim() === "") {
-//     throw new functions.https.HttpsError("invalid-argument", "Invalid username");
-//   }
-//   if (typeof score !== "number" || score < 0) {
-//     throw new functions.https.HttpsError("invalid-argument", "Invalid score");
-//   }
+  // Validate the data
+  const username = data.username;
+  const score = data.score;
+  if (typeof username !== "string" || username.trim() === "") {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid username");
+  }
+  if (typeof score !== "number" || score < 0) {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid score");
+  }
 
-//   // Write to Firestore
-//   return admin.firestore().collection("scores").add({
-//     username: username,
-//     score: score,
-//     timestamp: admin.firestore.FieldValue.serverTimestamp(),
-//     uid: context.auth.uid,
-//   });
-// });
+  // Write to Firestore
+  return admin.firestore().collection("scores").add({
+    username: username,
+    score: score,
+    timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    uid: context.auth.uid,
+  });
+});
 
 // "Play Anonymously" button handler.
 
