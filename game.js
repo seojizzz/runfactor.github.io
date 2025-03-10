@@ -436,9 +436,11 @@ async function updateUserRecord(username, email, password, newScore) {
     });
     console.log("New user record created.");
   }
-}
-  console.table(leaderboard);
+
+console.table(leaderboard);
   return leaderboard;
+}
+
 
 function hideAuthSections() {
     document.getElementById("sign-in-page").style.display = "none";
