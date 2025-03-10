@@ -396,12 +396,18 @@ function gameOver() {
   }
 }
 
+function hideAllScreens() {
+    document.getElementById("sign-in-page").style.display = "none";
+    document.getElementById("account-options").style.display = "none";
+    document.getElementById("existing-account").style.display = "none";
+    document.getElementById("game-screen").style.display = "none";
+    document.getElementById("end-screen").style.display = "none";
+}
 
 // user credentials
-window.userEmail = "example@example.com"; // user's email
-window.userPassword = "secretPassword"; // user's password
-window.game.username = "exampleUser"; // user's username
-
+window.userEmail = ""; // user's email
+window.userPassword = ""; // user's password
+window.game.username = ""; // user's username
 
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
