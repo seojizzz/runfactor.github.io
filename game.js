@@ -33,7 +33,6 @@ signInAnonymously(auth)
     console.error("Authentication error:", error);
   });
 
-authentication
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
