@@ -385,6 +385,53 @@ function gameOver() {
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
 // --- Helper Functions ---
+async function updateUserRecord(username, email, password, newScore) {
+  const db = getFirestore();
+  // Use the username as the document ID (or use the user's UID if using Firebase Authentication)
+  const userRef = doc(db, "users", username);
+  
+  // Check if a record already exists.
+  const docSnap = await getDoc(userRef);
+  if (docSnap.exists()) {
+    const currentHighest = docSnap.data().highestScore || 0;
+    if (newScore > currentHighest) {
+      await setDoc(userRef, {
+        username: username,
+        email: email,
+        password: password, // For production, NEVER store plaintext passwords.
+        highestScore: newScore
+      }, { merge: true });
+      console.log("User record updated with new high score.");
+    } else {
+      console.log("New score is not higher; record not updated.");
+    }
+  } else {
+    // Create a new record.
+    await setDoc(userRef, {
+      username: username,
+      email: email,
+      password: password, // Use proper hashing in production.
+      highestScore: newScore
+    });
+    console.log("New user record created.");
+  }
+}
+
+
+async function getLeaderboard() {
+  const db = getFirestore();
+  const usersRef = collection(db, "users");
+  // Query top 20 users by highestScore descending.
+  const q = query(usersRef, orderBy("highestScore", "desc"), limit(20));
+  const querySnapshot = await getDocs(q);
+  let leaderboard = [];
+  querySnapshot.forEach(docSnap => {
+    leaderboard.push(docSnap.data());
+  });
+  console.table(leaderboard);
+  return leaderboard;
+}
+
 function hideAuthSections() {
     document.getElementById("sign-in-page").style.display = "none";
     document.getElementById("account-options").style.display = "none";
