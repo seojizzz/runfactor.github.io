@@ -33,31 +33,6 @@ signInAnonymously(auth)
     console.error("Authentication error:", error);
   });
 
-exports.submitScore = functions.https.onCall((data, context) => {
-  // Make sure the user is authenticated.
-  if (!context.auth) {
-    throw new functions.https.HttpsError("unauthenticated", "User must be authenticated.");
-  }
-  
-  // Validate the data
-  const username = data.username;
-  const score = data.score;
-  if (typeof username !== "string" || username.trim() === "") {
-    throw new functions.https.HttpsError("invalid-argument", "Invalid username");
-  }
-  if (typeof score !== "number" || score < 0) {
-    throw new functions.https.HttpsError("invalid-argument", "Invalid score");
-  }
-
-  // Write to Firestore
-  return admin.firestore().collection("scores").add({
-    username: username,
-    score: score,
-    timestamp: admin.firestore.FieldValue.serverTimestamp(),
-    uid: context.auth.uid,
-  });
-});
-
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {
