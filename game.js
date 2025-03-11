@@ -457,19 +457,16 @@ async function updateUserHighScoreIfHigher(newScore) {
 
 async function createUser(username, email, password) {
   const db = getFirestore();
-  const auth = getAuth();
-  const currentUser = auth.currentUser;
-  // Use UID if available; fallback to username (not recommended for production).
-  const userId = currentUser ? currentUser.uid : username;
-  const userRef = doc(db, "users", userId);
+  // Use the username as the document ID (or use the auth UID if available)
+  const userRef = doc(db, "users", username);
   await setDoc(userRef, {
-      username: username,
-      email: email,
-      password: password,  // In production, store a hashed password!
+      username: username,  // Use the provided username
+      email: email,        // Use the provided email
+      password: password,  // In production, store a hashed version
       highestScore: 0,
       createdAt: serverTimestamp()
   });
-  console.log("New user record created.");
+  console.log("New user record created:", { username, email });
 }
 
 
