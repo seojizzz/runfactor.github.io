@@ -137,14 +137,14 @@
     <!-- Inline module script for UI logic -->
     <script type="module">
         import { startGame } from './game.js';
-
-        // Helper functions to hide all auth-related sections.
+    
+        // Helper function to hide auth sections.
         function hideAuthSections() {
             document.getElementById("sign-in-page").style.display = "none";
             document.getElementById("account-options").style.display = "none";
             document.getElementById("existing-account").style.display = "none";
         }
-
+    
         function showGameScreen(username) {
             hideAuthSections();
             document.getElementById("game-screen").style.display = "block";
@@ -211,7 +211,7 @@
                     }
                 });
             });
-
+        });
         // "Back" button.
         document.getElementById("back-btn").addEventListener("click", () => {
             document.getElementById("account-options").style.display = "none";
@@ -267,6 +267,18 @@
                 document.getElementById("existing-account").style.display = "none";
                 document.getElementById("sign-in-page").style.display = "block";
                 document.getElementById("existing-password").value = "";
+            });
+
+            document.addEventListener("DOMContentLoaded", () => {
+            // For example, when the join button is clicked:
+            document.getElementById("join-btn").addEventListener("click", () => {
+                let username = document.getElementById("username-signin").value.trim();
+                if (username === "") {
+                    alert("Username cannot be empty.");
+                    return;
+                }
+                // (Assume you have your profanity check and backend simulation here)
+                showGameScreen(username);
             });
         });
     </script>
