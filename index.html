@@ -158,6 +158,89 @@
         document.getElementById("existing-account").style.display = "none";
     }
 
+
+    document.getElementById("join-btn").addEventListener("click", async () => {
+        let username = document.getElementById("username-signin").value.trim();
+        if (username === "") {
+            alert("Username cannot be empty.");
+            return;
+        }
+        if (containsProfanity(username)) {
+            alert("Inappropriate username.");
+            return;
+        }
+        currentUsername = username;
+        // Check Firestore for an existing record.
+        const exists = await checkUserExists(username);
+        if (exists) {
+            // Show the sign-in page (for password input)
+            document.getElementById("sign-in-page").style.display = "none";
+            document.getElementById("existing-account").style.display = "block";
+            document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+        } else {
+            // Show the create account options.
+            document.getElementById("sign-in-page").style.display = "none";
+            document.getElementById("account-options").style.display = "block";
+            document.getElementById("new-account-message").textContent =
+                `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
+        }
+    });
+
+    document.getElementById("join-btn").addEventListener("click", async () => {
+    let username = document.getElementById("username-signin").value.trim();
+    if (username === "") {
+        alert("Username cannot be empty.");
+        return;
+    }
+    if (containsProfanity(username)) {
+        alert("Inappropriate username.");
+        return;
+    }
+    currentUsername = username;
+    // Check Firestore for an existing record.
+    const exists = await checkUserExists(username);
+    if (exists) {
+        // Show the sign-in page (for password input)
+        document.getElementById("sign-in-page").style.display = "none";
+        document.getElementById("existing-account").style.display = "block";
+        document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+    } else {
+        // Show the create account options.
+        document.getElementById("sign-in-page").style.display = "none";
+        document.getElementById("account-options").style.display = "block";
+        document.getElementById("new-account-message").textContent =
+            `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
+    }
+    });
+
+    document.getElementById("create-account-btn").addEventListener("click", async () => {
+    const email = document.getElementById("new-email").value.trim();
+    const password = document.getElementById("new-password").value;
+    const confirmPassword = document.getElementById("confirm-password").value;
+    if (!email || !password || !confirmPassword) {
+        alert("Please fill in all fields.");
+        return;
+    }
+    if (password !== confirmPassword) {
+        alert("Passwords do not match.");
+        return;
+    }
+    const emailExists = await checkEmailExists(email);
+    if (emailExists) {
+        alert("Email already in use. Please choose a different email.");
+        return;
+    } else {
+        await createUser(currentUsername, email, password);
+        alert("Account created successfully! Your scores will be saved.");
+        showGameScreen(currentUsername);
+    }
+    });
+
+    
+
+
+
+
     function showGameScreen(username) {
         hideAuthSections();
         document.getElementById("game-screen").style.display = "block";

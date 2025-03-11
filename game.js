@@ -393,7 +393,6 @@ window.userEmail = ""; // user's email
 window.userPassword = ""; // user's password
 window.username = ""; // user's username
 
-
 // 5. Define Helper Functions (Leaderboard, Score Submission)
 // --- Helper Functions ---
 async function updateUserRecord(username, email, password, newScore) {
@@ -431,6 +430,52 @@ console.table(leaderboard);
     return leaderboard;
 }
 
+async function updateUserHighScoreIfHigher(newScore) {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+      console.error("No authenticated user.");
+      return;
+  }
+  const uid = currentUser.uid; // If you're using UID.
+  const db = getFirestore();
+  const userRef = doc(db, "users", currentUser.displayName || currentUser.uid);
+  const docSnap = await getDoc(userRef);
+  if (docSnap.exists()) {
+      const currentHigh = docSnap.data().highestScore || 0;
+      if (newScore > currentHigh) {
+          await setDoc(userRef, {
+              highestScore: newScore,
+              updatedAt: serverTimestamp()
+          }, { merge: true });
+          console.log("User record updated with new high score.");
+      } else {
+          console.log("New score is not higher; record not updated.");
+      }
+  }
+}
+
+async function createUser(username, email, password) {
+  const db = getFirestore();
+  // Use the username as document ID (or use a UID from Firebase Auth)
+  const userRef = doc(db, "users", username);
+  await setDoc(userRef, {
+      username: username,
+      email: email,
+      password: password, // In production, NEVER store plaintext passwords.
+      highestScore: 0,
+      createdAt: serverTimestamp()
+  });
+  console.log("New user record created.");
+}
+
+async function checkUserExists(username) {
+  const db = getFirestore();
+  const userRef = doc(db, "users", username);
+  const docSnap = await getDoc(userRef);
+  return docSnap.exists();
+}
+
 async function updateUserRecordIfHigh(newScore) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
@@ -465,38 +510,6 @@ async function updateUserRecordIfHigh(newScore) {
       });
       console.log("New user record created.");
   }
-}
-
-async function updateUserHighScoreIfHigher(username, email, password, newScore) {
-    const db = getFirestore();
-    // Here, we're using the username as the document ID.
-    const userRef = doc(db, "users", username);
-    const docSnap = await getDoc(userRef);
-    if (docSnap.exists()) {
-        let currentHigh = docSnap.data().highestScore || 0;
-        if (newScore > currentHigh) {
-            await setDoc(userRef, {
-                username: username,
-                email: email,
-                password: password,  // In production, store hashed passwords.
-                highestScore: newScore,
-                timestamp: serverTimestamp()
-            }, { merge: true });
-            console.log("User record updated with new high score.");
-        } else {
-            console.log("New score is not higher; record not updated.");
-        }
-    } else {
-        // Create a new record.
-        await setDoc(userRef, {
-            username: username,
-            email: email,
-            password: password,
-            highestScore: newScore,
-            timestamp: serverTimestamp()
-        });
-        console.log("New user record created.");
-    }
 }
 
 function hideAuthSections() {
