@@ -247,17 +247,12 @@
     });
 
     // Simulated backend.
-    const fakeAccountsDB = {
-        'johnDoe': { email: 'john@example.com', password: 'password123' }
-    };
-
-    function checkUserExists(username) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(!!fakeAccountsDB[username]);
-            }, 500);
-        });
-    }
+    async function checkUserExists(username) {
+    const db = getFirestore();
+    const userRef = doc(db, "users", username);  // Assuming you're using the username as the document ID.
+    const docSnap = await getDoc(userRef);
+    return docSnap.exists();
+}
 
     function checkEmailExists(email) {
         return new Promise((resolve) => {

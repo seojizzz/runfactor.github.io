@@ -475,8 +475,7 @@ async function createUser(username, email, password) {
 
 async function checkUserExists(username) {
   const db = getFirestore();
-  // If you're not using Firebase Auth, you can use the username as the document ID.
-  const userRef = doc(db, "users", username);
+  const userRef = doc(db, "users", username);  // Assuming you're using the username as the document ID.
   const docSnap = await getDoc(userRef);
   return docSnap.exists();
 }
