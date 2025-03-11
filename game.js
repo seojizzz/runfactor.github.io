@@ -31,7 +31,7 @@ signInAnonymously(auth)
         startGame();
     })
     .catch((error) => {
-      console.error("Authentication error:", error);
+        console.error("Authentication error:", error);
     });
 
 // 4. Define PrimeFactorGame Class
@@ -69,55 +69,55 @@ class PrimeFactorGame {
             if (e.target && e.target.classList.contains("prime-btn")) {
                 const guessedFactor = parseInt(e.target.textContent, 10);
                 this.handleGuess(guessedFactor, e.target);
-        }
-      });
+            }
+        });
     }
   
     // Create and render prime buttons.
     createButtons() {
-      const buttonsContainer = document.getElementById("buttons");
-      buttonsContainer.innerHTML = "";
-      [...this.easyPrimes, ...this.hardPrimes].forEach(prime => {
-        const button = document.createElement("button");
-        button.classList.add("prime-btn");
-        button.textContent = prime;
-        buttonsContainer.appendChild(button);
-      });
+        const buttonsContainer = document.getElementById("buttons");
+        buttonsContainer.innerHTML = "";
+        [...this.easyPrimes, ...this.hardPrimes].forEach(prime => {
+            const button = document.createElement("button");
+            button.classList.add("prime-btn");
+            button.textContent = prime;
+            buttonsContainer.appendChild(button);
+        });
     }
     
     // Returns the full factorization as a string.
     getFactorization(number) {
-      let n = number;
-      let factors = {};
-      for (let prime of [...this.easyPrimes, ...this.hardPrimes]) {
-        while (n % prime === 0) {
-          factors[prime] = (factors[prime] || 0) + 1;
-          n /= prime;
+        let n = number;
+        let factors = {};
+        for (let prime of [...this.easyPrimes, ...this.hardPrimes]) {
+            while (n % prime === 0) {
+                factors[prime] = (factors[prime] || 0) + 1;
+                n /= prime;
+            }
         }
-      }
-      return Object.entries(factors)
-        .map(([base, exp]) => exp > 1 ? `${base}^${exp}` : base)
-        .join(" × ");
-    }
+        return Object.entries(factors)
+            .map(([base, exp]) => exp > 1 ? `${base}^${exp}` : base)
+            .join(" × ");
+        }
     
     // Starts the game. First, runs a 3-second countdown, then starts the timer and rounds.
     startGame(username) {
-      this.username = username || "Player";
-      document.getElementById("username-display").innerText = `Player: ${this.username}`;
-      // Reset state.
-      this.score = 0;
-      this.combo = 0;
-      // Combo persists until a mistake occurs.
-      this.perfectStreak = 0;
-      this.mistakeMade = false;
-      this.mistakeCount = 0;
-      this.questionNumber = 0;
-      this.usedNumbers.clear();
-      this.timeLeft = 120.00;
-      this.totalPenalty = 0;
-      this.gameRunning = false;
-      
-      this.createButtons();
+        this.username = username || "Player";
+        document.getElementById("username-display").innerText = `Player: ${this.username}`;
+        // Reset state.
+        this.score = 0;
+        this.combo = 0;
+        // Combo persists until a mistake occurs.
+        this.perfectStreak = 0;
+        this.mistakeMade = false;
+        this.mistakeCount = 0;
+        this.questionNumber = 0;
+        this.usedNumbers.clear();
+        this.timeLeft = 120.00;
+        this.totalPenalty = 0;
+        this.gameRunning = false;
+        
+        this.createButtons();
       
       // Run a 3-second countdown.
       let countdown = 3;
