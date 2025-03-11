@@ -144,14 +144,7 @@
     import { startGame } from './game.js';
     import { fetchLeaderboard } from './game.js';
 
-    document.addEventListener("DOMContentLoaded", () => {
-        fetchLeaderboard(10); // initial load
-        setInterval(() => {
-            console.log("Refreshing leaderboard...");
-            fetchLeaderboard(10);
-        }, 60 * 60 * 1000); // 1 hour in milliseconds
-    });
-
+    let currentUsername = ""; // Declare once at the top
 
     // Helper functions.
     function hideAuthSections() {
@@ -160,6 +153,20 @@
         document.getElementById("existing-account").style.display = "none";
     }
 
+    function showGameScreen(username) {
+        hideAuthSections();
+        document.getElementById("game-screen").style.display = "block";
+        if (username) {
+            document.getElementById("username-display").textContent = username;
+        }
+        bgMusic.loop = true;
+        bgMusic.volume = 0.5; // Adjust volume as needed
+        // Start the music when appropriate (after a user gesture, for instance):
+        bgMusic.play().catch(error => {
+            console.error("Playback prevented:", error);
+        });
+        startGame(username);
+    }
 
     document.getElementById("join-btn").addEventListener("click", async () => {
         let username = document.getElementById("username-signin").value.trim();
@@ -190,30 +197,30 @@
 
 
     document.getElementById("join-btn").addEventListener("click", async () => {
-    let username = document.getElementById("username-signin").value.trim();
-    if (username === "") {
-        alert("Username cannot be empty.");
-        return;
-    }
-    if (containsProfanity(username)) {
-        alert("Inappropriate username.");
-        return;
-    }
-    currentUsername = username;
-    // Check Firestore for an existing record.
-    const exists = await checkUserExists(username);
-    if (exists) {
-        // Show the sign-in page (for password input)
-        document.getElementById("sign-in-page").style.display = "none";
-        document.getElementById("existing-account").style.display = "block";
-        document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-    } else {
-        // Show the create account options.
-        document.getElementById("sign-in-page").style.display = "none";
-        document.getElementById("account-options").style.display = "block";
-        document.getElementById("new-account-message").textContent =
-            `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
-    }
+        let username = document.getElementById("username-signin").value.trim();
+        if (username === "") {
+            alert("Username cannot be empty.");
+            return;
+        }
+        if (containsProfanity(username)) {
+            alert("Inappropriate username.");
+            return;
+        }
+        currentUsername = username;
+        // Check Firestore for an existing record.
+        const exists = await checkUserExists(username);
+        if (exists) {
+            // Show the sign-in page (for password input)
+            document.getElementById("sign-in-page").style.display = "none";
+            document.getElementById("existing-account").style.display = "block";
+            document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+        } else {
+            // Show the create account options.
+            document.getElementById("sign-in-page").style.display = "none";
+            document.getElementById("account-options").style.display = "block";
+            document.getElementById("new-account-message").textContent =
+                `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
+        }
     });
 
     document.getElementById("create-account-btn").addEventListener("click", async () => {
@@ -238,27 +245,6 @@
             showGameScreen(currentUsername);
         }
     });
-
-    function showGameScreen(username) {
-        hideAuthSections();
-        document.getElementById("game-screen").style.display = "block";
-        if (username) {
-            document.getElementById("username-display").textContent = username;
-        }
-        const bgMusic = new Audio("https://seojizzz.github.io/runfactor.github.io/music.mp3");
-        bgMusic.loop = true;
-        bgMusic.volume = 0.5; // Adjust volume as needed
-        // Start the music when appropriate (after a user gesture, for instance):
-        bgMusic.play().catch(error => {
-            console.error("Playback prevented:", error);
-        });
-        startGame(username);
-    }
-
-    // Simulated backend.
-    const fakeAccountsDB = {
-        'johnDoe': { email: 'john@example.com', password: 'password123' }
-    };
 
     function checkUserExists(username) {
         return new Promise((resolve) => {
