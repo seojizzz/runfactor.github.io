@@ -7,17 +7,6 @@ import badWordsList from "./badwords.js"; // External file with bad words
 import {query, where, orderBy, limit, deleteDoc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-const auth = getAuth();
-signInAnonymously(auth)
-  .then(() => {
-      console.log("Signed in anonymously");
-      // At this point, auth.currentUser.uid is available.
-  })
-  .catch((error) => {
-      console.error("Authentication error:", error);
-  });
-
-
 
 // 2a. Firebase Configuration
 const firebaseConfig = {
@@ -34,6 +23,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+signInAnonymously(auth)
+  .then(() => {
+      console.log("Signed in anonymously");
+      // At this point, auth.currentUser.uid is available.
+  })
+  .catch((error) => {
+      console.error("Authentication error:", error);
+  });
+
+
+
 
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
