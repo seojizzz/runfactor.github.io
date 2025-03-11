@@ -282,9 +282,6 @@
         return bannedWords.some(badWord => username.toLowerCase().includes(badWord));
     }
 
-    // Declare currentUsername only once.
-    let currentUsername = "";
-
     // Wait until DOM is fully loaded.
     document.addEventListener("DOMContentLoaded", () => {
         // Join button on sign-in page.
@@ -341,17 +338,17 @@
                 alert("Passwords do not match.");
                 return;
             }
-            // Optionally, check if the email already exists in your Firestore database.
             const emailExists = await checkEmailExists(email);
             if (emailExists) {
                 alert("Email already in use. Please choose a different email.");
                 return;
             }
+            // Create the user record with the inputted username and email.
             await createUser(currentUsername, email, password);
             alert("Account created successfully! Your scores will be saved.");
-            // Now, direct the user to the game screen.
             showGameScreen(currentUsername);
         });
+
 
 
         // "Sign In" button for existing accounts.

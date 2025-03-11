@@ -91,7 +91,7 @@ class PrimeFactorGame {
     
     // Starts the game. First, runs a 3-second countdown, then starts the timer and rounds.
     startGame(username) {
-        this.username = username || "Player";
+        this.username = username;
         document.getElementById("username-display").innerText = `Player: ${this.username}`;
         // Reset state.
         this.score = 0;
@@ -457,16 +457,21 @@ async function updateUserHighScoreIfHigher(newScore) {
 
 async function createUser(username, email, password) {
   const db = getFirestore();
-  const userRef = doc(db, "users", username); // Document ID is the username.
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  // Use UID if available; fallback to username (not recommended for production).
+  const userId = currentUser ? currentUser.uid : username;
+  const userRef = doc(db, "users", userId);
   await setDoc(userRef, {
       username: username,
       email: email,
-      password: password,  // For production, store a hashed password!
+      password: password,  // In production, store a hashed password!
       highestScore: 0,
       createdAt: serverTimestamp()
   });
   console.log("New user record created.");
 }
+
 
 async function checkUserExists(username) {
   const db = getFirestore();
