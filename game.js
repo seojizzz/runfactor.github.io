@@ -7,6 +7,17 @@ import badWordsList from "./badwords.js"; // External file with bad words
 import {query, where, orderBy, limit, deleteDoc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
+const auth = getAuth();
+signInAnonymously(auth)
+  .then(() => {
+      console.log("Signed in anonymously");
+      // At this point, auth.currentUser.uid is available.
+  })
+  .catch((error) => {
+      console.error("Authentication error:", error);
+  });
+
+
 
 // 2a. Firebase Configuration
 const firebaseConfig = {
@@ -467,17 +478,22 @@ export function startGame(username) {
 
 // Export the createUser function
 export async function createUser(username, email, password) {
-    const db = getFirestore();
-    // Use the username as the document ID (or the UID from Firebase Auth)
-    const userRef = doc(db, "users", username);
-    await setDoc(userRef, {
-        username: username,
-        email: email,
-        password: password, // In production, store a hashed password!
-        highestScore: 0,
-        createdAt: serverTimestamp()
-    });
-    console.log("New user record created:", { username, email });
+  const db = getFirestore();
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+      throw new Error("User not authenticated");
+  }
+  // Use the UID as the document ID (recommended)
+  const userRef = doc(db, "users", currentUser.uid);
+  await setDoc(userRef, {
+      username: username,
+      email: email,
+      password: password, // In production, NEVER store plaintext passwords.
+      highestScore: 0,
+      createdAt: serverTimestamp()
+  });
+  console.log("New user record created:", { username, email });
 }
 
 // Export checkUserExists using Firestore:
