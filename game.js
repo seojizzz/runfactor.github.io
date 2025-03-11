@@ -23,17 +23,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Sign in anonymously
-signInAnonymously(auth)
-    .then(() => {
-        console.log("Signed in anonymously");
-        // You can now start your game logic safely
-        startGame();
-    })
-    .catch((error) => {
-        console.error("Authentication error:", error);
-    });
-
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {

@@ -131,28 +131,60 @@
         </section>
     </div>
 
-    <!-- Load game.js as a module first -->
-    <script type="module" src="game.js"></script>
     
-    <!-- Inline module script for UI logic -->
-    <script type="module">
-        import { startGame } from './game.js';
-    
-        // Helper function to hide auth sections.
-        function hideAuthSections() {
-            document.getElementById("sign-in-page").style.display = "none";
-            document.getElementById("account-options").style.display = "none";
-            document.getElementById("existing-account").style.display = "none";
+
+<!-- Load game.js as a module first -->
+<script type="module" src="game.js"></script>
+<!-- Inline module script for UI logic -->
+<script type="module">
+    import { startGame } from './game.js';
+
+    function hideAuthSections() {
+        document.getElementById("sign-in-page").style.display = "none";
+        document.getElementById("account-options").style.display = "none";
+        document.getElementById("existing-account").style.display = "none";
+    }
+
+    function showGameScreen(username) {
+        hideAuthSections();
+        document.getElementById("game-screen").style.display = "block";
+        if (username) {
+            document.getElementById("username-display").textContent = username;
         }
-    
-        function showGameScreen(username) {
-            hideAuthSections();
-            document.getElementById("game-screen").style.display = "block";
-            if (username) {
-                document.getElementById("username-display").textContent = username;
-            }
-            startGame(username);
-        }
+        startGame(username);
+    }
+
+        // Declare currentUsername only once.
+        let currentUsername = "";
+
+        document.addEventListener("DOMContentLoaded", () => {
+            // Your event listeners for the join button, etc.
+            document.getElementById("join-btn").addEventListener("click", () => {
+                let username = document.getElementById("username-signin").value.trim();
+                if (username === "") {
+                    alert("Username cannot be empty.");
+                    return;
+                }
+                if (containsProfanity(username)) {
+                    alert("Inappropriate username.");
+                    return;
+                }
+                currentUsername = username;
+                checkUserExists(username).then(exists => {
+                    if (exists) {
+                        document.getElementById("sign-in-page").style.display = "none";
+                        document.getElementById("existing-account").style.display = "block";
+                        document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+                    } else {
+                        document.getElementById("sign-in-page").style.display = "none";
+                        document.getElementById("account-options").style.display = "block";
+                        document.getElementById("new-account-message").textContent =
+                            `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
+                    }
+                });
+            });
+        });
+
 
         // Simulated backend data.
         const fakeAccountsDB = {
@@ -180,9 +212,6 @@
             const bannedWords = ["badword1", "badword2", "anotherbadword"];
             return bannedWords.some(badWord => username.toLowerCase().includes(badWord));
         }
-
-        // Declare currentUsername once.
-        let currentUsername = "";
 
         // Attach event listener once the DOM is fully loaded.
         document.addEventListener("DOMContentLoaded", () => {
@@ -212,6 +241,7 @@
                 });
             });
         });
+
         // "Back" button.
         document.getElementById("back-btn").addEventListener("click", () => {
             document.getElementById("account-options").style.display = "none";
@@ -268,19 +298,6 @@
                 document.getElementById("sign-in-page").style.display = "block";
                 document.getElementById("existing-password").value = "";
             });
-
-            document.addEventListener("DOMContentLoaded", () => {
-            // For example, when the join button is clicked:
-            document.getElementById("join-btn").addEventListener("click", () => {
-                let username = document.getElementById("username-signin").value.trim();
-                if (username === "") {
-                    alert("Username cannot be empty.");
-                    return;
-                }
-                // (Assume you have your profanity check and backend simulation here)
-                showGameScreen(username);
-            });
-        });
     </script>
 </body>
 </html>
