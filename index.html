@@ -246,6 +246,11 @@
         }
     });
 
+    // Simulated backend.
+    const fakeAccountsDB = {
+        'johnDoe': { email: 'john@example.com', password: 'password123' }
+    };
+
     function checkUserExists(username) {
         return new Promise((resolve) => {
             setTimeout(() => {
