@@ -1,10 +1,12 @@
 // 1. Import Firebase Modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import {collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
 import badWordsList from "./badwords.js"; // External file with bad words
-import {query, where, orderBy, limit, deleteDoc, doc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import {query, where, orderBy, limit, deleteDoc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
 
 
 // 2a. Firebase Configuration
@@ -455,19 +457,51 @@ async function updateUserHighScoreIfHigher(newScore) {
   }
 }
 
-async function createUser(username, email, password) {
-  const db = getFirestore();
-  // Use the username as the document ID (or use the auth UID if available)
-  const userRef = doc(db, "users", username);
-  await setDoc(userRef, {
-      username: username,  // Use the provided username
-      email: email,        // Use the provided email
-      password: password,  // In production, store a hashed version
-      highestScore: 0,
-      createdAt: serverTimestamp()
-  });
-  console.log("New user record created:", { username, email });
+// In game.js
+
+// Export your startGame function (already at the bottom):
+const game = new PrimeFactorGame();
+window.game = game;
+export function startGame(username) {
+    game.startGame(username);
 }
+
+// Export the createUser function
+export async function createUser(username, email, password) {
+    const db = getFirestore();
+    // Use the username as the document ID (or the UID from Firebase Auth)
+    const userRef = doc(db, "users", username);
+    await setDoc(userRef, {
+        username: username,
+        email: email,
+        password: password, // In production, store a hashed password!
+        highestScore: 0,
+        createdAt: serverTimestamp()
+    });
+    console.log("New user record created:", { username, email });
+}
+
+// Export checkUserExists using Firestore:
+export async function checkUserExists(username) {
+    const db = getFirestore();
+    const userRef = doc(db, "users", username);
+    const docSnap = await getDoc(userRef);
+    return docSnap.exists();
+}
+
+// Export checkEmailExists if you have a Firestore version, or for your fake backend:
+export function checkEmailExists(email) {
+    return new Promise((resolve) => {
+        // For testing, you can use your simulated fakeAccountsDB
+        setTimeout(() => {
+            // Replace this with a proper Firestore query if needed.
+            // For example, if you query the "users" collection by email.
+            const exists = Object.values(fakeAccountsDB).some(account => account.email === email);
+            resolve(exists);
+        }, 500);
+    });
+}
+
 
 
 async function checkUserExists(username) {
@@ -529,7 +563,6 @@ function showGameScreen(username) {
     startGame(username);
     }
 
-
 let leaderboardLoaded = false;
 
 async function loadLeaderboard() {
@@ -584,8 +617,6 @@ document.addEventListener("DOMContentLoaded", () => {
     fetchLeaderboard();
 });
 
-
-
 async function submitUserScore(username, email, password, finalScore) {
     const db = getFirestore();
     // Use the username as the document ID (in production, use the UID from Firebase Auth)
@@ -621,12 +652,4 @@ async function submitUserScore(username, email, password, finalScore) {
     } catch (error) {
       console.error("Error updating user record:", error);
     }
-}
-
-
-// --- Instantiate Game & Export startGame ---
-const game = new PrimeFactorGame();
-window.game = game;  // Optional: for debugging.
-export function startGame(username) {
-    game.startGame(username);
 }
