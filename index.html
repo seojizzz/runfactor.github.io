@@ -141,12 +141,12 @@
 <script type="module" src="game.js"></script>
 <!-- Inline module script for UI logic -->
 <script type="module">
-    import { startGame } from './game.js';
-    import { fetchLeaderboard } from './game.js';
+    import { startGame, createUser, checkUserExists, checkEmailExists } from './game.js';
 
-    let currentUsername = ""; // Declare once at the top
+    // Declare global variable once.
+    let currentUsername = "";
 
-    // Helper functions.
+    // Helper function to hide all auth-related sections.
     function hideAuthSections() {
         document.getElementById("sign-in-page").style.display = "none";
         document.getElementById("account-options").style.display = "none";
@@ -159,117 +159,12 @@
         if (username) {
             document.getElementById("username-display").textContent = username;
         }
-        bgMusic.loop = true;
-        bgMusic.volume = 0.5; // Adjust volume as needed
-        // Start the music when appropriate (after a user gesture, for instance):
-        bgMusic.play().catch(error => {
-            console.error("Playback prevented:", error);
-        });
         startGame(username);
-    }
-
-    document.getElementById("join-btn").addEventListener("click", async () => {
-        let username = document.getElementById("username-signin").value.trim();
-        if (username === "") {
-            alert("Username cannot be empty.");
-            return;
-        }
-        if (containsProfanity(username)) {
-            alert("Inappropriate username.");
-            return;
-        }
-        currentUsername = username;
-        // Check Firestore for an existing record.
-        const exists = await checkUserExists(username);
-        if (exists) {
-            // Show the sign-in page (for password input)
-            document.getElementById("sign-in-page").style.display = "none";
-            document.getElementById("existing-account").style.display = "block";
-            document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-        } else {
-            // Show the create account options.
-            document.getElementById("sign-in-page").style.display = "none";
-            document.getElementById("account-options").style.display = "block";
-            document.getElementById("new-account-message").textContent =
-                `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
-        }
-    });
-
-
-    document.getElementById("join-btn").addEventListener("click", async () => {
-        let username = document.getElementById("username-signin").value.trim();
-        if (username === "") {
-            alert("Username cannot be empty.");
-            return;
-        }
-        if (containsProfanity(username)) {
-            alert("Inappropriate username.");
-            return;
-        }
-        currentUsername = username;
-        // Check Firestore for an existing record.
-        const exists = await checkUserExists(username);
-        if (exists) {
-            // Show the sign-in page (for password input)
-            document.getElementById("sign-in-page").style.display = "none";
-            document.getElementById("existing-account").style.display = "block";
-            document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-        } else {
-            // Show the create account options.
-            document.getElementById("sign-in-page").style.display = "none";
-            document.getElementById("account-options").style.display = "block";
-            document.getElementById("new-account-message").textContent =
-                `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
-        }
-    });
-
-    document.getElementById("create-account-btn").addEventListener("click", async () => {
-        const email = document.getElementById("new-email").value.trim();
-        const password = document.getElementById("new-password").value;
-        const confirmPassword = document.getElementById("confirm-password").value;
-        if (!email || !password || !confirmPassword) {
-            alert("Please fill in all fields.");
-            return;
-        }
-        if (password !== confirmPassword) {
-            alert("Passwords do not match.");
-            return;
-        }
-        const emailExists = await checkEmailExists(email);
-        if (emailExists) {
-            alert("Email already in use. Please choose a different email.");
-            return;
-        } else {
-            await createUser(currentUsername, email, password);
-            alert("Account created successfully! Your scores will be saved.");
-            showGameScreen(currentUsername);
-        }
-    });
-
-    // Simulated backend.
-    async function checkUserExists(username) {
-    const db = getFirestore();
-    const userRef = doc(db, "users", username);  // Assuming you're using the username as the document ID.
-    const docSnap = await getDoc(userRef);
-    return docSnap.exists();
-}
-
-    function checkEmailExists(email) {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const exists = Object.values(fakeAccountsDB).some(account => account.email === email);
-                resolve(exists);
-            }, 500);
-        });
-    }
-
-    function containsProfanity(username) {
-        const bannedWords = ["badword1", "badword2", "anotherbadword"];
-        return bannedWords.some(badWord => username.toLowerCase().includes(badWord));
     }
 
     // Wait until DOM is fully loaded.
     document.addEventListener("DOMContentLoaded", () => {
+
         // Join button on sign-in page.
         document.getElementById("join-btn").addEventListener("click", async () => {
             let username = document.getElementById("username-signin").value.trim();
@@ -284,31 +179,17 @@
             currentUsername = username;
             const exists = await checkUserExists(username);
             if (exists) {
-                // Direct to sign-in page (for password input).
+                // Show the existing account login for password input.
                 document.getElementById("sign-in-page").style.display = "none";
                 document.getElementById("existing-account").style.display = "block";
                 document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
             } else {
-                // Direct to create-account page.
+                // Show create account options.
                 document.getElementById("sign-in-page").style.display = "none";
                 document.getElementById("account-options").style.display = "block";
                 document.getElementById("new-account-message").textContent =
                     `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
             }
-        });
-
-
-        // "Back" button (from account options).
-        document.getElementById("back-btn").addEventListener("click", () => {
-            hideAuthSections();
-            document.getElementById("sign-in-page").style.display = "block";
-        });
-
-        // "Play Anonymously" button.
-        document.getElementById("play-anon-btn").addEventListener("click", () => {
-            window.playAnonymously = true;
-            alert("Playing anonymously. Your scores won't be saved.");
-            showGameScreen("");
         });
 
         // "Create Account" button.
@@ -329,18 +210,16 @@
                 alert("Email already in use. Please choose a different email.");
                 return;
             }
-            // Create the user record with the inputted username and email.
+            // Create user record.
             await createUser(currentUsername, email, password);
             alert("Account created successfully! Your scores will be saved.");
             showGameScreen(currentUsername);
         });
 
-
-
         // "Sign In" button for existing accounts.
         document.getElementById("sign-in-btn").addEventListener("click", () => {
             const password = document.getElementById("existing-password").value;
-            const account = fakeAccountsDB[currentUsername];
+            const account = fakeAccountsDB[currentUsername];  // For simulation purposes.
             if (account && account.password === password) {
                 alert("Sign in successful! Welcome back.");
                 showGameScreen(currentUsername);
@@ -349,13 +228,25 @@
             }
         });
 
-        // "Not your account?" button.
+        // "Back" and "Not your account?" buttons.
+        document.getElementById("back-btn").addEventListener("click", () => {
+            hideAuthSections();
+            document.getElementById("sign-in-page").style.display = "block";
+        });
+
         document.getElementById("not-your-account-btn").addEventListener("click", () => {
             hideAuthSections();
             document.getElementById("sign-in-page").style.display = "block";
             document.getElementById("existing-password").value = "";
         });
     });
+
+    // Dummy implementation of containsProfanity.
+    function containsProfanity(username) {
+        const bannedWords = ["badword1", "badword2", "anotherbadword"];
+        return bannedWords.some(badWord => username.toLowerCase().includes(badWord));
+    }
 </script>
+
 </body>
 </html>

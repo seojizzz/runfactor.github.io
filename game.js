@@ -42,7 +42,7 @@ class PrimeFactorGame {
         this.timeLeft = 120.00;
         this.totalPenalty = 0; // Total penalty applied.
         this.gameRunning = false;
-        this.username = "";
+        this.username = this.username;
         this.startTime = null;
         // Current question values.
         this.currentNumber = 0;
@@ -507,7 +507,7 @@ async function updateUserRecordIfHigh(newScore) {
   } else {
       // For new users, you’d normally have already created the record at sign‑up.
       await setDoc(userRef, {
-          username: currentUser.displayName || "Player",
+          username: currentUser.displayName,
           email: currentUser.email || "",
           highestScore: newScore,
           createdAt: serverTimestamp()
