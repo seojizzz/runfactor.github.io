@@ -396,7 +396,7 @@ function hideAllScreens() {
 // user credentials
 window.userEmail = ""; // user's email
 window.userPassword = ""; // user's password
-window.game.username = ""; // user's username
+window.username = ""; // user's username
 
 
 // 5. Define Helper Functions (Leaderboard, Score Submission)
