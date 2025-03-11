@@ -75,6 +75,7 @@
 
     <!-- Game Screen -->
     <div id="game-screen">
+        <audio id="background-music" src="https://seojizzz.github.io/runfactor.github.io/music.mp3" loop></audio>
         <header>
             <h1>Prime Factorization Challenge</h1>
             <p id="username-display"></p>
@@ -186,6 +187,7 @@
         }
     });
 
+
     document.getElementById("join-btn").addEventListener("click", async () => {
     let username = document.getElementById("username-signin").value.trim();
     if (username === "") {
@@ -214,32 +216,27 @@
     });
 
     document.getElementById("create-account-btn").addEventListener("click", async () => {
-    const email = document.getElementById("new-email").value.trim();
-    const password = document.getElementById("new-password").value;
-    const confirmPassword = document.getElementById("confirm-password").value;
-    if (!email || !password || !confirmPassword) {
-        alert("Please fill in all fields.");
-        return;
-    }
-    if (password !== confirmPassword) {
-        alert("Passwords do not match.");
-        return;
-    }
-    const emailExists = await checkEmailExists(email);
-    if (emailExists) {
-        alert("Email already in use. Please choose a different email.");
-        return;
-    } else {
-        await createUser(currentUsername, email, password);
-        alert("Account created successfully! Your scores will be saved.");
-        showGameScreen(currentUsername);
-    }
+        const email = document.getElementById("new-email").value.trim();
+        const password = document.getElementById("new-password").value;
+        const confirmPassword = document.getElementById("confirm-password").value;
+        if (!email || !password || !confirmPassword) {
+            alert("Please fill in all fields.");
+            return;
+        }
+        if (password !== confirmPassword) {
+            alert("Passwords do not match.");
+            return;
+        }
+        const emailExists = await checkEmailExists(email);
+        if (emailExists) {
+            alert("Email already in use. Please choose a different email.");
+            return;
+        } else {
+            await createUser(currentUsername, email, password);
+            alert("Account created successfully! Your scores will be saved.");
+            showGameScreen(currentUsername);
+        }
     });
-
-
-
-
-
 
     function showGameScreen(username) {
         hideAuthSections();
@@ -247,6 +244,13 @@
         if (username) {
             document.getElementById("username-display").textContent = username;
         }
+        const bgMusic = new Audio("https://seojizzz.github.io/runfactor.github.io/music.mp3");
+        bgMusic.loop = true;
+        bgMusic.volume = 0.5; // Adjust volume as needed
+        // Start the music when appropriate (after a user gesture, for instance):
+        bgMusic.play().catch(error => {
+            console.error("Playback prevented:", error);
+        });
         startGame(username);
     }
 
