@@ -140,17 +140,8 @@
 <!-- Inline module script for UI logic -->
 <script type="module">
     import { startGame } from './game.js';
-    import { fetchLeaderboard } from './game.js';
 
-    document.addEventListener("DOMContentLoaded", () => {
-        fetchLeaderboard(10); // initial load
-        setInterval(() => {
-            console.log("Refreshing leaderboard...");
-            fetchLeaderboard(10);
-        }, 60 * 60 * 1000); // 1 hour in milliseconds
-    });
-
-
+    // Helper functions.
     function hideAuthSections() {
         document.getElementById("sign-in-page").style.display = "none";
         document.getElementById("account-options").style.display = "none";
@@ -166,97 +157,69 @@
         startGame(username);
     }
 
-        // Declare currentUsername only once.
-        let currentUsername = "";
+    // Simulated backend.
+    const fakeAccountsDB = {
+        'johnDoe': { email: 'john@example.com', password: 'password123' }
+    };
 
-        document.addEventListener("DOMContentLoaded", () => {
-            // Your event listeners for the join button, etc.
-            document.getElementById("join-btn").addEventListener("click", () => {
-                let username = document.getElementById("username-signin").value.trim();
-                if (username === "") {
-                    alert("Username cannot be empty.");
-                    return;
-                }
-                if (containsProfanity(username)) {
-                    alert("Inappropriate username.");
-                    return;
-                }
-                currentUsername = username;
-                checkUserExists(username).then(exists => {
-                    if (exists) {
-                        document.getElementById("sign-in-page").style.display = "none";
-                        document.getElementById("existing-account").style.display = "block";
-                        document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-                    } else {
-                        document.getElementById("sign-in-page").style.display = "none";
-                        document.getElementById("account-options").style.display = "block";
-                        document.getElementById("new-account-message").textContent =
-                            `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
-                    }
-                });
-            });
+    function checkUserExists(username) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(!!fakeAccountsDB[username]);
+            }, 500);
         });
+    }
 
+    function checkEmailExists(email) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                const exists = Object.values(fakeAccountsDB).some(account => account.email === email);
+                resolve(exists);
+            }, 500);
+        });
+    }
 
-        // Simulated backend data.
-        const fakeAccountsDB = {
-            'johnDoe': { email: 'john@example.com', password: 'password123' }
-        };
+    function containsProfanity(username) {
+        const bannedWords = ["badword1", "badword2", "anotherbadword"];
+        return bannedWords.some(badWord => username.toLowerCase().includes(badWord));
+    }
 
-        function checkUserExists(username) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    resolve(!!fakeAccountsDB[username]);
-                }, 500);
-            });
-        }
+    // Declare currentUsername only once.
+    let currentUsername = "";
 
-        function checkEmailExists(email) {
-            return new Promise((resolve) => {
-                setTimeout(() => {
-                    const exists = Object.values(fakeAccountsDB).some(account => account.email === email);
-                    resolve(exists);
-                }, 500);
-            });
-        }
-
-        function containsProfanity(username) {
-            const bannedWords = ["badword1", "badword2", "anotherbadword"];
-            return bannedWords.some(badWord => username.toLowerCase().includes(badWord));
-        }
-
-        // Attach event listener once the DOM is fully loaded.
-        document.addEventListener("DOMContentLoaded", () => {
+    // Wait until DOM is fully loaded.
+    document.addEventListener("DOMContentLoaded", () => {
         // Join button on sign-in page.
-            document.getElementById("join-btn").addEventListener("click", () => {
-                    let username = document.getElementById("username-signin").value.trim();
-                    if (username === "") {
-                        alert("Username cannot be empty.");
-                        return;
-                    }
-                    if (containsProfanity(username)) {
-                        alert("Inappropriate username.");
-                        return;
-                    }
-                currentUsername = username;
-                checkUserExists(username).then(exists => {
-                    if (exists) {
-                        document.getElementById("sign-in-page").style.display = "none";
-                        document.getElementById("existing-account").style.display = "block";
-                        document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-                    } else {
-                        document.getElementById("sign-in-page").style.display = "none";
-                        document.getElementById("account-options").style.display = "block";
-                        document.getElementById("new-account-message").textContent =
+        document.getElementById("join-btn").addEventListener("click", () => {
+            let username = document.getElementById("username-signin").value.trim();
+            if (username === "") {
+                alert("Username cannot be empty.");
+                return;
+            }
+            if (containsProfanity(username)) {
+                alert("Inappropriate username.");
+                return;
+            }
+            currentUsername = username;
+            checkUserExists(username).then(exists => {
+                if (exists) {
+                    // Show existing account login.
+                    hideAuthSections();
+                    document.getElementById("existing-account").style.display = "block";
+                    document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+                } else {
+                    // Show new account options.
+                    hideAuthSections();
+                    document.getElementById("account-options").style.display = "block";
+                    document.getElementById("new-account-message").textContent =
                         `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
-                    }
-                });
+                }
             });
         });
 
-        // "Back" button.
+        // "Back" button (from account options).
         document.getElementById("back-btn").addEventListener("click", () => {
-            document.getElementById("account-options").style.display = "none";
+            hideAuthSections();
             document.getElementById("sign-in-page").style.display = "block";
         });
 
@@ -264,52 +227,54 @@
         document.getElementById("play-anon-btn").addEventListener("click", () => {
             window.playAnonymously = true;
             alert("Playing anonymously. Your scores won't be saved.");
-            showGameScreen(""); // Anonymous play.
+            showGameScreen("");
         });
 
-            // "Create Account" button.
-                document.getElementById("create-account-btn").addEventListener("click", () => {
-                    const email = document.getElementById("new-email").value.trim();
-                    const password = document.getElementById("new-password").value;
-                    const confirmPassword = document.getElementById("confirm-password").value;
-                    if (!email || !password || !confirmPassword) {
-                        alert("Please fill in all fields.");
+        // "Create Account" button.
+        document.getElementById("create-account-btn").addEventListener("click", () => {
+            const email = document.getElementById("new-email").value.trim();
+            const password = document.getElementById("new-password").value;
+            const confirmPassword = document.getElementById("confirm-password").value;
+            if (!email || !password || !confirmPassword) {
+                alert("Please fill in all fields.");
+                return;
+            }
+            if (password !== confirmPassword) {
+                alert("Passwords do not match.");
+                return;
+            }
+            checkEmailExists(email).then(emailExists => {
+                if (emailExists) {
+                    alert("Email already in use. Please choose a different email.");
                     return;
-                    }
-                    if (password !== confirmPassword) {
-                        alert("Passwords do not match.");
-                        return;
-                    }
-                    checkEmailExists(email).then(emailExists => {
-                    if (emailExists) {
-                        alert("Email already in use. Please choose a different email.");
-                        return;
-                    } else {
-                        fakeAccountsDB[currentUsername] = { email, password };
-                        alert("Account created successfully! Your scores will be saved.");
-                        showGameScreen(currentUsername);
-                    }
-                });
-            });
-
-        // "Sign In" button for existing accounts.
-            document.getElementById("sign-in-btn").addEventListener("click", () => {
-                const password = document.getElementById("existing-password").value;
-                const account = fakeAccountsDB[currentUsername];
-                if (account && account.password === password) {
-                    alert("Sign in successful! Welcome back.");
-                    showGameScreen(currentUsername);
                 } else {
-                alert("Incorrect password. Please try again.");
+                    // Simulate account creation.
+                    fakeAccountsDB[currentUsername] = { email, password };
+                    alert("Account created successfully! Your scores will be saved.");
+                    showGameScreen(currentUsername);
                 }
             });
+        });
 
-      // "Not your account?" button.
-            document.getElementById("not-your-account-btn").addEventListener("click", () => {
-                document.getElementById("existing-account").style.display = "none";
-                document.getElementById("sign-in-page").style.display = "block";
-                document.getElementById("existing-password").value = "";
-            });
-    </script>
+        // "Sign In" button for existing accounts.
+        document.getElementById("sign-in-btn").addEventListener("click", () => {
+            const password = document.getElementById("existing-password").value;
+            const account = fakeAccountsDB[currentUsername];
+            if (account && account.password === password) {
+                alert("Sign in successful! Welcome back.");
+                showGameScreen(currentUsername);
+            } else {
+                alert("Incorrect password. Please try again.");
+            }
+        });
+
+        // "Not your account?" button.
+        document.getElementById("not-your-account-btn").addEventListener("click", () => {
+            hideAuthSections();
+            document.getElementById("sign-in-page").style.display = "block";
+            document.getElementById("existing-password").value = "";
+        });
+    });
+</script>
 </body>
 </html>
