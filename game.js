@@ -24,18 +24,6 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-signInAnonymously(auth)
-  .then(() => {
-      console.log("Signed in anonymously");
-      // At this point, auth.currentUser.uid is available.
-  })
-  .catch((error) => {
-      console.error("Authentication error:", error);
-  });
-
-
-
-
 // 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {
@@ -62,12 +50,17 @@ class PrimeFactorGame {
         this.originalNumber = 0;
       
         this.bannedWords = ["badword1", "badword2", "anotherbadword"];
-        this.bindEvents();
+        window.addEventListener("DOMContentLoaded", () => {
+          this.bindEvents();
+      });
     }
-  
-    // Attach event listener for prime buttons.
     bindEvents() {
-        document.getElementById("buttons").addEventListener("click", (e) => {
+        const buttonsEl = document.getElementById("buttons");
+        if (!buttonsEl) {
+            console.error("Element with ID 'buttons' not found!");
+            return;
+        }
+        buttonsEl.addEventListener("click", (e) => {
             if (e.target && e.target.classList.contains("prime-btn")) {
                 const guessedFactor = parseInt(e.target.textContent, 10);
                 this.handleGuess(guessedFactor, e.target);
