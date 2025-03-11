@@ -489,17 +489,17 @@ export async function checkUserExists(username) {
 }
 
 // Export checkEmailExists if you have a Firestore version, or for your fake backend:
-export function checkEmailExists(email) {
-    return new Promise((resolve) => {
-        // For testing, you can use your simulated fakeAccountsDB
-        setTimeout(() => {
-            // Replace this with a proper Firestore query if needed.
-            // For example, if you query the "users" collection by email.
-            const exists = Object.values(fakeAccountsDB).some(account => account.email === email);
-            resolve(exists);
-        }, 500);
-    });
+// In game.js (at the very top, before your exported functions)
+
+export async function checkEmailExists(email) {
+    const db = getFirestore();
+    const usersRef = collection(db, "users");
+    const q = query(usersRef, where("email", "==", email));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
 }
+
+
 
 async function updateUserRecordIfHigh(newScore) {
   const auth = getAuth();
