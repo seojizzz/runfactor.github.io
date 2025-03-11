@@ -364,26 +364,20 @@ class PrimeFactorGame {
 let scoreSubmitted = false;
 
 function gameOver() {
-    if (scoreSubmitted) return;
-    scoreSubmitted = true;
-    
-    // Use game.username (set during sign-in) and your stored user data.
     let username = window.game.username;
-    // For demonstration, assume these global variables were set upon sign‑in:
-    let email = window.userEmail || "default@example.com"; 
-    let password = window.userPassword || "defaultpassword";
-    
+    // Assume that when the user signed in or created an account, you saved their email and password:
+    let email = window.userEmail || "default@example.com";  // Replace with real value.
+    let password = window.userPassword || "defaultPassword";  // Replace with real value.
     let scoreText = document.getElementById("score-display").innerText.trim();
     let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
-    
     console.log("Game over! Submitting score:", { username, finalScore });
-    
     if (username && !isNaN(finalScore)) {
-        submitUserScore(username, email, password, finalScore);
+        updateUserHighScoreIfHigher(username, email, password, finalScore);
     } else {
         console.error("Invalid username or score, not submitting.");
     }
 }
+
 
 function hideAllScreens() {
     document.getElementById("sign-in-page").style.display = "none";
@@ -436,6 +430,38 @@ console.table(leaderboard);
     return leaderboard;
 }
 
+
+async function updateUserHighScoreIfHigher(username, email, password, newScore) {
+    const db = getFirestore();
+    // Here, we're using the username as the document ID.
+    const userRef = doc(db, "users", username);
+    const docSnap = await getDoc(userRef);
+    if (docSnap.exists()) {
+        let currentHigh = docSnap.data().highestScore || 0;
+        if (newScore > currentHigh) {
+            await setDoc(userRef, {
+                username: username,
+                email: email,
+                password: password,  // In production, store hashed passwords.
+                highestScore: newScore,
+                timestamp: serverTimestamp()
+            }, { merge: true });
+            console.log("User record updated with new high score.");
+        } else {
+            console.log("New score is not higher; record not updated.");
+        }
+    } else {
+        // Create a new record.
+        await setDoc(userRef, {
+            username: username,
+            email: email,
+            password: password,
+            highestScore: newScore,
+            timestamp: serverTimestamp()
+        });
+        console.log("New user record created.");
+    }
+}
 
 function hideAuthSections() {
     document.getElementById("sign-in-page").style.display = "none";

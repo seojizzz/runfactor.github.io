@@ -73,11 +73,13 @@
     <div id="game-screen">
         <header>
             <h1>Prime Factorization Challenge</h1>
-            <!-- Username display -->
-            <p id="username-display" style="position: absolute; top: 10px; right: 20px;"></p>
-            <!-- Timer display -->
+            <div style="position: absolute; top: 10px; right: 20px;">
+                <a href="https://github.com/seojizzz/runfactor.github.io/tree/main" target="_blank">GitHub Repo</a> |
+                <a href="https://seojizzz.github.io/runfactor.github.io/leaderboard.html" target="_blank">Leaderboard</a>
+            </div>
+            <p id="username-display"></p>
             <p id="timer-display">Time Left: 120.00s</p>
-        </header>
+        </header>        
         <section id="game-content">
             <!-- Composite number display -->
             <p id="number-display">Factorize: Generating number...</p>
@@ -138,6 +140,16 @@
 <!-- Inline module script for UI logic -->
 <script type="module">
     import { startGame } from './game.js';
+    import { fetchLeaderboard } from './game.js';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        fetchLeaderboard(10); // initial load
+        setInterval(() => {
+            console.log("Refreshing leaderboard...");
+            fetchLeaderboard(10);
+        }, 60 * 60 * 1000); // 1 hour in milliseconds
+    });
+
 
     function hideAuthSections() {
         document.getElementById("sign-in-page").style.display = "none";
