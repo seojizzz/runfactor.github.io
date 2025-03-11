@@ -502,15 +502,6 @@ export function checkEmailExists(email) {
     });
 }
 
-
-
-async function checkUserExists(username) {
-  const db = getFirestore();
-  const userRef = doc(db, "users", username);  // Assuming you're using the username as the document ID.
-  const docSnap = await getDoc(userRef);
-  return docSnap.exists();
-}
-
 async function updateUserRecordIfHigh(newScore) {
   const auth = getAuth();
   const currentUser = auth.currentUser;
