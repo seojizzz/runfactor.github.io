@@ -287,7 +287,7 @@
     // Wait until DOM is fully loaded.
     document.addEventListener("DOMContentLoaded", () => {
         // Join button on sign-in page.
-        document.getElementById("join-btn").addEventListener("click", () => {
+        document.getElementById("join-btn").addEventListener("click", async () => {
             let username = document.getElementById("username-signin").value.trim();
             if (username === "") {
                 alert("Username cannot be empty.");
@@ -298,21 +298,21 @@
                 return;
             }
             currentUsername = username;
-            checkUserExists(username).then(exists => {
-                if (exists) {
-                    // Show existing account login.
-                    hideAuthSections();
-                    document.getElementById("existing-account").style.display = "block";
-                    document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-                } else {
-                    // Show new account options.
-                    hideAuthSections();
-                    document.getElementById("account-options").style.display = "block";
-                    document.getElementById("new-account-message").textContent =
-                        `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously? (If you play anonymously, you won't be able to submit scores to the leaderboards.)`;
-                }
-            });
+            const exists = await checkUserExists(username);
+            if (exists) {
+                // Direct to sign-in page (for password input).
+                document.getElementById("sign-in-page").style.display = "none";
+                document.getElementById("existing-account").style.display = "block";
+                document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
+            } else {
+                // Direct to create-account page.
+                document.getElementById("sign-in-page").style.display = "none";
+                document.getElementById("account-options").style.display = "block";
+                document.getElementById("new-account-message").textContent =
+                    `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
+            }
         });
+
 
         // "Back" button (from account options).
         document.getElementById("back-btn").addEventListener("click", () => {
@@ -328,7 +328,7 @@
         });
 
         // "Create Account" button.
-        document.getElementById("create-account-btn").addEventListener("click", () => {
+        document.getElementById("create-account-btn").addEventListener("click", async () => {
             const email = document.getElementById("new-email").value.trim();
             const password = document.getElementById("new-password").value;
             const confirmPassword = document.getElementById("confirm-password").value;
@@ -340,18 +340,18 @@
                 alert("Passwords do not match.");
                 return;
             }
-            checkEmailExists(email).then(emailExists => {
-                if (emailExists) {
-                    alert("Email already in use. Please choose a different email.");
-                    return;
-                } else {
-                    // Simulate account creation.
-                    fakeAccountsDB[currentUsername] = { email, password };
-                    alert("Account created successfully! Your scores will be saved.");
-                    showGameScreen(currentUsername);
-                }
-            });
+            // Optionally, check if the email already exists in your Firestore database.
+            const emailExists = await checkEmailExists(email);
+            if (emailExists) {
+                alert("Email already in use. Please choose a different email.");
+                return;
+            }
+            await createUser(currentUsername, email, password);
+            alert("Account created successfully! Your scores will be saved.");
+            // Now, direct the user to the game screen.
+            showGameScreen(currentUsername);
         });
+
 
         // "Sign In" button for existing accounts.
         document.getElementById("sign-in-btn").addEventListener("click", () => {

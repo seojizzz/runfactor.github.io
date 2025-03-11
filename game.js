@@ -457,12 +457,11 @@ async function updateUserHighScoreIfHigher(newScore) {
 
 async function createUser(username, email, password) {
   const db = getFirestore();
-  // Use the username as document ID (or use a UID from Firebase Auth)
-  const userRef = doc(db, "users", username);
+  const userRef = doc(db, "users", username); // Document ID is the username.
   await setDoc(userRef, {
       username: username,
       email: email,
-      password: password, // In production, NEVER store plaintext passwords.
+      password: password,  // For production, store a hashed password!
       highestScore: 0,
       createdAt: serverTimestamp()
   });
@@ -471,6 +470,7 @@ async function createUser(username, email, password) {
 
 async function checkUserExists(username) {
   const db = getFirestore();
+  // If you're not using Firebase Auth, you can use the username as the document ID.
   const userRef = doc(db, "users", username);
   const docSnap = await getDoc(userRef);
   return docSnap.exists();
