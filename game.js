@@ -364,20 +364,21 @@ class PrimeFactorGame {
 let scoreSubmitted = false;
 
 function gameOver() {
-    let username = window.game.username;
-    // Assume that when the user signed in or created an account, you saved their email and password:
-    let email = window.userEmail || "default@example.com";  // Replace with real value.
-    let password = window.userPassword || "defaultPassword";  // Replace with real value.
-    let scoreText = document.getElementById("score-display").innerText.trim();
-    let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
-    console.log("Game over! Submitting score:", { username, finalScore });
-    if (username && !isNaN(finalScore)) {
-        updateUserHighScoreIfHigher(username, email, password, finalScore);
-    } else {
-        console.error("Invalid username or score, not submitting.");
-    }
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+      console.error("No authenticated user to submit score.");
+      return;
+  }
+  let scoreText = document.getElementById("score-display").innerText.trim();
+  let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
+  console.log("Game over! Submitting score:", { username: currentUser.uid, finalScore });
+  if (finalScore && !isNaN(finalScore)) {
+      updateUserRecordIfHigh(finalScore);
+  } else {
+      console.error("Invalid score, not submitting.");
+  }
 }
-
 
 function hideAllScreens() {
     document.getElementById("sign-in-page").style.display = "none";
@@ -430,6 +431,41 @@ console.table(leaderboard);
     return leaderboard;
 }
 
+async function updateUserRecordIfHigh(newScore) {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+      console.error("No authenticated user.");
+      return;
+  }
+  const uid = currentUser.uid;
+  const db = getFirestore();
+  const userRef = doc(db, "users", uid);
+  const docSnap = await getDoc(userRef);
+  if (docSnap.exists()) {
+      const currentHigh = docSnap.data().highestScore || 0;
+      if (newScore > currentHigh) {
+          await setDoc(userRef, {
+              username: docSnap.data().username, // or however you stored it
+              email: docSnap.data().email,       // assuming it's stored
+              highestScore: newScore,
+              updatedAt: serverTimestamp()
+          }, { merge: true });
+          console.log("User record updated with new high score.");
+      } else {
+          console.log("New score is not higher; record not updated.");
+      }
+  } else {
+      // For new users, you’d normally have already created the record at sign‑up.
+      await setDoc(userRef, {
+          username: currentUser.displayName || "Player",
+          email: currentUser.email || "",
+          highestScore: newScore,
+          createdAt: serverTimestamp()
+      });
+      console.log("New user record created.");
+  }
+}
 
 async function updateUserHighScoreIfHigher(username, email, password, newScore) {
     const db = getFirestore();
@@ -502,45 +538,16 @@ async function loadLeaderboard() {
 }
 
 export async function fetchLeaderboard(entriesToShow = 10) {
-    console.log("Fetching leaderboard...");
-
-    try {
-        const db = getFirestore();
-        const leaderboardRef = collection(db, "scores");
-        const querySnapshot = await getDocs(leaderboardRef);
-
-        let userScores = new Map(); // Map to store highest score per user
-
-        querySnapshot.forEach((doc) => {
-            let data = doc.data();
-            let scoreValue = data.finalScore ?? data.score;
-            let username = data.username;
-
-            if (username && scoreValue !== undefined) {
-                // Store only the highest score for each user
-                if (!userScores.has(username) || userScores.get(username) < scoreValue) {
-                    userScores.set(username, scoreValue);
-                }
-            } else {
-                console.warn("Document is missing username or score:", data);
-            }
-        });
-
-        // Convert map to array, sort by score descending
-        let leaderboardData = Array.from(userScores.entries())
-            .map(([username, finalScore]) => ({ username, finalScore }))
-            .sort((a, b) => b.finalScore - a.finalScore);
-
-        updateLeaderboardTable(leaderboardData.slice(0, entriesToShow));
-
-        // Store full leaderboard for "Show More" functionality
-        window.fullLeaderboard = leaderboardData;
-
-        console.log("Leaderboard updated!");
-
-    } catch (error) {
-        console.error("🔥 Error fetching leaderboard:", error);
-    }
+  const db = getFirestore();
+  const usersRef = collection(db, "users");
+  const q = query(usersRef, orderBy("highestScore", "desc"), limit(entriesToShow));
+  const querySnapshot = await getDocs(q);
+  let leaderboard = [];
+  querySnapshot.forEach(docSnap => {
+      leaderboard.push(docSnap.data());
+  });
+  console.table(leaderboard);
+  return leaderboard;
 }
 
 export function updateLeaderboardTable(data) {
