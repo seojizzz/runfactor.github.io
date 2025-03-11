@@ -8,7 +8,6 @@ import {query, where, orderBy, limit, deleteDoc} from "https://www.gstatic.com/f
 import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 
-
 // 2a. Firebase Configuration
 const firebaseConfig = {
     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
@@ -483,10 +482,10 @@ export async function createUser(username, email, password) {
 
 // Export checkUserExists using Firestore:
 export async function checkUserExists(username) {
-    const db = getFirestore();
-    const userRef = doc(db, "users", username);
-    const docSnap = await getDoc(userRef);
-    return docSnap.exists();
+  const db = getFirestore();
+  const userRef = doc(db, "users", username);
+  const docSnap = await getDoc(userRef);
+  return docSnap.exists();
 }
 
 // Export checkEmailExists if you have a Firestore version, or for your fake backend:
