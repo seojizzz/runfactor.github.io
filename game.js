@@ -1,6 +1,6 @@
 // Assume you have a variable that tracks the score during the game:
 let currentScore = 0;
-const sheetURL = "https://script.google.com/macros/s/AKfycbxGylggEiuhkn6c5AoxOu7WKFElxqKu_4kDfU4LjSLiMifxLeMBUX8yX6-mpu1JWA8u/exec";
+const sheetURL = "https://script.google.com/macros/s/AKfycbyD1IWUr1d7v49a8w9c3K3gOEA6zpbMdEmiRy_tbSQdG1OJHZZGXDViev6alv02zqgg/exec";
 
 
 class PrimeFactorGame {
