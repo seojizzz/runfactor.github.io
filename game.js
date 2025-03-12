@@ -373,6 +373,18 @@ async function fetchLeaderboard() {
   sortTable(); // Sort initially
 }
 
+function showEndScreen(finalScore) {
+  // Hide the game screen and show the end screen.
+  document.getElementById("game-screen").style.display = "none";
+  document.getElementById("end-screen").style.display = "block";
+  
+  // Display the final score
+  document.getElementById("final-score").innerText = `Final Score: ${finalScore.toFixed(2)}`;
+  
+  // Optionally, store the score for submission later
+  localStorage.setItem("finalScore", finalScore);
+}
+
 function sortTable() {
   let rows = Array.from(document.querySelectorAll("#leaderboard tbody tr"));
   rows.sort((a, b) => parseFloat(b.children[3].textContent) - parseFloat(a.children[3].textContent));
