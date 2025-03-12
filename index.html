@@ -101,17 +101,6 @@
             startGame();
         });
 
-        // Function to display the end screen with the final score
-        function showEndScreen(finalScore) {
-            document.getElementById("game-screen").style.display = "none";
-            document.getElementById("end-screen").style.display = "block";
-            
-            // Display final score
-            document.getElementById("final-score").innerText = `Final Score: ${finalScore.toFixed(2)}`;
-            
-            // Store score in localStorage for form submission
-            localStorage.setItem("finalScore", finalScore);
-        }
 
         // Score submission event listener
         // document.getElementById("scoreForm").addEventListener("submit", async function(event) {
