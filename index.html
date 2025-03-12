@@ -4,95 +4,36 @@
     <link rel="icon" href="favicon.ico" type="image/x-icon">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sign In - Prime Factorization Challenge</title>
+    <title>Prime Factorization Challenge</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-    /* Minimal styling for demonstration */
-    #sign-in-page, #account-options, #existing-account {
-        margin: 20px auto;
-        max-width: 400px;
-        padding: 20px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        display: none;
-    }
-    /* By default, only sign-in is visible */
-    #sign-in-page {
-        display: block;
-    }
-    /* Ensure game and end screens are hidden */
-    #game-screen, #end-screen {
-        display: none;
-    }
-    input {
-        display: block;
-        width: 100%;
-        margin: 10px 0;
-        padding: 8px;
-    }
-    button {
-        margin: 5px;
-        padding: 8px 12px;
-    }
-    </style>
 </head>
 <body>
-    <!-- Sign In Page -->
+
     <div style="position: absolute; top: 10px; right: 20px;">
         <a href="https://github.com/seojizzz/runfactor.github.io/tree/main" target="_blank">GitHub Repo</a> |
         <a href="https://seojizzz.github.io/runfactor.github.io/leaderboard.html" target="_blank">Leaderboard</a>
-    </div>    
-    <div id="sign-in-page">
-        <h1>Sign In</h1>
-        <label for="username-signin">Enter your username:</label>
-        <input type="text" id="username-signin" maxlength="20" placeholder="Username">
-        <button id="join-btn">Join</button>
-    </div>
+    </div>  
 
-    <!-- New Account Options (username doesn't exist) -->
-    <div id="account-options">
-        <p id="new-account-message"></p>
-        <div id="new-account-form">
-            <input type="email" id="new-email" placeholder="Email">
-            <input type="password" id="new-password" placeholder="Password">
-            <input type="password" id="confirm-password" placeholder="Confirm Password">
-            <div>
-                <button id="back-btn">Back</button>
-                <button id="play-anon-btn">Play Anonymously</button>
-                <button id="create-account-btn">Create Account</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Existing Account Login -->
-    <div id="existing-account">
-        <p id="welcome-message"></p>
-        <input type="password" id="existing-password" placeholder="Enter your password">
-        <div>
-            <button id="sign-in-btn">Sign In</button>
-            <button id="not-your-account-btn">Not your account?</button>
-        </div>
+    <!-- Start Page -->
+    <div id="start-page">
+        <h1>Prime Factorization Challenge</h1>
+        <button id="start-btn">Start Game</button>
     </div>
 
     <!-- Game Screen -->
-    <div id="game-screen">
-        <audio id="background-music" src="https://seojizzz.github.io/runfactor.github.io/music.mp3" loop></audio>
+    <div id="game-screen" style="display: none;">
+        <audio id="background-music" src="music.mp3" loop></audio>
         <header>
             <h1>Prime Factorization Challenge</h1>
-            <p id="username-display"></p>
             <p id="timer-display">Time Left: 120.00s</p>
         </header>        
         <section id="game-content">
-            <!-- Composite number display -->
             <p id="number-display">Factorize: Generating number...</p>
             <div class="game-container">
-            <!-- Prime buttons container -->
                 <div id="buttons"></div>
-            <!-- Score container -->
                 <div class="score-container">
                     <p id="score-label">Score:</p>
                     <p id="score-display">0</p>
-                    <!-- Action text for score increment -->
                     <p id="action-text">+0</p>
                 </div>
             </div>
@@ -100,11 +41,9 @@
     </div>
 
     <!-- End Screen -->
-    <div id="end-screen">
+    <div id="end-screen" style="display: none;">
         <h1>Game Over</h1>
-        <!-- Final score display -->
         <p id="final-score"></p>
-        <!-- Results sections -->
         <section id="results">
             <div id="correct-results">
                 <h2>Correctly Factorized</h2>
@@ -115,10 +54,8 @@
                 <ul id="wrong-list"></ul>
             </div>
         </section>
-            <!-- Replay button -->
-            <button onclick="location.reload()">Play Again</button>
-            <!-- Leaderboard -->
-            <section id="leaderboard-section">
+        <button onclick="location.reload()">Play Again</button>
+        <section id="leaderboard-section">
             <h2>Leaderboard (Top 10)</h2>
             <table id="leaderboard">
                 <thead>
@@ -128,129 +65,21 @@
                     <th>Score</th>
                 </tr>
                 </thead>
-                <tbody id="leaderboard-body">
-                    <!-- Leaderboard entries will be added dynamically -->
-                </tbody>
+                <tbody id="leaderboard-body"></tbody>
             </table>
         </section>
     </div>
 
-    
+    <script type="module" src="game.js"></script>
+    <script type="module">
+        import { startGame } from "./game.js";
 
-<!-- Load game.js as a module first -->
-<script type="module" src="game.js"></script>
-<!-- Inline module script for UI logic -->
-<script type="module">
-    import { startGame, createUser, checkUserExists, checkEmailExists } from './game.js';
-
-    // Declare global variable once.
-    let currentUsername = "";
-    const fakeAccountsDB = {
-        'johnDoe': { email: 'john@example.com', password: 'password123' }
-    };
-
-
-    // Helper function to hide all auth-related sections.
-    function hideAuthSections() {
-        document.getElementById("sign-in-page").style.display = "none";
-        document.getElementById("account-options").style.display = "none";
-        document.getElementById("existing-account").style.display = "none";
-    }
-
-    function showGameScreen(username) {
-        hideAuthSections();
-        document.getElementById("game-screen").style.display = "block";
-        if (username) {
-            document.getElementById("username-display").textContent = username;
-        }
-        startGame(username);
-    }
-
-    // Wait until DOM is fully loaded.
-    document.addEventListener("DOMContentLoaded", () => {
-
-        // Join button on sign-in page.
-        document.getElementById("join-btn").addEventListener("click", async () => {
-            let username = document.getElementById("username-signin").value.trim();
-            if (username === "") {
-                alert("Username cannot be empty.");
-                return;
-            }
-            if (containsProfanity(username)) {
-                alert("Inappropriate username.");
-                return;
-            }
-            currentUsername = username;
-            const exists = await checkUserExists(username);
-            if (exists) {
-                // Show the existing account login for password input.
-                document.getElementById("sign-in-page").style.display = "none";
-                document.getElementById("existing-account").style.display = "block";
-                document.getElementById("welcome-message").textContent = `Welcome back, ${username}!`;
-            } else {
-                // Show create account options.
-                document.getElementById("sign-in-page").style.display = "none";
-                document.getElementById("account-options").style.display = "block";
-                document.getElementById("new-account-message").textContent =
-                    `The nickname "${username}" hasn't been registered. Do you want to claim it as yours or play anonymously?`;
-            }
+        document.getElementById("start-btn").addEventListener("click", () => {
+            document.getElementById("start-page").style.display = "none";
+            document.getElementById("game-screen").style.display = "block";
+            startGame();
         });
-
-        // "Create Account" button.
-        document.getElementById("create-account-btn").addEventListener("click", async () => {
-            const email = document.getElementById("new-email").value.trim();
-            const password = document.getElementById("new-password").value;
-            const confirmPassword = document.getElementById("confirm-password").value;
-            if (!email || !password || !confirmPassword) {
-                alert("Please fill in all fields.");
-                return;
-            }
-            if (password !== confirmPassword) {
-                alert("Passwords do not match.");
-                return;
-            }
-            const emailExists = await checkEmailExists(email);
-            if (emailExists) {
-                alert("Email already in use. Please choose a different email.");
-                return;
-            }
-            // Create user record.
-            await createUser(currentUsername, email, password);
-            alert("Account created successfully! Your scores will be saved.");
-            showGameScreen(currentUsername);
-        });
-
-        // "Sign In" button for existing accounts.
-        document.getElementById("sign-in-btn").addEventListener("click", () => {
-            const password = document.getElementById("existing-password").value;
-            const account = fakeAccountsDB[currentUsername];  // For simulation purposes.
-            if (account && account.password === password) {
-                alert("Sign in successful! Welcome back.");
-                showGameScreen(currentUsername);
-            } else {
-                alert("Incorrect password. Please try again.");
-            }
-        });
-
-        // "Back" and "Not your account?" buttons.
-        document.getElementById("back-btn").addEventListener("click", () => {
-            hideAuthSections();
-            document.getElementById("sign-in-page").style.display = "block";
-        });
-
-        document.getElementById("not-your-account-btn").addEventListener("click", () => {
-            hideAuthSections();
-            document.getElementById("sign-in-page").style.display = "block";
-            document.getElementById("existing-password").value = "";
-        });
-    });
-
-    // Dummy implementation of containsProfanity.
-    function containsProfanity(username) {
-        const bannedWords = ["badword1", "badword2", "anotherbadword"];
-        return bannedWords.some(badWord => username.toLowerCase().includes(badWord));
-    }
-</script>
+    </script>
 
 </body>
 </html>
