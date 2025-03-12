@@ -119,7 +119,7 @@ class PrimeFactorGame {
     updateTimer() {
       if (!this.gameRunning) return;
       const elapsed = (Date.now() - this.startTime) / 1000;
-      this.timeLeft = Math.max(0, 120 - elapsed - this.totalPenalty);
+      this.timeLeft = Math.max(0, 10 - elapsed - this.totalPenalty);
       document.getElementById("timer-display").innerText = `Time Left: ${this.timeLeft.toFixed(2)}s`;
       if (this.timeLeft <= 0) {
         clearInterval(this.timerInterval);
@@ -328,7 +328,6 @@ class PrimeFactorGame {
         this.gameRunning = false;
         document.getElementById("game-screen").style.display = "none";
         document.getElementById("end-screen").style.display = "block";
-        document.getElementById("final-score").innerText = `Final Score: ${this.score.toFixed(2)}`;
         
         const correctListElement = document.getElementById("correct-list");
         correctListElement.innerHTML = this.correctList.length > 0 
@@ -342,6 +341,7 @@ class PrimeFactorGame {
     
         // Example: Call this when the game ends
         // When the game ends, assign curren  // Define the final score variable
+        currentScore = this.score;
         showEndScreen(currentScore);
         let finalscore = currentScore;
         fetchLeaderboard();
