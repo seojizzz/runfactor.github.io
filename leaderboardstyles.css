@@ -11,8 +11,8 @@ table {
 th, td {
     padding: 10px;
     border: 1px solid black;
+    text-align: center;
 }
-th {
-    cursor: pointer;
-    background-color: #f2f2f2;
+table {
+    width: 80%;
 }

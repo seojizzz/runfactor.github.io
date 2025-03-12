@@ -1,30 +1,3 @@
-// // 1. Import Firebase Modules
-// import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-// import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-analytics.js";
-// import {collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-// import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-// import badWordsList from "./badwords.js"; // External file with bad words
-// import {query, where, orderBy, limit, deleteDoc} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-// import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-
-// // 2a. Firebase Configuration
-// const firebaseConfig = {
-//     apiKey: "AIzaSyDBgRh-t6pJOEZfQanb-T6KYNj_XbL_YP8",
-//     authDomain: "runfactor-cf724.firebaseapp.com",
-//     projectId: "runfactor-cf724",
-//     storageBucket: "runfactor-cf724.firebasestorage.app",
-//     messagingSenderId: "882591954418",
-//     appId: "1:882591954418:web:39964ebfa664061fb4a76b",
-//     measurementId: "G-KWWWHF4NQE"
-// };
-
-// // 2b. Initialize Firebase
-// const app = initializeApp(firebaseConfig);
-// const auth = getAuth(app);
-// const db = getFirestore(app);
-
-// 4. Define PrimeFactorGame Class
 class PrimeFactorGame {
     constructor() {
         // Define prime arrays.
@@ -363,6 +336,9 @@ class PrimeFactorGame {
         : '<li>None</li>';
         
         gameOver();
+        // Example: Call this when the game ends
+        showEndScreen(playerFinalScore);
+        fetchLeaderboard();
     }
 }
 
@@ -374,97 +350,6 @@ function hideAllScreens() {
     document.getElementById("end-screen").style.display = "none";
 }
 
-// user credentials
-window.userEmail = ""; // user's email
-window.userPassword = ""; // user's password
-window.username = ""; // user's username
-
-// 5. Define Helper Functions (Leaderboard, Score Submission)
-// --- Global Helper Function ---
-// Ensure this global flag is defined so we only submit once.
-// let scoreSubmitted = false;
-
-// function gameOver() {
-//   const auth = getAuth();
-//   const currentUser = auth.currentUser;
-//   if (!currentUser) {
-//       console.error("No authenticated user to submit score.");
-//       return;
-//   }
-//   let scoreText = document.getElementById("score-display").innerText.trim();
-//   let finalScore = parseFloat(scoreText.replace(/[^\d.]/g, ""));
-//   console.log("Game over! Submitting score:", { username: currentUser.uid, finalScore });
-//   if (finalScore && !isNaN(finalScore)) {
-//       updateUserRecordIfHigh(finalScore);
-//   } else {
-//       console.error("Invalid score, not submitting.");
-//   }
-// }
-
-
-// // --- Helper Functions ---
-// async function updateUserRecord(username, email, password, newScore) {
-//     const db = getFirestore();
-//     // Use the username as the document ID (or use the user's UID if using Firebase Authentication)
-//     const userRef = doc(db, "users", username);
-    
-//     // Check if a record already exists.
-//     const docSnap = await getDoc(userRef);
-//     if (docSnap.exists()) {
-//         const currentHighest = docSnap.data().highestScore || 0;
-//         if (newScore > currentHighest) {
-//             await setDoc(userRef, {
-//                 username: username,
-//                 email: email,
-//                 password: password, // For production, NEVER store plaintext passwords.
-//                 highestScore: newScore
-//             }, { merge: true });
-//             console.log("User record updated with new high score.");
-//         } else {
-//             console.log("New score is not higher; record not updated.");
-//         }
-//     } else {
-//         // Create a new record.
-//         await setDoc(userRef, {
-//             username: username,
-//             email: email,
-//             password: password, // Use proper hashing in production.
-//             highestScore: newScore
-//         });
-//         console.log("New user record created.");
-//     }
-
-// console.table(leaderboard);
-//     return leaderboard;
-// }
-
-// async function updateUserHighScoreIfHigher(newScore) {
-//   const auth = getAuth();
-//   const currentUser = auth.currentUser;
-//   if (!currentUser) {
-//       console.error("No authenticated user.");
-//       return;
-//   }
-//   const uid = currentUser.uid; // If you're using UID.
-//   const db = getFirestore();
-//   const userRef = doc(db, "users", currentUser.displayName || currentUser.uid);
-//   const docSnap = await getDoc(userRef);
-//   if (docSnap.exists()) {
-//       const currentHigh = docSnap.data().highestScore || 0;
-//       if (newScore > currentHigh) {
-//           await setDoc(userRef, {
-//               highestScore: newScore,
-//               updatedAt: serverTimestamp()
-//           }, { merge: true });
-//           console.log("User record updated with new high score.");
-//       } else {
-//           console.log("New score is not higher; record not updated.");
-//       }
-//   }
-// }
-
-// // In game.js
-
 // Export your startGame function (already at the bottom):
 const game = new PrimeFactorGame();
 window.game = game;
@@ -472,186 +357,25 @@ export function startGame(username) {
     game.startGame(username);
 }
 
-// // Export the createUser function
-// export async function createUser(username, email, password) {
-//   const db = getFirestore();
-//   const auth = getAuth();
-//   const currentUser = auth.currentUser;
-//   if (!currentUser) {
-//       throw new Error("User not authenticated");
-//   }
-//   // Use the UID as the document ID (recommended)
-//   const userRef = doc(db, "users", currentUser.uid);
-//   await setDoc(userRef, {
-//       username: username,
-//       email: email,
-//       password: password, // In production, NEVER store plaintext passwords.
-//       highestScore: 0,
-//       createdAt: serverTimestamp()
-//   });
-//   console.log("New user record created:", { username, email });
-// }
+async function fetchLeaderboard() {
+  const response = await fetch(sheetURL);
+  const data = await response.json();
+  data.shift(); // Remove headers
 
-// // Export checkUserExists using Firestore:
-// export async function checkUserExists(username) {
-//   const db = getFirestore();
-//   const userRef = doc(db, "users", username);
-//   const docSnap = await getDoc(userRef);
-//   return docSnap.exists();
-// }
+  const tbody = document.querySelector("#leaderboard tbody");
+  tbody.innerHTML = ""; 
 
-// // Export checkEmailExists if you have a Firestore version, or for your fake backend:
-// // In game.js (at the very top, before your exported functions)
+  data.forEach(row => {
+      let tr = document.createElement("tr");
+      tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${parseFloat(row[3]).toFixed(2)}</td>`;
+      tbody.appendChild(tr);
+  });
 
-// export async function checkEmailExists(email) {
-//     const db = getFirestore();
-//     const usersRef = collection(db, "users");
-//     const q = query(usersRef, where("email", "==", email));
-//     const querySnapshot = await getDocs(q);
-//     return !querySnapshot.empty;
-// }
+  sortTable(); // Sort initially
+}
 
-
-
-// async function updateUserRecordIfHigh(newScore) {
-//   const auth = getAuth();
-//   const currentUser = auth.currentUser;
-//   if (!currentUser) {
-//       console.error("No authenticated user.");
-//       return;
-//   }
-//   const uid = currentUser.uid;
-//   const db = getFirestore();
-//   const userRef = doc(db, "users", uid);
-//   const docSnap = await getDoc(userRef);
-//   if (docSnap.exists()) {
-//       const currentHigh = docSnap.data().highestScore || 0;
-//       if (newScore > currentHigh) {
-//           await setDoc(userRef, {
-//               username: docSnap.data().username, // or however you stored it
-//               email: docSnap.data().email,       // assuming it's stored
-//               highestScore: newScore,
-//               updatedAt: serverTimestamp()
-//           }, { merge: true });
-//           console.log("User record updated with new high score.");
-//       } else {
-//           console.log("New score is not higher; record not updated.");
-//       }
-//   } else {
-//       // For new users, you’d normally have already created the record at sign‑up.
-//       await setDoc(userRef, {
-//           username: currentUser.displayName,
-//           email: currentUser.email || "",
-//           highestScore: newScore,
-//           createdAt: serverTimestamp()
-//       });
-//       console.log("New user record created.");
-//   }
-// }
-
-// function hideAuthSections() {
-//     document.getElementById("sign-in-page").style.display = "none";
-//     document.getElementById("account-options").style.display = "none";
-//     document.getElementById("existing-account").style.display = "none";
-//     }
-  
-// function showGameScreen(username) {
-//     hideAuthSections();
-//     document.getElementById("game-screen").style.display = "block";
-//     if (username) {
-//         document.getElementById("username-display").textContent = username;
-//     }
-//     // Call the exported startGame function from your module.
-//     startGame(username);
-//     }
-
-// let leaderboardLoaded = false;
-
-// async function loadLeaderboard() {
-//     if (leaderboardLoaded) return; // Prevent multiple calls
-
-//     const q = query(collection(db, "scores"), orderBy("score", "desc"), limit(10));
-//     const querySnapshot = await getDocs(q);
-
-//     let leaderboardTable = document.getElementById("leaderboard").getElementsByTagName("tbody")[0];
-//     leaderboardTable.innerHTML = ""; // Clear old data
-
-//     querySnapshot.forEach((doc, index) => {
-//         let row = leaderboardTable.insertRow();
-//         row.insertCell(0).innerText = index + 1;
-//         row.insertCell(1).innerText = doc.data().username;
-//         row.insertCell(2).innerText = doc.data().score;
-//     });
-
-//     leaderboardLoaded = true; // Ensure leaderboard only loads once
-// }
-
-// export async function fetchLeaderboard(entriesToShow = 10) {
-//   const db = getFirestore();
-//   const usersRef = collection(db, "users");
-//   const q = query(usersRef, orderBy("highestScore", "desc"), limit(entriesToShow));
-//   const querySnapshot = await getDocs(q);
-//   let leaderboard = [];
-//   querySnapshot.forEach(docSnap => {
-//       leaderboard.push(docSnap.data());
-//   });
-//   console.table(leaderboard);
-//   return leaderboard;
-// }
-
-// export function updateLeaderboardTable(data) {
-//     const leaderboardBody = document.getElementById("leaderboard-body");
-//     leaderboardBody.innerHTML = ""; 
-
-//     data.forEach((entry, index) => {
-//         const row = document.createElement("tr");
-//         row.innerHTML = `
-//             <td>${index + 1}</td>
-//             <td>${entry.username || "Unknown"}</td>
-//             <td>${entry.finalScore || 0}</td>
-//         `;
-//         leaderboardBody.appendChild(row);
-//     });
-// }
-
-// // Call fetchLeaderboard when the end screen is displayed
-// document.addEventListener("DOMContentLoaded", () => {
-//     fetchLeaderboard();
-// });
-
-// async function submitUserScore(username, email, password, finalScore) {
-//     const db = getFirestore();
-//     // Use the username as the document ID (in production, use the UID from Firebase Auth)
-//     const userRef = doc(db, "users", username);
-//     try {
-//       const docSnap = await getDoc(userRef);
-//       if (docSnap.exists()) {
-//         const currentHighest = docSnap.data().highestScore || 0;
-//         if (finalScore > currentHighest) {
-//           // Update record if new score is higher.
-//           await setDoc(userRef, {
-//             username: username,
-//             email: email,
-//             password: password, // Use hashed passwords in production.
-//             highestScore: finalScore,
-//             timestamp: serverTimestamp()
-//           }, { merge: true });
-//           console.log("User record updated with new high score.");
-//         } else {
-//           console.log("New score is not higher; record not updated.");
-//         }
-//       } else {
-//         // Create a new record.
-//         await setDoc(userRef, {
-//           username: username,
-//           email: email,
-//           password: password,
-//           highestScore: finalScore,
-//           timestamp: serverTimestamp()
-//         });
-//         console.log("New user record created.");
-//       }
-//     } catch (error) {
-//       console.error("Error updating user record:", error);
-//     }
-// }
+function sortTable() {
+  let rows = Array.from(document.querySelectorAll("#leaderboard tbody tr"));
+  rows.sort((a, b) => parseFloat(b.children[3].textContent) - parseFloat(a.children[3].textContent));
+  rows.forEach(row => document.querySelector("#leaderboard tbody").appendChild(row));
+}

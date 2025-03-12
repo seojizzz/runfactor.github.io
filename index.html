@@ -44,6 +44,7 @@
     <div id="end-screen" style="display: none;">
         <h1>Game Over</h1>
         <p id="final-score"></p>
+
         <section id="results">
             <div id="correct-results">
                 <h2>Correctly Factorized</h2>
@@ -54,21 +55,41 @@
                 <ul id="wrong-list"></ul>
             </div>
         </section>
+
+        <!-- Score Submission Form -->
+        <h2>Submit Your Score</h2>
+        <form id="scoreForm">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="class">Class:</label>
+            <input type="text" id="class" required>
+
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+
+            <button type="submit">Submit Score</button>
+        </form>
+        <p id="message"></p>
+
         <button onclick="location.reload()">Play Again</button>
+
+        <!-- Leaderboard Display -->
         <section id="leaderboard-section">
             <h2>Leaderboard (Top 10)</h2>
             <table id="leaderboard">
                 <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Username</th>
-                    <th>Score</th>
-                </tr>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Username</th>
+                        <th>Score</th>
+                    </tr>
                 </thead>
                 <tbody id="leaderboard-body"></tbody>
             </table>
         </section>
     </div>
+
 
     <script type="module" src="game.js"></script>
     <script type="module">
@@ -79,6 +100,41 @@
             document.getElementById("game-screen").style.display = "block";
             startGame();
         });
+
+                const sheetAPI = "https://script.google.com/macros/s/AKfycbxOMrxxzJJqE60l89l27QoDqhmhhEUChsMOq7vgG26RDRLw9i6p43kbuf9-GIbtRgib/exec"; // Replace with Google Apps Script URL
+
+        // Function to display the end screen with the final score
+        function showEndScreen(finalScore) {
+            document.getElementById("game-screen").style.display = "none";
+            document.getElementById("end-screen").style.display = "block";
+            
+            // Display final score
+            document.getElementById("final-score").innerText = `Final Score: ${finalScore.toFixed(2)}`;
+            
+            // Store score in localStorage for form submission
+            localStorage.setItem("finalScore", finalScore);
+        }
+
+        // Score submission event listener
+        document.getElementById("scoreForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const className = document.getElementById("class").value;
+            const username = document.getElementById("username").value;
+            const finalScore = localStorage.getItem("finalScore") || 0; // Retrieve the stored score
+
+            // Send data to Google Sheets
+            const response = await fetch(sheetAPI, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, class: className, username, score: parseFloat(finalScore).toFixed(2) })
+            });
+
+            const result = await response.json();
+            document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
+        });
+
     </script>
 
 </body>

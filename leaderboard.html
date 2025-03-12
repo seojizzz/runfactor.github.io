@@ -1,53 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaderboard</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="stylesheet" href="leaderboardstyles.css">
-</head>
-<body>
-    <h1>Leaderboard</h1>
-    <table id="leaderboard">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Class</th>
-                <th onclick="sortTable()">Score ⬇️</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+<h2>Submit Your Score</h2>
+<form id="scoreForm">
+    <label for="name">Name:</label>
+    <input type="text" id="name" required>
 
-    <script>
-        const sheetURL = "https://script.google.com/macros/s/AKfycbxrpq5_o--eQRUNwrxIcteQsoq-AoxiIWZj8KbJkuURntiCvLpNZBku8Fq5aR3jT_ev/exec"; // Replace with your Apps Script URL
+    <label for="class">Class:</label>
+    <input type="text" id="class" required>
 
-        async function fetchLeaderboard() {
-            const response = await fetch(sheetURL);
-            const data = await response.json();
-            data.shift(); // Remove headers
+    <label for="username">Username:</label>
+    <input type="text" id="username" required>
 
-            const tbody = document.querySelector("#leaderboard tbody");
-            tbody.innerHTML = ""; 
+    <button type="submit">Submit Score</button>
+</form>
 
-            data.forEach(row => {
-                let tr = document.createElement("tr");
-                tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${parseFloat(row[2]).toFixed(2)}</td>`;
-                tbody.appendChild(tr);
-            });
+<p id="message"></p>
 
-            sortTable(); // Sort initially
-        }
+<script>
+    const sheetAPI = "https://script.google.com/macros/s/AKfycbxOMrxxzJJqE60l89l27QoDqhmhhEUChsMOq7vgG26RDRLw9i6p43kbuf9-GIbtRgib/exec"; // Replace with your Web App URL
 
-        function sortTable() {
-            let rows = Array.from(document.querySelectorAll("#leaderboard tbody tr"));
-            rows.sort((a, b) => parseFloat(b.children[2].textContent) - parseFloat(a.children[2].textContent));
-            rows.forEach(row => document.querySelector("#leaderboard tbody").appendChild(row));
-        }
+    document.getElementById("scoreForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
 
-        fetchLeaderboard();
-    </script>
-</body>
-</html>
+        const name = document.getElementById("name").value;
+        const className = document.getElementById("class").value;
+        const username = document.getElementById("username").value;
+        const finalScore = localStorage.getItem("finalScore") || 0; // Retrieve the score from local storage
+
+        const response = await fetch(sheetAPI, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, class: className, username, score: finalScore })
+        });
+
+        const result = await response.json();
+        document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
+    });
+</script>
