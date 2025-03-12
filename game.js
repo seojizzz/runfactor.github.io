@@ -339,9 +339,8 @@ class PrimeFactorGame {
         : '<li>None</li>';
     
         // Example: Call this when the game ends
-        // When the game ends, assign currentScore to playerFinalScore:
-        let playerFinalScore = currentScore;  // Define the final score variable
-        showEndScreen(playerFinalScore);
+        // When the game ends, assign curren  // Define the final score variable
+        showEndScreen(currentScore);
         fetchLeaderboard();
     }
 }
