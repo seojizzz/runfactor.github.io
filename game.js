@@ -1,3 +1,6 @@
+// Assume you have a variable that tracks the score during the game:
+let currentScore = 0;
+
 class PrimeFactorGame {
     constructor() {
         // Define prime arrays.
@@ -22,7 +25,7 @@ class PrimeFactorGame {
         this.currentNumber = 0;
         this.originalNumber = 0;
       
-        this.bannedWords = ["badword1", "badword2", "anotherbadword"];
+        this.bannedWords = ["fuck", "shit", "nigga", "hitler"];
         window.addEventListener("DOMContentLoaded", () => {
           this.bindEvents();
       });
@@ -336,6 +339,8 @@ class PrimeFactorGame {
         : '<li>None</li>';
     
         // Example: Call this when the game ends
+        // When the game ends, assign currentScore to playerFinalScore:
+        let playerFinalScore = currentScore;  // Define the final score variable
         showEndScreen(playerFinalScore);
         fetchLeaderboard();
     }
