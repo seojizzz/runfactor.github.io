@@ -101,8 +101,6 @@
             startGame();
         });
 
-                const sheetAPI = "https://script.google.com/macros/s/AKfycbz49BomTC3_ne3oArPZ7IduL6TtFl6WQrkDSX5SMYHlc_QZK12XWghDhtoxGeJ3GPwq/exec"; // Replace with Google Apps Script URL
-
         // Function to display the end screen with the final score
         function showEndScreen(finalScore) {
             document.getElementById("game-screen").style.display = "none";
@@ -175,18 +173,18 @@
             const finalScore = localStorage.getItem("finalScore") || 0; // or use your score variable
 
             // Send a POST request with the score data to your Google Apps Script
-            try {
-                const response = await fetch(sheetAPI, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, class: className, username, score: parseFloat(finalScore).toFixed(2) })
-                });
-                const result = await response.json();
-                document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
-            } catch (error) {
-                console.error("Error submitting score:", error);
-                document.getElementById("message").innerText = "Error submitting score.";
-            }
+            // try {
+            //     const response = await fetch(sheetAPI, {
+            //         method: "POST",
+            //         headers: { "Content-Type": "application/json" },
+            //         body: JSON.stringify({ name, class: className, username, score: parseFloat(finalScore).toFixed(2) })
+            //     });
+            //     const result = await response.json();
+            //     document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
+            // } catch (error) {
+            //     console.error("Error submitting score:", error);
+            //     document.getElementById("message").innerText = "Error submitting score.";
+            // }
         });
 
 
