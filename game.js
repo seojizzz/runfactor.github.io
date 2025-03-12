@@ -119,7 +119,7 @@ class PrimeFactorGame {
     updateTimer() {
       if (!this.gameRunning) return;
       const elapsed = (Date.now() - this.startTime) / 1000;
-      this.timeLeft = Math.max(0, 10 - elapsed - this.totalPenalty);
+      this.timeLeft = Math.max(0, 120 - elapsed - this.totalPenalty);
       document.getElementById("timer-display").innerText = `Time Left: ${this.timeLeft.toFixed(2)}s`;
       if (this.timeLeft <= 0) {
         clearInterval(this.timerInterval);
