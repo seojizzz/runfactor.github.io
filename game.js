@@ -394,3 +394,4 @@ function sortTable() {
   rows.sort((a, b) => parseFloat(b.children[3].textContent) - parseFloat(a.children[3].textContent));
   rows.forEach(row => document.querySelector("#leaderboard tbody").appendChild(row));
 }
+

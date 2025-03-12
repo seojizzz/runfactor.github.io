@@ -135,6 +135,31 @@
             document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
         });
 
+        document.getElementById("scoreForm").addEventListener("submit", async function(event) {
+            event.preventDefault(); // Prevent the default form submission behavior
+
+            // Retrieve values from form inputs
+            const name = document.getElementById("name").value;
+            const className = document.getElementById("class").value;
+            const username = document.getElementById("username").value;
+            const finalScore = localStorage.getItem("finalScore") || 0; // or use your score variable
+
+            // Send a POST request with the score data to your Google Apps Script
+            try {
+                const response = await fetch(sheetAPI, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, class: className, username, score: parseFloat(finalScore).toFixed(2) })
+                });
+                const result = await response.json();
+                document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
+            } catch (error) {
+                console.error("Error submitting score:", error);
+                document.getElementById("message").innerText = "Error submitting score.";
+            }
+        });
+
+
     </script>
 
 </body>
