@@ -334,8 +334,7 @@ class PrimeFactorGame {
         wrongListElement.innerHTML = this.wrongList.length > 0 
         ? this.wrongList.map(item => `<li title="${item.factors}">${item.number}</li>`).join('')
         : '<li>None</li>';
-        
-        gameOver();
+    
         // Example: Call this when the game ends
         showEndScreen(playerFinalScore);
         fetchLeaderboard();
