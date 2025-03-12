@@ -344,7 +344,7 @@ class PrimeFactorGame {
         // When the game ends, assign curren  // Define the final score variable
         showEndScreen(currentScore);
         let finalscore = currentScore;
-        fetchLeaderboard();
+        // fetchLeaderboard();
     }
 }
 
@@ -363,22 +363,22 @@ export function startGame(username) {
     game.startGame(username);
 }
 
-async function fetchLeaderboard() {
-  const response = await fetch(sheetURL);
-  const data = await response.json();
-  data.shift(); // Remove headers
+// async function fetchLeaderboard() {
+//   const response = await fetch(sheetURL);
+//   const data = await response.json();
+//   data.shift(); // Remove headers
 
-  const tbody = document.querySelector("#leaderboard tbody");
-  tbody.innerHTML = ""; 
+//   const tbody = document.querySelector("#leaderboard tbody");
+//   tbody.innerHTML = ""; 
 
-  data.forEach(row => {
-      let tr = document.createElement("tr");
-      tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${parseFloat(row[3]).toFixed(2)}</td>`;
-      tbody.appendChild(tr);
-  });
+//   data.forEach(row => {
+//       let tr = document.createElement("tr");
+//       tr.innerHTML = `<td>${row[0]}</td><td>${row[1]}</td><td>${row[2]}</td><td>${parseFloat(row[3]).toFixed(2)}</td>`;
+//       tbody.appendChild(tr);
+//   });
 
-  sortTable(); // Sort initially
-}
+//   sortTable(); // Sort initially
+// }
 
 function showEndScreen(finalScore) {
   // Hide the game screen and show the end screen.
@@ -392,9 +392,9 @@ function showEndScreen(finalScore) {
   localStorage.setItem("finalScore", finalScore);
 }
 
-function sortTable() {
-  let rows = Array.from(document.querySelectorAll("#leaderboard tbody tr"));
-  rows.sort((a, b) => parseFloat(b.children[3].textContent) - parseFloat(a.children[3].textContent));
-  rows.forEach(row => document.querySelector("#leaderboard tbody").appendChild(row));
-}
+// function sortTable() {
+//   let rows = Array.from(document.querySelectorAll("#leaderboard tbody tr"));
+//   rows.sort((a, b) => parseFloat(b.children[3].textContent) - parseFloat(a.children[3].textContent));
+//   rows.forEach(row => document.querySelector("#leaderboard tbody").appendChild(row));
+// }
 

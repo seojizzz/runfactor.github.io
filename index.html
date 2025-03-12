@@ -56,7 +56,7 @@
             </div>
         </section>
 
-        <div>Score Submission Form</div>
+        <!-- <div>Score Submission Form</div>
         <h2>Submit Your Score</h2>
         <form id="scoreForm">
             <label for="name">Name:</label>
@@ -70,10 +70,10 @@
 
             <button type="submit">Submit Score</button>
         </form>
-        <p id="message"></p>
+        <p id="message"></p> -->
 
         <button onclick="location.reload()">Play Again</button>
-
+<!-- 
         <Leaderboard Display>
         <section id="leaderboard-section">
             <h2>Leaderboard (Top 10)</h2>
@@ -87,7 +87,7 @@
                 </thead>
                 <tbody id="leaderboard-body"></tbody>
             </table>
-        </section>
+        </section> -->
     </div>
 
 
@@ -114,63 +114,63 @@
         }
 
         // Score submission event listener
-        document.getElementById("scoreForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+        // document.getElementById("scoreForm").addEventListener("submit", async function(event) {
+        //     event.preventDefault();
 
-            const name = document.getElementById("name").value;
-            const className = document.getElementById("class").value;
-            const username = document.getElementById("username").value;
-            const finalScore = localStorage.getItem("finalScore") || 0; // Retrieve the stored score
+        //     const name = document.getElementById("name").value;
+        //     const className = document.getElementById("class").value;
+        //     const username = document.getElementById("username").value;
+        //     const finalScore = localStorage.getItem("finalScore") || 0; // Retrieve the stored score
 
-            // Send data to Google Sheets
-            const response = await fetch(sheetAPI, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, class: className, username, score: parseFloat(finalScore).toFixed(2) })
-            });
+        //     // Send data to Google Sheets
+        //     const response = await fetch(sheetAPI, {
+        //         method: "POST",
+        //         headers: { "Content-Type": "application/json" },
+        //         body: JSON.stringify({ name, class: className, username, score: parseFloat(finalScore).toFixed(2) })
+        //     });
 
-            const result = await response.json();
-            document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
-        });
+        //     const result = await response.json();
+        //     document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
+        // });
 
-        const proxyURL = "http://localhost:3000/proxy"; // Replace with your server's URL
+        // const proxyURL = "http://localhost:3000/proxy"; // Replace with your server's URL
 
-        document.getElementById("scoreForm").addEventListener("submit", async function(event) {
-            event.preventDefault();
+        // document.getElementById("scoreForm").addEventListener("submit", async function(event) {
+        //     event.preventDefault();
 
-            const name = document.getElementById("name").value;
-            const className = document.getElementById("class").value;
-            const username = document.getElementById("username").value;
-            const finalScore = localStorage.getItem("finalScore") || 0;
+        //     const name = document.getElementById("name").value;
+        //     const className = document.getElementById("class").value;
+        //     const username = document.getElementById("username").value;
+        //     const finalScore = localStorage.getItem("finalScore") || 0;
 
-            try {
-                const response = await fetch(proxyURL, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        name, 
-                        class: className, 
-                        username, 
-                        score: parseFloat(finalScore).toFixed(2)
-                    })
-                });
-                const result = await response.json();
-                document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
-            } catch (error) {
-                console.error("Error submitting score:", error);
-                document.getElementById("message").innerText = "Error submitting score.";
-            }
-        });
+        //     try {
+        //         const response = await fetch(proxyURL, {
+        //             method: "POST",
+        //             headers: { "Content-Type": "application/json" },
+        //             body: JSON.stringify({
+        //                 name, 
+        //                 class: className, 
+        //                 username, 
+        //                 score: parseFloat(finalScore).toFixed(2)
+        //             })
+        //         });
+        //         const result = await response.json();
+        //         document.getElementById("message").innerText = result.status === "success" ? "Score submitted!" : "Error submitting score.";
+        //     } catch (error) {
+        //         console.error("Error submitting score:", error);
+        //         document.getElementById("message").innerText = "Error submitting score.";
+        //     }
+        // });
 
 
-        document.getElementById("scoreForm").addEventListener("submit", async function(event) {
-            event.preventDefault(); // Prevent the default form submission behavior
+        // document.getElementById("scoreForm").addEventListener("submit", async function(event) {
+        //     event.preventDefault(); // Prevent the default form submission behavior
 
-            // Retrieve values from form inputs
-            const name = document.getElementById("name").value;
-            const className = document.getElementById("class").value;
-            const username = document.getElementById("username").value;
-            const finalScore = localStorage.getItem("finalScore") || 0; // or use your score variable
+        //     // Retrieve values from form inputs
+        //     const name = document.getElementById("name").value;
+        //     const className = document.getElementById("class").value;
+        //     const username = document.getElementById("username").value;
+        //     const finalScore = localStorage.getItem("finalScore") || 0; // or use your score variable
 
             // Send a POST request with the score data to your Google Apps Script
             // try {
@@ -185,7 +185,7 @@
             //     console.error("Error submitting score:", error);
             //     document.getElementById("message").innerText = "Error submitting score.";
             // }
-        });
+        // });
 
 
     </script>
