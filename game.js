@@ -96,9 +96,10 @@ class PrimeFactorGame {
         }
     
     // Starts the game. First, runs a 3-second countdown, then starts the timer and rounds.
-    startGame(username) {
-        this.username = username;
-        document.getElementById("username-display").innerText = `Player: ${this.username}`;
+    // startGame(username) {
+    startGame() {
+        // this.username = username;
+        // document.getElementById("username-display").innerText = `Player: ${this.username}`;
         // Reset state.
         this.score = 0;
         this.combo = 0;
